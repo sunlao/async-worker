@@ -1,0 +1,26 @@
+FROM python:3.13-slim
+
+RUN mkdir -p /opt/pip
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_CACHE_DIR=/opt/pip \
+    TOX_WORK_DIR=/opt/tox
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        python3-dev \
+        libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt requirements-test.txt tox.ini VERSION /app/
+RUN pip install --upgrade pip && \
+    pip install -r /app/requirements.txt && \
+    pip install -r /app/requirements-test.txt
+RUN tox -e ci --notest --recreate
+
+RUN touch /tmp/healthy

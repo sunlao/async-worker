@@ -1,0 +1,41 @@
+jobs:
+  - job_type: movement
+    id: 101
+    name: Test-Startup-Normal
+    action_type: C-TI
+    source: src1
+    source_type: cli
+    cmd: "this is comand 1"
+    target: trg1
+    target_type: pg      
+    retry: 1
+    delay: 1
+    startup: true
+    run_once: false
+    kwargs: 
+      Hello: movement
+  - job_type: movement
+    id: 101
+    name: Test-Startup-Normal
+    action_type: C-TI
+    source: src1
+    source_type: cli
+    cmd: "this is comand 2"
+    target: trg1
+    target_type: pg      
+    retry: 1
+    delay: 1
+    startup: true
+    run_once: false
+    kwargs: 
+      Hello: World2
+  - job_type: movement
+    id: 103
+    name: Test-Startup-Next-Bad
+    action_type: C-TI
+    source: src3
+    source_type: cli
+    cmd: "this is comand 2"
+    target: trg3
+    target_type: pg      
+    run_next: [101, 104]
