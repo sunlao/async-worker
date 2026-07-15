@@ -104,7 +104,7 @@ services:
   #     - LOG_DIR=/logs
   #     - LOG_TO_FILE=true
   #     - DB_HOST=${APP_CODE}-postgres
-  #     - DB_DATA_PWD=${DB_DATA_PWD}
+  #     - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
   #     - DB_NAME=db_${APP_CODE}
   #     - DB_PORT=${DB_PORT}
   #     - DB_MAX_POOL=${DB_MAX_POOL_QUIESCE}
@@ -147,7 +147,7 @@ services:
   #     - REDIS_HOST=${APP_CODE}-redis
   #     - REDIS_PORT=${REDIS_PORT}
   #     - DB_HOST=${APP_CODE}-postgres
-  #     - DB_DATA_PWD=${DB_DATA_PWD}
+  #     - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
   #     - DB_NAME=db_${APP_CODE}
   #     - DB_PORT=${DB_PORT}
   #     - DB_MAX_POOL=${DB_MAX_POOL_WORKER}
@@ -194,7 +194,7 @@ services:
       - API_PORT=${API_PORT}
       - DB_PORT=${DB_PORT}
       - DB_HOST=${APP_CODE}-postgres
-      - DB_DATA_PWD=${DB_DATA_PWD}
+      - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
       - DB_APP_PWD=${DB_APP_PWD}
       - ENV=${ENV}
       - REDIS_HOST=${APP_CODE}-redis
