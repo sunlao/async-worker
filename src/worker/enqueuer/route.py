@@ -1,3 +1,4 @@
+from taskiq import TaskiqState
 from shared.helper.target_audit_detail import TargetAuditDetail
 from shared.models.api import EnqueueResponse
 from shared.models.constants import JobTypes
@@ -9,10 +10,10 @@ class Route:
     """Used by worker Startup and Controllers to enqueue, re-enqueue and
     emit run next messages"""
 
-    def __init__(self, ctx):
-        self.control = Control(ctx)
-        self.reader = ctx["reader"]
-        self.tad = TargetAuditDetail(ctx["arq_client"], ctx["db"])
+    def __init__(self, state: TaskiqState):
+        self.control = Control(state)
+        self.reader = state.reader
+        self.tad = TargetAuditDetail(state.db)
 
     async def _enqueue(
         self,
@@ -31,7 +32,7 @@ class Route:
         raise RuntimeError(f"Job Type: {job_type} - Not Supported ")
 
     async def _run_next(self, job_config: JobConfig):
-        job_type = job_config.Type)
+        job_type = job_config.Type
         if job_type == JobTypes.MOVEMENT:
             updt = await self.tad.update_job(job_config)
             await self.control.enqueue(False, job_type, updt)

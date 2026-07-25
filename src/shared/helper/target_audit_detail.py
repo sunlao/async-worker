@@ -10,8 +10,7 @@ class TargetAuditDetail:
     - Worker has all current run ids that are inflight and queued
     """
 
-    def __init__(self, arq_client, db):
-        self.arq = arq_client
+    def __init__(self, db):
         self.db = db
 
     async def _audit_detail(self, config: MovementConfig):
