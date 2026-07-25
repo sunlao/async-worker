@@ -15,7 +15,7 @@ class LifeCycle:
     def __init__(self, life_cycle: Lifecycle):
         self.life_cycle = life_cycle
         self.locker = life_cycle.Locker
-        self.config_redis = self.locker.redis()
+        config_redis = self.locker.redis()
         self.config_log = self.locker.log()
         self.config_worker = self.locker.worker()
         self.reader = Reader(
@@ -24,10 +24,11 @@ class LifeCycle:
                 JobVersion=self.config_worker.JobVersion,
             )
         )
-        self.arq = life_cycle.Client(
-            self.config_redis, life_cycle.AsyncSleep, life_cycle.Broker
-        )
         self.enqueue_gate = life_cycle.EnqueueGate
+        self.broker =life_cycle.Broker(
+            url=f"redis://{config_redis.Host}:{config_redis.Port}"
+        )
+    
 
     async def _db_startup(self, ctx, db_startup_ctx: DBStartUpContext) -> None:
         db = Engine(db_startup_ctx)
@@ -42,17 +43,8 @@ class LifeCycle:
         """Shutdown the db before worker shutdown"""
         await ctx["db"].shutdown()
 
-    def settings(self) -> RedisSettings:
-        """Redis Connection setting used by worker"""
-        return RedisSettings(
-            host=self.config_redis.Host,
-            port=self.config_redis.Port,
-        )
-
     async def start_all(self, ctx) -> None:
         """Start up and create global context for the worker"""
-        ctx["arq_client"] = self.arq
-        await ctx["arq_client"].startup()
         ctx["log"] = Writer(self.config_log)
         ctx["config_log"] = self.config_log
         ctx["log_error_helper"] = Error()
@@ -62,6 +54,7 @@ class LifeCycle:
         ctx["config_worker"] = self.config_worker
         ctx["reader"] = self.reader
         ctx["enqueue_gate"] = self.enqueue_gate
+        ctx["broker"] = self.broker
 
         db_startup_ctx = DBStartUpContext(
             Log=ctx["log"],

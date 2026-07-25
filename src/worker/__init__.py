@@ -16,16 +16,12 @@ from shared.models.log import CoreError
 
 locker = Locker()
 config_worker = locker.worker()
-config_redis = locker.redis()
 gate_path = Path(config_worker.GatePath)
-broker = RedisStreamBroker(
-    url=f"redis://{config_redis.Host}:{config_redis.Port}",
-)
 life_cycle = Lifecycle(
     Locker=locker,
     AsyncSleep=async_sleep,
     SubProcess=subprocess,
-    Broker=broker,
+    Broker=RedisStreamBroker,
     EnqueueGate=gate_path.is_file(),
 )
 
