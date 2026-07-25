@@ -13,9 +13,9 @@ from shared.models.worker import LifeCycleContext
 class LifeCycle:
     """Worker lifecyle utility Class"""
 
-    def __init__(self, cntx: LifeCycleContext):
-        self.life_cycle = cntx
-        self.locker = cntx.Locker
+    def __init__(self, context: LifeCycleContext):
+        self.life_cycle = context
+        self.locker = context.Locker
         config_redis = self.locker.redis()
         self.config_log = self.locker.log()
         self.config_worker = self.locker.worker()
@@ -25,16 +25,16 @@ class LifeCycle:
                 JobVersion=self.config_worker.JobVersion,
             )
         )
-        self.enqueue_gate = cntx.EnqueueGate
-        self.broker = self._broker(config_redis, cntx)
+        self.enqueue_gate = context.EnqueueGate
+        self._broker(config_redis, context)
 
-    def _broker(self, config_redis: Redis, init: LifeCycleContext):
+    def _broker(self, config_redis: Redis, context: LifeCycleContext) -> None:
         redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
-        backend = init.Backend(redis_url=redis_url, result_ex_time=14400)
-        return init.Broker(url=redis_url).with_result_backend(backend)
+        backend = context.Backend(redis_url=redis_url, result_ex_time=14400)
+        context.Broker(url=redis_url).with_result_backend(backend)
 
-    async def _db_startup(self, state: TaskiqState, cntx: DBStartUpContext) -> None:
-        db = Engine(cntx)
+    async def _db_startup(self, state: TaskiqState, context: DBStartUpContext) -> None:
+        db = Engine(context)
         await db.startup()
         async with db.client() as conn:
             row = await conn.fetchrow("select true as check")
