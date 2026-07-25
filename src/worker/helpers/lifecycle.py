@@ -15,10 +15,10 @@ class LifeCycle:
 
     def __init__(self, context: LifeCycleContext):
         self.life_cycle = context
-        self.locker = context.Locker
-        config_redis = self.locker.redis()
-        self.config_log = self.locker.log()
-        self.config_worker = self.locker.worker()
+        locker = context.Locker
+        config_redis = locker.redis()
+        self.config_log = locker.log()
+        self.config_worker = locker.worker()
         self.reader = Reader(
             ReaderConfig(
                 JobPath=self.config_worker.JobPath,
