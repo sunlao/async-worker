@@ -133,7 +133,6 @@ class WorkerConfig(BaseModel):
     JobPath: str
     JobVersion: str
     GatePath: str
-    Retry: int
 
 
 class MovementEvent(BaseModel):
