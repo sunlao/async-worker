@@ -30,23 +30,19 @@ life_cycle = Lifecycle(
 utility = LifeCycle(life_cycle)
 
 
-async def admin(
-    config: JobConfig,
-    state: TaskiqState = TaskiqDepends(),
-):
+async def admin(config: JobConfig, state: TaskiqState = TaskiqDepends()):
     ctx = state.ctx
     result = await AHandler(ctx).handle(config.Config, **config.KWARGS)
+    if result.Event.Status is False:
+        raise RuntimeError("Admin job failed")
     return result
 
-
-async def movement(
-    config: JobConfig,
-    state: TaskiqState = TaskiqDepends(),
-):
+async def movement(config: JobConfig, state: TaskiqState = TaskiqDepends()):
     ctx = state.ctx
     result = await MHandler(ctx).handle(config.Config, **config.KWARGS)
+    if result.Event.Status is False:
+        raise RuntimeError("Admin job failed")
     return result
-
 
 async def flush(
     state: TaskiqState = TaskiqDepends(),
@@ -120,4 +116,4 @@ utility.broker.with_middlewares(
 
 utility.broker.task(admin,retry_on_error=True,max_retries=3,delay=60)
 utility.broker.task(movement,retry_on_error=True,max_retries=3,delay=60)
-utility.broker.task(flush,retry_on_error=True,max_retries=3,delay=60)
+utility.broker.task(flush)
