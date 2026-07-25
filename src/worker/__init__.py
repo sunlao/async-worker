@@ -12,13 +12,13 @@ from worker.helpers.flush import save
 from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel, JobTypes
-from shared.models.worker import JobConfig, Lifecycle
+from shared.models.worker import JobConfig, LifeCycleInit
 from shared.models.log import CoreError
 
 locker = Locker()
 config_worker = locker.worker()
 gate_path = Path(config_worker.GatePath)
-life_cycle = Lifecycle(
+life_cycle_init = LifeCycleInit(
     Locker=locker,
     AsyncSleep=async_sleep,
     SubProcess=subprocess,
@@ -26,8 +26,7 @@ life_cycle = Lifecycle(
     Backend=RedisAsyncResultBackend,
     EnqueueGate=gate_path.is_file(),
 )
-
-utility = LifeCycle(life_cycle)
+lifecycle = LifeCycle(life_cycle_init)
 
 
 async def admin(config: JobConfig, state: TaskiqState = TaskiqDepends()):
@@ -51,15 +50,14 @@ async def flush(
 
 
 async def worker_shutdown(state: TaskiqState) -> None:
-    ctx = state.ctx
-    config_log = ctx["config_log"]
-    if ctx.get("db"):
-        await utility.db_shutdown(ctx)
-    if ctx.get("http_client"):
-        await ctx["http_client"].aclose()
+    config_log = state["config_log"]
+    if state.get("db"):
+        await lifecycle.db_shutdown(state)
+    if state.get("http_client"):
+        await state["http_client"].aclose()
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
-    ctx["log"].write_core(core)
-    save(ctx)
+    state["log"].write_core(core)
+    save(state)
 
 
 async def jobs(ctx, job_type: JobTypes) -> None:
@@ -77,43 +75,41 @@ async def jobs(ctx, job_type: JobTypes) -> None:
 
 
 async def worker_startup(state: TaskiqState) -> None:
-    ctx = {}
-    await utility.start_all(ctx)
-    config_log = ctx["config_log"]
+    await lifecycle.start_all(state)
+    config_log = state["config_log"]
     if config_worker.StartUp is True:
         for jt in JobTypes:
-            await jobs(ctx, jt)
+            await jobs(state, jt)
     try:
-        ctx["http_client"] = AsyncClient(timeout=60)
+        state["http_client"] = AsyncClient(timeout=60)
         core = core_log(
             config_log, LogLevel.INFO, Events.STARTUP, "http client startup"
         )
-        ctx["log"].write_core(core)
+        state["log"].write_core(core)
     except Exception as e:  # pylint: disable=broad-except
         msg = "http client startup Failure"
         core = core_log(config_log, LogLevel.ERROR, Events.STARTUP, msg)
-        error = ctx["log_error_helper"].trace_back_nfo(e)
-        ctx["log"].write_core_error(CoreError(Core=core, Error=error))
-    state.ctx = ctx
+        error = state["log_error_helper"].trace_back_nfo(e)
+        state["log"].write_core_error(CoreError(Core=core, Error=error))
 
 
-utility.broker.add_event_handler(
+lifecycle.broker.add_event_handler(
     TaskiqEvents.WORKER_STARTUP,
     worker_startup,
 )
 
-utility.broker.add_event_handler(
+lifecycle.broker.add_event_handler(
     TaskiqEvents.WORKER_SHUTDOWN,
     worker_shutdown,
 )
 
-utility.broker.with_middlewares(
+lifecycle.broker.with_middlewares(
     SmartRetryMiddleware(
         default_retry_label=False,
         default_delay=60,
     )
 )
 
-utility.broker.task(admin,retry_on_error=True,max_retries=3,delay=60)
-utility.broker.task(movement,retry_on_error=True,max_retries=3,delay=60)
-utility.broker.task(flush)
+lifecycle.broker.task(admin,retry_on_error=True,max_retries=3,delay=60)
+lifecycle.broker.task(movement,retry_on_error=True,max_retries=3,delay=60)
+lifecycle.broker.task(flush)
