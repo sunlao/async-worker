@@ -23,7 +23,6 @@ log = Writer(config_log)
 
 
 class Control:
-
     def __init__(self):
         self.config_quiesce = locker.quiesce()
         self.gate = Gate(self.config_quiesce, uuid4)

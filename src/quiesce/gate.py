@@ -3,7 +3,6 @@ from shared.models.api import AdminExecutionResults
 
 
 class Gate:
-
     def __init__(self, config, uuid):
         self.path = Path(config.GatePath)
         self.uuid = uuid

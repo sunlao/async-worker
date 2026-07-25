@@ -2,7 +2,6 @@ from shared.models.api import AdminExecutionResults, QuiesceQueue
 
 
 class Queue:
-
     def __init__(self, params: QuiesceQueue):
         self.config = params.Config
         self.arq = params.Arq

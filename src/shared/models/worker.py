@@ -172,6 +172,7 @@ class JobConfig(BaseModel, Generic[INPUTTYPE]):
     Config: INPUTTYPE
     KWARGS: Dict[Any, Any] = None
 
+
 class EnqueueRequest(BaseModel):
     model_config = DTO_CONFIG
     JobType: JobTypes

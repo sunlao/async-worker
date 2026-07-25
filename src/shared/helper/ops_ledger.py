@@ -2,7 +2,6 @@ from shared.models.api import AdminExecutionResults
 
 
 class OpsLedger:
-
     def __init__(self, arq_client, db, uuid):
         self.arq = arq_client
         self.db = db

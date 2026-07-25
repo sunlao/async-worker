@@ -36,7 +36,6 @@ class Redis(BaseModel):
 
 
 class Quiesce(BaseModel):
-
     model_config = DTO_CONFIG
     GatePath: str
     TimeOut: int

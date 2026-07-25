@@ -38,4 +38,3 @@ class Connector:
                     file_hash.update(chunk)
                     size_bytes += len(chunk)
         return BinaryOutput(BytesSHA256=file_hash.hexdigest(), BytesLen=size_bytes)
-

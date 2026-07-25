@@ -29,6 +29,7 @@ life_cycle = Lifecycle(
 
 utility = LifeCycle(life_cycle)
 
+
 async def admin(ctx, config: JobConfig):
     """Routes all admin jobs to it's Handler"""
 
@@ -46,22 +47,25 @@ async def movement(ctx, config: JobConfig):
         raise Retry(defer=timedelta(minutes=1))
     return result
 
+
 async def flush(ctx):
     """Support CI Code Coverage
     - Only used in ENV: ci
     - Disabled in all other environments"""
     save(ctx)
 
-async def worker_shutdown(ctx) -> None:
+
+async def worker_shutdown(state: TaskiqState) -> None:
+    ctx = state.ctx
     config_log = ctx["config_log"]
     if ctx.get("db"):
         await utility.db_shutdown(ctx)
-    if ctx.get("arq_client"):
-        await ctx["arq_client"].shutdown()
-    await ctx["http_client"].aclose()
+    if ctx.get("http_client"):
+        await ctx["http_client"].aclose()
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
     ctx["log"].write_core(core)
     save(ctx)
+
 
 async def jobs(ctx, job_type: JobTypes) -> None:
     config_log = ctx["config_log"]
@@ -75,6 +79,7 @@ async def jobs(ctx, job_type: JobTypes) -> None:
         core = core_log(config_log, LogLevel.ERROR, Events.STARTUP, msg)
         error = ctx["log_error_helper"].trace_back_nfo(e)
         ctx["log"].write_core_error(CoreError(Core=core, Error=error))
+
 
 async def worker_startup(state: TaskiqState) -> None:
     ctx = {}
@@ -95,6 +100,7 @@ async def worker_startup(state: TaskiqState) -> None:
         error = ctx["log_error_helper"].trace_back_nfo(e)
         ctx["log"].write_core_error(CoreError(Core=core, Error=error))
     state.ctx = ctx
+
 
 utility.broker.add_event_handler(
     TaskiqEvents.WORKER_STARTUP,
