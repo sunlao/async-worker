@@ -1,8 +1,8 @@
 from pathlib import Path
-from datetime import timedelta
 from asyncio import sleep as async_sleep, subprocess
 from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
-from taskiq import TaskiqEvents, TaskiqState
+from taskiq import TaskiqEvents, TaskiqState, TaskiqDepends
+from taskiq.middlewares import SmartRetryMiddleware
 from httpx import AsyncClient
 from worker.helpers.lifecycle import LifeCycle
 from worker.handler.movement import Movement as MHandler
@@ -30,29 +30,28 @@ life_cycle = Lifecycle(
 utility = LifeCycle(life_cycle)
 
 
-async def admin(ctx, config: JobConfig):
-    """Routes all admin jobs to it's Handler"""
-
+async def admin(
+    config: JobConfig,
+    state: TaskiqState = TaskiqDepends(),
+):
+    ctx = state.ctx
     result = await AHandler(ctx).handle(config.Config, **config.KWARGS)
-    if result.Event.Status is False and ctx["job_try"] < config.Config.Retry:
-        raise Retry(defer=timedelta(minutes=1))
     return result
 
 
-async def movement(ctx, config: JobConfig):
-    """Routes all movement jobs to it's Handler"""
-
+async def movement(
+    config: JobConfig,
+    state: TaskiqState = TaskiqDepends(),
+):
+    ctx = state.ctx
     result = await MHandler(ctx).handle(config.Config, **config.KWARGS)
-    if result.Event.Status is False and ctx["job_try"] < config.Config.Retry:
-        raise Retry(defer=timedelta(minutes=1))
     return result
 
 
-async def flush(ctx):
-    """Support CI Code Coverage
-    - Only used in ENV: ci
-    - Disabled in all other environments"""
-    save(ctx)
+async def flush(
+    state: TaskiqState = TaskiqDepends(),
+):
+    save(state.ctx)
 
 
 async def worker_shutdown(state: TaskiqState) -> None:
@@ -112,6 +111,13 @@ utility.broker.add_event_handler(
     worker_shutdown,
 )
 
-utility.broker.task(admin)
-utility.broker.task(movement)
-utility.broker.task(flush)
+utility.broker.with_middlewares(
+    SmartRetryMiddleware(
+        default_retry_label=False,
+        default_delay=60,
+    )
+)
+
+utility.broker.task(admin,retry_on_error=True,max_retries=3,delay=60)
+utility.broker.task(movement,retry_on_error=True,max_retries=3,delay=60)
+utility.broker.task(flush,retry_on_error=True,max_retries=3,delay=60)
