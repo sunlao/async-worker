@@ -15,7 +15,7 @@ router = APIRouter()
 # pylint: disable=too-many-locals
 async def enqueue(request: Request, job_id: int) -> EnqueueResponse:
     """Enqueue Jobs on worker by id from job yml"""
-    arq = request.app.state.arq_client
+    arq = request.app.state.client
     db = request.app.state.db
     reader = request.app.state.reader
     job_info = reader.config(job_id)

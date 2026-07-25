@@ -9,7 +9,7 @@ class RunSerializer:
     """Use arq client from the edge to serialize job run info to DTO"""
 
     def __init__(self, request: Request):
-        self.arq = request.app.state.arq_client
+        self.arq = request.app.state.client
 
     @staticmethod
     def _clean_status(status: str) -> str:

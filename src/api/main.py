@@ -9,7 +9,7 @@ from api.v1 import flush
 from api.metadata import tags
 # from api.v1 import enqueue
 from api.v1.info import ready, info
-# from shared.queue.arq_client import ARQClient
+# from shared.queue.client import ARQClient
 from shared.log.helpers.api_log_serializer import LogSerializer
 from shared.db import Engine
 from shared.config.locker import Locker
@@ -57,12 +57,12 @@ async def lifespan(app: FastAPI):
         DBMaxPool=config_awork.DBMaxPool,
     )
     app.state.db = Engine(db_startup_ctx)
-    # app.state.arq_client = arq
-    # await app.state.arq_client.startup()
+    # app.state.client = arq
+    # await app.state.client.startup()
     await app.state.db.startup()
-    # if not await app.state.arq_client.redis_ping():
+    # if not await app.state.client.redis_ping():
     #     await app.state.db.shutdown()
-    #     # await app.state.arq_client.shutdown()
+    #     # await app.state.client.shutdown()
     #     msg = "Failed Redis Ping on startup"
     #     core = core_log(config_log, LogLevel.ERROR, Events.STARTUP, msg)
     #     app.state.log.write_core(core)
@@ -74,7 +74,7 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         await app.state.db.shutdown()
-        # await app.state.arq_client.shutdown()
+        # await app.state.client.shutdown()
         msg = "API Service Shutdown complete"
         core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, msg)
         app.state.log.write_core(core)

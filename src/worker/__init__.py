@@ -9,7 +9,7 @@ from worker.handler.admin import Admin as AHandler
 from worker.helpers.startup import Startup
 from worker.helpers.flush import save
 from shared.config.locker import Locker
-from shared.queue.arq_client import Client
+from shared.queue.client import Client
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel
 from shared.models.worker import JobConfig, Lifecycle, JobTypes
@@ -22,7 +22,7 @@ life_cycle = Lifecycle(
     Locker=locker,
     AsyncSleep=async_sleep,
     SubProcess=subprocess,
-    ARQClient=Client,
+    Client=Client,
     Pool=create_pool,
     EnqueueGate=gate_path.is_file(),
 )

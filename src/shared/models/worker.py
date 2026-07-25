@@ -187,6 +187,6 @@ class Lifecycle(BaseModel):
     Locker: Any
     AsyncSleep: Callable[[float], Awaitable[None]]
     SubProcess: Any
-    ARQClient: Optional[Any] = None
+    Client: Optional[Any] = None
     Pool: Any
     EnqueueGate: bool

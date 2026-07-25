@@ -15,7 +15,7 @@ from shared.models.api import AdminExecutionResults, QuiesceQueue
 from shared.models.constants import Events, LogLevel, UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.log import Event, CoreError
-from shared.queue.arq_client import Client
+from shared.queue.client import Client
 
 locker = Locker()
 config_log = locker.log()

@@ -25,7 +25,7 @@ class LifeCycle:
                 JobVersion=self.config_worker.JobVersion,
             )
         )
-        self.arq = life_cycle.ARQClient(
+        self.arq = life_cycle.Client(
             self.config_redis, life_cycle.AsyncSleep, life_cycle.Pool
         )
         self.enqueue_gate = life_cycle.EnqueueGate
