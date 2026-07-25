@@ -27,7 +27,7 @@ life_cycle_init = LifeCycleContext(
     EnqueueGate=gate_path.is_file(),
 )
 lifecycle = LifeCycle(life_cycle_init)
-
+broker = lifecycle.broker
 
 async def admin(config: JobConfig, state: TaskiqState = TaskiqDepends()):
     result = await AHandler(state).handle(config.Config, **config.KWARGS)
@@ -91,23 +91,23 @@ async def worker_startup(state: TaskiqState) -> None:
         state.log.write_core_error(CoreError(Core=core, Error=error))
 
 
-lifecycle.broker.add_event_handler(
+broker.add_event_handler(
     TaskiqEvents.WORKER_STARTUP,
     worker_startup,
 )
 
-lifecycle.broker.add_event_handler(
+broker.add_event_handler(
     TaskiqEvents.WORKER_SHUTDOWN,
     worker_shutdown,
 )
 
-lifecycle.broker.with_middlewares(
+broker.with_middlewares(
     SmartRetryMiddleware(
         default_retry_label=False,
         default_delay=60,
     )
 )
 
-lifecycle.broker.task(admin,retry_on_error=True,max_retries=3,delay=60)
-lifecycle.broker.task(movement,retry_on_error=True,max_retries=3,delay=60)
-lifecycle.broker.task(flush)
+broker.task(admin,retry_on_error=True,max_retries=3,delay=60)
+broker.task(movement,retry_on_error=True,max_retries=3,delay=60)
+broker.task(flush)
