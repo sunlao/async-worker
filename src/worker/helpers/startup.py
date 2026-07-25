@@ -1,15 +1,16 @@
 from asyncio import gather
 from typing import Tuple, Sequence
+from taskiq import TaskiqState
 from worker.enqueuer.route import Route
 from shared.models.constants import Audit, JobTypes, TargetTypes
 from shared.models.worker import JobConfig
 
 
 class Startup:
-    def __init__(self, ctx):
-        self.ctx = ctx
-        self.reader = ctx["reader"]
-        self.db = ctx["db"]
+    def __init__(self, state: TaskiqState):
+        self.state = state
+        self.reader = state.reader
+        self.db = state.db
 
     async def _audit_detail(self, job_config: JobConfig) -> Tuple[str, Audit]:
         """Return (target, Audit) for a single job."""
@@ -42,7 +43,7 @@ class Startup:
             new_configs = [await self.updt_config(c, audit_details) for c in configs]
         else:
             new_configs = configs
-        enq = Route(self.ctx)
+        enq = Route(self.state)
         return await gather(*[enq.execute(False, job_type, c) for c in new_configs])
 
     async def enqueue(self, job_type: JobTypes) -> list:

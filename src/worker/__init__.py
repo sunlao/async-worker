@@ -47,16 +47,6 @@ async def flush(
     save(state)
 
 
-async def worker_shutdown(state: TaskiqState) -> None:
-    config_log = state.config_log
-    if state.get("db"):
-        await lifecycle.db_shutdown(state)
-    if state.get("http_client"):
-        await state.http_client.aclose()
-    core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
-    state.log.write_core(core)
-
-
 async def jobs(state: TaskiqState, job_type: JobTypes) -> None:
     config_log = state.config_log
     try:
@@ -69,6 +59,17 @@ async def jobs(state: TaskiqState, job_type: JobTypes) -> None:
         core = core_log(config_log, LogLevel.ERROR, Events.STARTUP, msg)
         error = state.log_error_helper.trace_back_nfo(e)
         state.log.write_core_error(CoreError(Core=core, Error=error))
+
+
+async def worker_shutdown(state: TaskiqState) -> None:
+    config_log = state.config_log
+    if state.get("db"):
+        await lifecycle.db_shutdown(state)
+    if state.get("http_client"):
+        await state.http_client.aclose()
+    core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
+    state.log.write_core(core)
+    save(state)
 
 
 async def worker_startup(state: TaskiqState) -> None:
