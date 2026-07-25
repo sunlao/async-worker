@@ -49,10 +49,10 @@ async def flush(
 
 async def worker_shutdown(state: TaskiqState) -> None:
     config_log = state.config_log
-    if state.db:
+    if state.get("db"):
         await lifecycle.db_shutdown(state)
-    if state.http_client:
-        await state["http_client"].aclose()
+    if state.get("http_client"):
+        await state.http_client.aclose()
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
     state.log.write_core(core)
     save(state)

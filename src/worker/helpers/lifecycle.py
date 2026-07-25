@@ -57,7 +57,6 @@ class LifeCycle:
         state.config_worker = self.config_worker
         state.reader = self.reader
         state.enqueue_gate = self.enqueue_gate
-        state.broker = self.broker
         db_startup_ctx = DBStartUpContext(
             Log=state.log,
             UserContext=UserContext.DATA,
