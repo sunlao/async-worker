@@ -55,7 +55,6 @@ async def worker_shutdown(state: TaskiqState) -> None:
         await state.http_client.aclose()
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
     state.log.write_core(core)
-    save(state)
 
 
 async def jobs(state: TaskiqState, job_type: JobTypes) -> None:
