@@ -4,12 +4,11 @@ from contextlib import asynccontextmanager
 from asyncio import sleep as async_sleep
 from starlette.responses import PlainTextResponse
 from fastapi import FastAPI, Request, Response
-from api.v1.helpers import flush
+from api.v1 import flush
 # from arq import create_pool
 from api.metadata import tags
-from api.v1 import info
-from api.v1.enqueue import results, submit
-from api.v1.info import ready
+# from api.v1 import enqueue
+from api.v1.info import ready, info
 # from shared.queue.arq_client import ARQClient
 from shared.log.helpers.api_log_serializer import LogSerializer
 from shared.db import Engine
@@ -30,12 +29,12 @@ locker = Locker()
 config_log = locker.log()
 config_awork = locker.awork()
 # redid_log = locker.redis()
-reader = Reader(
-    ReaderConfig(
-        JobPath=config_awork.JobPath,
-        JobVersion=config_awork.JobVersion,
-    )
-)
+# reader = Reader(
+#     ReaderConfig(
+#         JobPath=config_awork.JobPath,
+#         JobVersion=config_awork.JobVersion,
+#     )
+# )
 # arq = ARQClient(locker.redis(), async_sleep, create_pool)
 gate_path = Path(config_awork.GatePath)
 
@@ -46,7 +45,7 @@ async def lifespan(app: FastAPI):
     app.state.log_error_helper = Error()
     app.state.format_log = LogSerializer()
     app.state.user_context = UserContext.APP
-    app.state.reader = reader
+    # app.state.reader = reader
     app.state.config_log = config_log
     app.state.app_version = config_awork.AppVersion
     app.state.enqueue_gate = gate_path.is_file()
@@ -59,7 +58,7 @@ async def lifespan(app: FastAPI):
     )
     app.state.db = Engine(db_startup_ctx)
     # app.state.arq_client = arq
-    await app.state.arq_client.startup()
+    # await app.state.arq_client.startup()
     await app.state.db.startup()
     # if not await app.state.arq_client.redis_ping():
     #     await app.state.db.shutdown()
