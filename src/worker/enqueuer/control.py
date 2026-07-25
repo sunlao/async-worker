@@ -1,4 +1,5 @@
 from datetime import timedelta
+from taskiq import TaskiqState
 from worker.enqueuer.helper import delay
 from shared.models.api import EnqueueResponse
 from shared.models.constants import JobTypes, TargetTypes
@@ -6,10 +7,10 @@ from shared.models.worker import EnqueueRequest, JobConfig, MovementJobResult
 
 
 class Control:
-    def __init__(self, ctx):
-        self.arq = ctx["arq_client"]
-        self.gate = ctx["enqueue_gate"]
-        self.run_id = ctx.get("job_id")
+    def __init__(self, state: TaskiqState):
+        self.tasks = state.tasks
+        self.gate = state.enqueue_gate
+        self.run_id = state.get("job_id")
 
     def _update_config(
         self, re_enqueue: bool, config: JobConfig, result: MovementJobResult = None

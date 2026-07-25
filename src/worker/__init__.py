@@ -29,17 +29,20 @@ life_cycle_init = LifeCycleContext(
 lifecycle = LifeCycle(life_cycle_init)
 broker = lifecycle.broker
 
+
 async def admin(config: JobConfig, state: TaskiqState = TaskiqDepends()):
     result = await AHandler(state).handle(config.Config, **config.KWARGS)
     if result.Event.Status is False:
         raise RuntimeError("Admin job failed")
     return result
 
+
 async def movement(config: JobConfig, state: TaskiqState = TaskiqDepends()):
     result = await MHandler(state).handle(config.Config, **config.KWARGS)
     if result.Event.Status is False:
         raise RuntimeError("Movement job failed")
     return result
+
 
 async def flush(
     state: TaskiqState = TaskiqDepends(),
@@ -75,6 +78,10 @@ async def worker_shutdown(state: TaskiqState) -> None:
 async def worker_startup(state: TaskiqState) -> None:
     await lifecycle.start_all(state)
     config_log = state.config_log
+    state.tasks = {
+        JobTypes.ADMIN: admin_task,
+        JobTypes.MOVEMENT: movement_task,
+    }
     if config_worker.StartUp is True:
         for jt in JobTypes:
             await jobs(state, jt)
@@ -108,6 +115,7 @@ broker.with_middlewares(
     )
 )
 
-broker.task(admin,retry_on_error=True,max_retries=3,delay=60)
-broker.task(movement,retry_on_error=True,max_retries=3,delay=60)
-broker.task(flush)
+admin_task = broker.task(admin, retry_on_error=True, max_retries=3, delay=60)
+movement_task = broker.task(movement, retry_on_error=True, max_retries=3, delay=60)
+flush_task = broker.task(flush)
+

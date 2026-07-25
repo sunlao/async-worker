@@ -3,7 +3,6 @@
 from taskiq import TaskiqState
 
 
-
 def save(state: TaskiqState):
     """Exists to support code coverage
     - execute in env ci only"""
