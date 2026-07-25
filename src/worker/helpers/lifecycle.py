@@ -26,12 +26,12 @@ class LifeCycle:
             )
         )
         self.enqueue_gate = context.EnqueueGate
-        self._broker(config_redis, context)
+        self.broker = self._broker(config_redis, context)
 
-    def _broker(self, config_redis: Redis, context: LifeCycleContext) -> None:
+    def _broker(self, config_redis: Redis, context: LifeCycleContext):
         redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
         backend = context.Backend(redis_url=redis_url, result_ex_time=14400)
-        context.Broker(url=redis_url).with_result_backend(backend)
+        return context.Broker(url=redis_url).with_result_backend(backend)
 
     async def _db_startup(self, state: TaskiqState, context: DBStartUpContext) -> None:
         db = Engine(context)
