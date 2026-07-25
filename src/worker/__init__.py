@@ -41,7 +41,7 @@ async def movement(config: JobConfig, state: TaskiqState = TaskiqDepends()):
     ctx = state.ctx
     result = await MHandler(ctx).handle(config.Config, **config.KWARGS)
     if result.Event.Status is False:
-        raise RuntimeError("Admin job failed")
+        raise RuntimeError("Movement job failed")
     return result
 
 async def flush(
