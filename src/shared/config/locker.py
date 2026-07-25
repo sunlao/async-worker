@@ -65,6 +65,7 @@ class Locker:
             DBMaxPool=int(getenv("DB_MAX_POOL")),
             DataDir=getenv("DATA_DIR"),
             GatePath=getenv("GATE_CLOSE_PATH", "dev"),
+            Retry=getenv("WORKER_RETRY"),
         )
 
     def log(self) -> Config:
