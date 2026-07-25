@@ -15,7 +15,7 @@ from shared.models.api import AdminExecutionResults, QuiesceQueue
 from shared.models.constants import Events, LogLevel, UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.log import Event, CoreError
-from shared.queue.arq_client import ARQClient
+from shared.queue.arq_client import Client
 
 locker = Locker()
 config_log = locker.log()
@@ -27,7 +27,7 @@ class Control:
     def __init__(self):
         self.config_quiesce = locker.quiesce()
         self.gate = Gate(self.config_quiesce, uuid4)
-        self.arq = ARQClient(locker.redis(), async_sleep, create_pool)
+        self.arq = Client(locker.redis(), async_sleep, create_pool)
         db_startup_ctx = DBStartUpContext(
             Log=log,
             UserContext=UserContext.DATA,

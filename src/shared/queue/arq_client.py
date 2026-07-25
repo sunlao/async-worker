@@ -9,7 +9,7 @@ from shared.models.api import LedgerData
 from shared.models.worker import EnqueueRequest, Health
 
 
-class ARQClient:
+class Client:
     """Shared Light weight ARQ client for api and worker services"""
 
     def __init__(self, redis_config, async_sleep, create_pool) -> None:
