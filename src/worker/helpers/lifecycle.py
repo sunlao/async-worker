@@ -1,4 +1,3 @@
-from arq.connections import RedisSettings
 from shared.config.reader import Reader
 from shared.db import Engine
 from shared.log.writer import Writer
@@ -26,7 +25,7 @@ class LifeCycle:
             )
         )
         self.arq = life_cycle.Client(
-            self.config_redis, life_cycle.AsyncSleep, life_cycle.Pool
+            self.config_redis, life_cycle.AsyncSleep, life_cycle.Broker
         )
         self.enqueue_gate = life_cycle.EnqueueGate
 

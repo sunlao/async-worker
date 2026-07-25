@@ -187,6 +187,5 @@ class Lifecycle(BaseModel):
     Locker: Any
     AsyncSleep: Callable[[float], Awaitable[None]]
     SubProcess: Any
-    Client: Optional[Any] = None
-    Pool: Any
+    Broker: Any
     EnqueueGate: bool

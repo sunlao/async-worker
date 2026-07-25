@@ -1,7 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
 from asyncio import sleep as async_sleep, subprocess
-from arq import Retry, create_pool
+from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
 from httpx import AsyncClient
 from worker.helpers.lifecycle import LifeCycle
 from worker.handler.movement import Movement as MHandler
@@ -9,7 +9,6 @@ from worker.handler.admin import Admin as AHandler
 from worker.helpers.startup import Startup
 from worker.helpers.flush import save
 from shared.config.locker import Locker
-from shared.queue.client import Client
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel, JobTypes
 from shared.models.worker import JobConfig, Lifecycle
@@ -17,13 +16,16 @@ from shared.models.log import CoreError
 
 locker = Locker()
 config_worker = locker.worker()
+config_redis = locker.redis()
 gate_path = Path(config_worker.GatePath)
+broker = RedisStreamBroker(
+    url=f"redis://{config_redis.Host}:{config_redis.Port}",
+)
 life_cycle = Lifecycle(
     Locker=locker,
     AsyncSleep=async_sleep,
     SubProcess=subprocess,
-    Client=Client,
-    Pool=create_pool,
+    Broker=broker,
     EnqueueGate=gate_path.is_file(),
 )
 
