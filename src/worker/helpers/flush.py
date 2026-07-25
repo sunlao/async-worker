@@ -1,11 +1,13 @@
 # pylint: disable=import-outside-toplevel
 # pylint: disable=duplicate-code
+from taskiq import TaskiqState
 
 
-def save(ctx):
+
+def save(state: TaskiqState):
     """Exists to support code coverage
     - execute in env ci only"""
-    log = ctx["config_log"]
+    log = state.config_log
     env = log.Environment
     if env == "ci":
         # only import in ci env
