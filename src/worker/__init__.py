@@ -22,6 +22,7 @@ life_cycle = Lifecycle(
     AsyncSleep=async_sleep,
     SubProcess=subprocess,
     Broker=RedisStreamBroker,
+    Backend=RedisAsyncResultBackend,
     EnqueueGate=gate_path.is_file(),
 )
 
@@ -97,11 +98,3 @@ async def worker_startup(ctx) -> None:
         error = ctx["log_error_helper"].trace_back_nfo(e)
         ctx["log"].write_core_error(CoreError(Core=core, Error=error))
 
-
-class AppSettings:
-    functions = [admin, flush, movement]
-    keep_result = 14400
-    health_check_interval = 1
-    redis_settings = utility.settings()
-    on_startup = worker_startup
-    on_shutdown = worker_shutdown

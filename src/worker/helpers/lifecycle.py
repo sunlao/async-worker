@@ -2,7 +2,7 @@ from shared.config.reader import Reader
 from shared.db import Engine
 from shared.log.writer import Writer
 from shared.log.helpers.error import Error
-from shared.models.config import ReaderConfig
+from shared.models.config import ReaderConfig, Redis
 from shared.models.constants import UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.worker import Lifecycle
@@ -25,10 +25,12 @@ class LifeCycle:
             )
         )
         self.enqueue_gate = life_cycle.EnqueueGate
-        self.broker =life_cycle.Broker(
-            url=f"redis://{config_redis.Host}:{config_redis.Port}"
-        )
-    
+        self.broker = self._broker(config_redis, life_cycle)
+
+    def _broker(self, config_redis: Redis, life_cycle: LifeCycle):
+        redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
+        backend = life_cycle.ResultBackend(redis_url=redis_url, result_ex_time=14400)
+        return life_cycle.Broker(url=redis_url,).with_result_backend(backend)
 
     async def _db_startup(self, ctx, db_startup_ctx: DBStartUpContext) -> None:
         db = Engine(db_startup_ctx)

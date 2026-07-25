@@ -188,4 +188,5 @@ class Lifecycle(BaseModel):
     AsyncSleep: Callable[[float], Awaitable[None]]
     SubProcess: Any
     Broker: Any
+    Backend: Any
     EnqueueGate: bool
