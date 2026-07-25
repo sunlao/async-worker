@@ -11,8 +11,8 @@ from worker.helpers.flush import save
 from shared.config.locker import Locker
 from shared.queue.client import Client
 from shared.log.helpers.core import build as core_log
-from shared.models.constants import Events, LogLevel
-from shared.models.worker import JobConfig, Lifecycle, JobTypes
+from shared.models.constants import Events, LogLevel, JobTypes
+from shared.models.worker import JobConfig, Lifecycle
 from shared.models.log import CoreError
 
 locker = Locker()
