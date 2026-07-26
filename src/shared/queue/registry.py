@@ -17,4 +17,4 @@ class Registry:
         try:
             return self._registry[job_type]
         except KeyError as error:
-            raise KeyError(f"Task not registered: {job_type}") from error
+            raise KeyError(f"Job Type not registered: {job_type}") from error
