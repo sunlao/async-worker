@@ -75,13 +75,9 @@ async def worker_shutdown(state: TaskiqState) -> None:
     save(state)
 
 
-async def worker_startup(state: TaskiqState) -> None:
+async def worker_startup(state: TaskiqState) -> None:    
     await lifecycle.start_all(state)
     config_log = state.config_log
-    state.tasks = {
-        JobTypes.ADMIN: admin_task,
-        JobTypes.MOVEMENT: movement_task,
-    }
     if config_worker.StartUp is True:
         for jt in JobTypes:
             await jobs(state, jt)
