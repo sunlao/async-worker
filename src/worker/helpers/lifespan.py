@@ -1,4 +1,5 @@
 from taskiq import TaskiqState
+from taskiq.abc.broker import AsyncBroker
 from shared.config.reader import Reader
 from shared.db import Engine
 from shared.log.writer import Writer
@@ -32,7 +33,7 @@ class Lifespan:
         self.enqueue_gate = context.EnqueueGate
         self.broker = self._broker(config_redis, context)
 
-    def _broker(self, config_redis: Redis, context: LifeCycleContext):
+    def _broker(self, config_redis: Redis, context: LifeCycleContext) -> AsyncBroker:
         redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
         backend = context.Backend(redis_url=redis_url, result_ex_time=14400)
         return context.Broker(url=redis_url).with_result_backend(backend)

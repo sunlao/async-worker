@@ -2,8 +2,11 @@ from re import findall
 from datetime import datetime
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
+from taskiq.abc.broker import AsyncBroker
+
 from arq.connections import RedisSettings
 from arq.jobs import Job as ARQ_Job, JobDef
+
 from shared.queue.ledger_data import serialize
 from shared.models.api import LedgerData
 from shared.models.worker import EnqueueRequest, Health
@@ -12,11 +15,9 @@ from shared.models.worker import EnqueueRequest, Health
 class Client:
     """Shared Light weight ARQ client for api and worker services"""
 
-    def __init__(self, redis_config, async_sleep, create_pool) -> None:
-        self.config = redis_config
+    def __init__(self, broker: AsyncBroker, async_sleep) -> None:
+        self.broker = broker
         self.sleep = async_sleep
-        self.create_pool = create_pool
-        self.pool = None
 
     async def completed(self):
         """All completed jobs with results"""
@@ -131,15 +132,10 @@ class Client:
         return ARQ_Job(run_id, redis=self.pool)
 
     async def shutdown(self) -> None:
-        if self.pool and hasattr(self.pool, "close"):
-            await self.pool.close()
-        self.pool = None
+        await self.broker.shutdown()
 
     async def startup(self) -> None:
-        host = f"{self.config.AppCode}-redis"
-        self.pool = await self.create_pool(
-            RedisSettings(host=host, port=self.config.Port)
-        )
+        await self.broker.startup()
 
     @asynccontextmanager
     async def client(self) -> AsyncIterator:
