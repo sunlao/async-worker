@@ -4,7 +4,7 @@ from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
 from taskiq import TaskiqEvents, TaskiqState, TaskiqDepends
 from taskiq.middlewares import SmartRetryMiddleware
 from httpx import AsyncClient
-from worker.helpers.lifecycle import LifeCycle
+from worker.helpers.lifespan import Lifespan
 from worker.handler.movement import Movement as MHandler
 from worker.handler.admin import Admin as AHandler
 from worker.helpers.startup import Startup
@@ -26,7 +26,7 @@ life_cycle_init = LifeCycleContext(
     Backend=RedisAsyncResultBackend,
     EnqueueGate=gate_path.is_file(),
 )
-lifecycle = LifeCycle(life_cycle_init)
+lifecycle = Lifespan(life_cycle_init)
 broker = lifecycle.broker
 
 

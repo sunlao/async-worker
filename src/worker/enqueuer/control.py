@@ -23,6 +23,9 @@ class Control:
 
     async def _exe_job(self, re_enqueue: bool, job_type: JobTypes, job_info: JobConfig):
         re_enqueue_id = self.run_id if re_enqueue is True else None
+        # task = self.tasks[job_type]
+        # return await task.kiq(job_info)
+
         run_result = await self.arq.enqueue(
             EnqueueRequest(
                 JobType=job_type,

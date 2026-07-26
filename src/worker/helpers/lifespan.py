@@ -10,8 +10,12 @@ from shared.models.worker import LifeCycleContext
 
 
 # pylint: disable=too-many-instance-attributes
-class LifeCycle:
-    """Worker lifecyle utility Class"""
+class Lifespan:
+    """Utiltiy lifespan helper for worker startup
+    - get configs used to support side effects
+    - inject side effects from the edge
+    - startup & shutdown methods
+    """
 
     def __init__(self, context: LifeCycleContext):
         self.life_cycle = context
