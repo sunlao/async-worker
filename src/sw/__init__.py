@@ -1,7 +1,10 @@
+import os
 import asyncio
 from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
 
-redis_url = "redis://localhost:6379"
+redis_url = (
+    f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}"
+)
 
 result_backend = RedisAsyncResultBackend(
     redis_url=redis_url,

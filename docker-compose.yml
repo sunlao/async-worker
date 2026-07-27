@@ -159,7 +159,7 @@ services:
         - BACKUP_COUNT=10
         - PYTHONDONTWRITEBYTECODE=1
         - WATCHFILES_FORCE_POLLING=1      
-        - PYTHONPATH=/app
+        - PYTHONPATH=/app/src
         - START_UP=${START_UP}
         - JOB_PATH=${JOB_PATH}
         - JOB_VERSION=${JOB_VERSION}
@@ -172,8 +172,8 @@ services:
       links:
         - redis
       volumes:
-        - ./src/shared:/app/shared:rw
-        - ./src/sw:/app:rw
+        - ./src/shared:/app/src/shared:ro
+        - ./src/sw:/app/src:ro
         - ./data:/data:rw
         - ./logs:/logs:rw
         - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r
