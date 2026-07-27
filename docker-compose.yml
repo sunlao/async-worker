@@ -138,7 +138,7 @@ services:
         dockerfile: ./deploy/worker/Dockerfile
       image: ${APP_CODE}-worker:latest
       container_name: ${APP_CODE}-worker
-      command: taskiq worker app:broker --reload
+      command: taskiq worker sw:broker --reload
       restart: unless-stopped
       environment:
         - APP_CODE=${APP_CODE}
@@ -173,7 +173,7 @@ services:
         - redis
       volumes:
         - ./src/shared:/app/src/shared:ro
-        - ./src/sw:/app/src:ro
+        - ./src/sw:/app/src/sw:ro
         - ./data:/data:rw
         - ./logs:/logs:rw
         - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r

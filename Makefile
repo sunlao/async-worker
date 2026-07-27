@@ -21,7 +21,7 @@ safety:
 .PHONY: up test-build test test-ci-local down
 up:
 	python -m scripts.reset
-	docker compose -f docker-compose.yml up --build --remove-orphans --detach api db-deploy postgres redis 
+	docker compose -f docker-compose.yml up --build --remove-orphans --detach api db-deploy postgres redis worker
 test-build:
 	docker compose -f docker-compose.yml build test
 test:
