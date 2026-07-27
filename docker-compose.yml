@@ -138,7 +138,7 @@ services:
         dockerfile: ./deploy/worker/Dockerfile
       image: ${APP_CODE}-worker:latest
       container_name: ${APP_CODE}-worker
-      entrypoint: bash -c "cd /app && arq src.worker.AppSettings --watch /app"
+      command: taskiq worker app:broker --reload
       restart: unless-stopped
       environment:
         - APP_CODE=${APP_CODE}
@@ -172,8 +172,8 @@ services:
       links:
         - redis
       volumes:
-        - ./src/shared:/app/src/shared:rw
-        - ./src/sw:/app/src/worker:rw
+        - ./src/shared:/app/shared:rw
+        - ./src/sw:/app/worker:rw
         - ./data:/data:rw
         - ./logs:/logs:rw
         - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r
