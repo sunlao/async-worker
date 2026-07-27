@@ -1,23 +1,13 @@
-FROM python:3.11-slim-bookworm
-
-ENV DEBIAN_FRONTEND=noninteractive \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-# system deps
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        python3-dev \
-        libssl-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-# python deps
-COPY requirements.txt /app/
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r /app/requirements.txt
-
-# simple health marker
-RUN touch /tmp/healthy
+FROM python:3.13-slim
 
 WORKDIR /app
+
+# Install Python packages
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-sw.txt
+
+COPY VERSION .
+COPY . .
+
+RUN touch /tmp/healthy
