@@ -138,7 +138,17 @@ services:
         dockerfile: ./deploy/worker/Dockerfile
       image: ${APP_CODE}-worker:latest
       container_name: ${APP_CODE}-worker
-      command: taskiq worker sw:broker --reload
+      command:
+        - taskiq
+        - worker
+        - sw:broker
+        - --workers
+        - ${TASKIQ_WORKERS}
+        - --max-async-tasks
+        - ${TASKIQ_MAX_ASYNC_TASKS}
+        - --max-prefetch
+        - ${TASKIQ_MAX_PREFETCH}
+        - --reload
       restart: unless-stopped
       environment:
         - APP_CODE=${APP_CODE}
@@ -146,6 +156,11 @@ services:
         - ENV=${ENV}
         - REDIS_HOST=${APP_CODE}-redis
         - REDIS_PORT=${REDIS_PORT}
+        - TASKIQ_WORKERS=${TASKIQ_WORKERS}
+        - TASKIQ_MAX_ASYNC_TASKS=${TASKIQ_MAX_ASYNC_TASKS}
+        - TASKIQ_MAX_PREFETCH=${TASKIQ_MAX_PREFETCH}
+        - TASKIQ_MAX_THREADPOOL_THREADS=${TASKIQ_MAX_THREADPOOL_THREADS}
+        - TASKIQ_MAX_PROCESS_POOL_PROCESSES=${TASKIQ_MAX_PROCESS_POOL_PROCESSES}
         - DB_HOST=${APP_CODE}-postgres
         - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
         - DB_NAME=db_${APP_CODE}

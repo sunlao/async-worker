@@ -75,7 +75,7 @@ async def worker_shutdown(state: TaskiqState) -> None:
     save(state)
 
 
-async def worker_startup(state: TaskiqState) -> None:    
+async def worker_startup(state: TaskiqState) -> None:
     await lifecycle.start_all(state)
     config_log = state.config_log
     if config_worker.StartUp is True:
@@ -114,4 +114,3 @@ broker.with_middlewares(
 admin_task = broker.task(admin, retry_on_error=True, max_retries=3, delay=60)
 movement_task = broker.task(movement, retry_on_error=True, max_retries=3, delay=60)
 flush_task = broker.task(flush)
-

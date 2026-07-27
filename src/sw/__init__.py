@@ -2,9 +2,7 @@ import os
 import asyncio
 from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
 
-redis_url = (
-    f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}"
-)
+redis_url = f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}"
 
 result_backend = RedisAsyncResultBackend(
     redis_url=redis_url,
@@ -17,5 +15,6 @@ broker = RedisStreamBroker(
 
 @broker.task
 async def example(job_id: int) -> str:
-    await asyncio.sleep(30)
+    await asyncio.sleep(10)
+    print(f"job_id: {job_id}")
     return f"completed {job_id}"
