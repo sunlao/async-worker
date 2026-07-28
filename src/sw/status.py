@@ -1,6 +1,7 @@
 import asyncio
 import os
 from redis.asyncio import Redis
+from taskiq.message import TaskiqMessage
 
 
 class Status:
@@ -11,27 +12,23 @@ class Status:
             decode_responses=True,
         )
 
-    async def _enqueued(self, broker) -> list[str]:
+    async def _enqueued(self, broker) -> list:
         groups = await self.redis.xinfo_groups(broker.queue_name)
-        id = groups[0]["last-delivered-id"]
+        last_delivered_id = groups[0]["last-delivered-id"]
         entries = await self.redis.xrange(
-            broker.queue_name,
-            min=f"({id.decode()}",
-            max="+",
+            broker.queue_name,min=f"({last_delivered_id}",max="+"
         )
-        return [
-            broker.formatter.loads(fields[b"data"]).task_id for _, fields in entries
-        ]
+        return [broker.formatter.loads(fields["data"]) for _, fields in entries]
 
-    async def _pending(self, broker) -> list[str]:
-        stream = await self.redis.xpending_range(
+    async def _pending(self, broker) -> list:
+        pending = await self.redis.xpending_range(
             broker.queue_name,
             broker.consumer_group_name,
             min="-",
             max="+",
             count=1000,
         )
-        tasks = await asyncio.gather(
+        entries = await asyncio.gather(
             *[
                 self.redis.xrange(
                     broker.queue_name,
@@ -39,35 +36,20 @@ class Status:
                     max=item["message_id"],
                     count=1,
                 )
-                for item in stream
+                for item in pending
             ]
         )
         return [
-            broker.formatter.loads(fields[b"data"]).task_id
-            for task in tasks
-            for _, fields in task
+            broker.formatter.loads(fields["data"])
+            for entry in entries
+            for _, fields in entry
         ]
 
-    async def _check_exist(self, broker, stream_ids: list[str], job_id: int) -> bool:
-        tasks = await asyncio.gather(
-            *[
-                self.redis.xrange(
-                    broker.queue_name, min=stream_id, max=stream_id, count=1
-                )
-                for stream_id in stream_ids
-            ]
-        )
-        return any(
-            message.labels.get("job_id") == job_id
-            for task in tasks
-            for _, fields in task
-            if (message := broker.formatter.loads(fields[b"data"]))
-        )
+    async def _check_exist(self, messages: list[TaskiqMessage], job_id: int) -> bool:
+        return any(message.labels.get("job_id") == job_id for message in messages)
 
     async def job_id_in_work(self, broker, job_id: int) -> bool:
         enqueued, pending = await asyncio.gather(
-            self._enqueued(broker),
-            self._pending(broker),
+            self._enqueued(broker), self._pending(broker)
         )
-        ids = enqueued + pending
-        return self._check_exist(broker, ids, job_id)
+        return await self._check_exist(enqueued + pending, job_id)
