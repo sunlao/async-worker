@@ -172,7 +172,6 @@ services:
         - DATA_DIR=/data
         - LOG_TO_FILE=true
         - BACKUP_COUNT=10
-        - PYTHONUNBUFFERED=1
         - PYTHONDONTWRITEBYTECODE=1
         - WATCHFILES_FORCE_POLLING=1      
         - PYTHONPATH=/app/src
