@@ -9,16 +9,19 @@ class Status:
         self.redis = Redis(
             host=os.environ["REDIS_HOST"],
             port=int(os.environ["REDIS_PORT"]),
-            decode_responses=True,
+            decode_responses=False,
         )
 
-    async def _enqueued(self, broker) -> list:
+    async def _enqueued(self, broker) -> list[TaskiqMessage]:
         groups = await self.redis.xinfo_groups(broker.queue_name)
         last_delivered_id = groups[0]["last-delivered-id"]
         entries = await self.redis.xrange(
-            broker.queue_name,min=f"({last_delivered_id}",max="+"
+            broker.queue_name, min=f"({last_delivered_id.decode()}", max="+"
         )
-        return [broker.formatter.loads(fields["data"]) for _, fields in entries]
+        return [
+            broker.formatter.loads(fields[b"data"])
+            for _, fields in entries
+        ]
 
     async def _pending(self, broker) -> list:
         pending = await self.redis.xpending_range(
@@ -40,7 +43,7 @@ class Status:
             ]
         )
         return [
-            broker.formatter.loads(fields["data"])
+            broker.formatter.loads(fields[b"data"])
             for entry in entries
             for _, fields in entry
         ]
