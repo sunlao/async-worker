@@ -18,10 +18,7 @@ class Status:
         entries = await self.redis.xrange(
             broker.queue_name, min=f"({last_delivered_id.decode()}", max="+"
         )
-        return [
-            broker.formatter.loads(fields[b"data"])
-            for _, fields in entries
-        ]
+        return [broker.formatter.loads(fields[b"data"]) for _, fields in entries]
 
     async def _pending(self, broker) -> list:
         pending = await self.redis.xpending_range(

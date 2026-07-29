@@ -1,6 +1,5 @@
-import asyncio
 import os
-
+import asyncio
 from redis.asyncio import Redis
 
 
@@ -17,7 +16,6 @@ async def main() -> None:
 
     groups = await redis.xinfo_groups(STREAM)
     print("groups:", groups)
-
     pending = await redis.xpending_range(
         STREAM,
         GROUP,
@@ -26,10 +24,8 @@ async def main() -> None:
         count=100,
     )
     print("pending:", pending)
-
     # entries = await redis.xrange(STREAM, min="-", max="+")
     # print("entries:", entries)
-
     await redis.aclose()
 
 
