@@ -12,6 +12,7 @@ broker = UniqueRedisStreamBroker(url=redis_url)
 broker = broker.with_result_backend(result_backend)
 broker = broker.with_middlewares(ActiveJobMiddleware(redis))
 
+
 @broker.task
 async def example(job_id: int) -> str:
     await asyncio.sleep(10)

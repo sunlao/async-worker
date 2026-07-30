@@ -10,11 +10,14 @@ end
 return 0
 """
 
+
 class ActiveJobMiddleware(TaskiqMiddleware):
     def __init__(self, redis: Redis) -> None:
         self.redis = redis
 
-    async def post_execute(self, message: TaskiqMessage, result: TaskiqResult[Any]) -> None:
+    async def post_execute(
+        self, message: TaskiqMessage, result: TaskiqResult[Any]
+    ) -> None:
         job_id = message.labels.get("job_id")
 
         if job_id is not None:

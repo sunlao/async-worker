@@ -2,6 +2,7 @@ import asyncio
 
 from sw import broker, example, redis
 
+
 async def main() -> None:
     await broker.startup()
 
@@ -12,6 +13,7 @@ async def main() -> None:
 
     await broker.shutdown()
     await redis.aclose()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

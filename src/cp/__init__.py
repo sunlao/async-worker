@@ -19,7 +19,7 @@ lifespan = Lifespan(
         SubProcess=subprocess,
         Broker=RedisStreamBroker,
         Backend=RedisAsyncResultBackend,
-        EnqueueGate=gate_path.is_file()
+        EnqueueGate=gate_path.is_file(),
     )
 )
 
