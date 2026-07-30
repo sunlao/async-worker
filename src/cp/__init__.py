@@ -31,6 +31,7 @@ lifespan = Lifespan(
     )
 )
 
+
 async def startup(state: TaskiqState) -> None:
     state.redis_client = worker_init.RedisClient
     await lifespan.startup(state)
