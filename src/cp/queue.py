@@ -7,7 +7,7 @@ class Queue:
         self.redis = redis
         self.url = f"redis://{self.redis.Host}:{self.redis.Port}"
 
-    def _broker(self):
+    def _broker(self) -> AsyncBroker:
         backend = self.redis.Backend(redis_url=self.url, result_ex_time=14400)
         return self.redis.Broker(
             url=self.url, ack_type="when_executed"
