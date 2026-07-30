@@ -183,7 +183,7 @@ class EnqueueRequest(BaseModel):
     ReEnqueueId: Optional[str] = None
 
 
-class LifeCycleContext(BaseModel):
+class LifespanContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
     Locker: Any
     AsyncSleep: Callable[[float], Awaitable[None]]

@@ -12,13 +12,13 @@ from worker.helpers.flush import save
 from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel, JobTypes
-from shared.models.worker import JobConfig, LifeCycleContext
+from shared.models.worker import JobConfig, LifespanContext
 from shared.models.log import CoreError
 
 locker = Locker()
 config_worker = locker.worker()
 gate_path = Path(config_worker.GatePath)
-life_cycle_init = LifeCycleContext(
+life_cycle_init = LifespanContext(
     Locker=locker,
     AsyncSleep=async_sleep,
     SubProcess=subprocess,

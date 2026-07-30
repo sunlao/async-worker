@@ -1,27 +1,18 @@
 from taskiq import TaskiqState
-from taskiq.abc.broker import AsyncBroker
 from shared.config.reader import Reader
 from shared.db import Engine
-from shared.log.writer import Writer
 from shared.log.helpers.error import Error
-from shared.models.config import ReaderConfig, Redis
+from shared.log.writer import Writer
+from shared.models.config import ReaderConfig
 from shared.models.constants import UserContext
 from shared.models.db import DBStartUpContext
-from shared.models.worker import LifeCycleContext
+from shared.models.worker import LifespanContext
 
 
-# pylint: disable=too-many-instance-attributes
 class Lifespan:
-    """Utiltiy lifespan helper for worker startup
-    - get configs used to support side effects
-    - inject side effects from the edge
-    - startup & shutdown methods
-    """
-
-    def __init__(self, context: LifeCycleContext):
-        self.life_cycle = context
+    def __init__(self, context: LifespanContext):
+        self.context = context
         locker = context.Locker
-        config_redis = locker.redis()
         self.config_log = locker.log()
         self.config_worker = locker.worker()
         self.reader = Reader(
@@ -30,43 +21,41 @@ class Lifespan:
                 JobVersion=self.config_worker.JobVersion,
             )
         )
-        self.enqueue_gate = context.EnqueueGate
-        self.broker = self._broker(config_redis, context)
 
-    def _broker(self, config_redis: Redis, context: LifeCycleContext) -> AsyncBroker:
-        redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
-        backend = context.Backend(redis_url=redis_url, result_ex_time=14400)
-        return context.Broker(url=redis_url).with_result_backend(backend)
-
-    async def _db_startup(self, state: TaskiqState, context: DBStartUpContext) -> None:
+    async def _db_startup(
+        self,
+        state: TaskiqState,
+        context: DBStartUpContext,
+    ) -> None:
         db = Engine(context)
         await db.startup()
         async with db.client() as conn:
             row = await conn.fetchrow("select true as check")
         if row["check"] is not True:
-            raise RuntimeError("DB probe failed (unexpected result)")
+            raise RuntimeError("DB probe failed")
+
         state.db = db
 
-    async def db_shutdown(self, state: TaskiqState) -> None:
-        """Shutdown the db before worker shutdown"""
-        await state.db.shutdown()
-
     async def start_all(self, state: TaskiqState) -> None:
-        """Start up and create global context for the worker"""
         state.log = Writer(self.config_log)
         state.config_log = self.config_log
         state.log_error_helper = Error()
-        state.asubprocess = self.life_cycle.SubProcess
+        state.asubprocess = self.context.SubProcess
+        state.asleep = self.context.AsyncSleep
         state.data_dir = self.config_worker.DataDir
-        state.asleep = self.life_cycle.AsyncSleep
         state.config_worker = self.config_worker
         state.reader = self.reader
-        state.enqueue_gate = self.enqueue_gate
-        db_startup_ctx = DBStartUpContext(
-            Log=state.log,
-            UserContext=UserContext.DATA,
-            Config=state.config_log,
-            LogErrorHelper=state.log_error_helper,
-            DBMaxPool=self.config_worker.DBMaxPool,
+        state.enqueue_gate = self.context.EnqueueGate
+        await self._db_startup(
+            state,
+            DBStartUpContext(
+                Log=state.log,
+                UserContext=UserContext.DATA,
+                Config=state.config_log,
+                LogErrorHelper=state.log_error_helper,
+                DBMaxPool=self.config_worker.DBMaxPool,
+            ),
         )
-        await self._db_startup(state, db_startup_ctx)
+
+    async def stop_all(self, state: TaskiqState) -> None:
+        await state.db.shutdown()
