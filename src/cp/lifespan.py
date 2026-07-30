@@ -36,7 +36,7 @@ class Lifespan:
 
         state.db = db
 
-    async def start_all(self, state: TaskiqState) -> None:
+    async def startup(self, state: TaskiqState) -> None:
         state.log = Writer(self.config_log)
         state.config_log = self.config_log
         state.log_error_helper = Error()
@@ -57,5 +57,5 @@ class Lifespan:
             ),
         )
 
-    async def stop_all(self, state: TaskiqState) -> None:
+    async def shutdown(self, state: TaskiqState) -> None:
         await state.db.shutdown()
