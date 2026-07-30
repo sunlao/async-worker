@@ -1,10 +1,9 @@
-from taskiq.abc.broker import AsyncBroker
-from shared.models.worker import EnqueueRequest
+from shared.models.worker import EnqueueRequest, WorkerInit
 
 
 class Client:
-    def __init__(self, broker: AsyncBroker) -> None:
-        self.broker = broker
+    def __init__(self, worker: WorkerInit) -> None:
+        self.broker = worker.Broker
 
     async def startup(self) -> None:
         await self.broker.startup()

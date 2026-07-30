@@ -1,8 +1,9 @@
 from pathlib import Path
 from asyncio import sleep as async_sleep, subprocess
+from redis.asyncio import Redis
 from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
 from shared.config.locker import Locker
-from shared.models.worker import LifespanContext
+from shared.models.worker import LifespanContext, WorkerInit
 from cp.lifespan import Lifespan
 from cp.queue import Queue
 
@@ -10,15 +11,17 @@ from cp.queue import Queue
 locker = Locker()
 config_redis = locker.redis()
 config_worker = locker.worker()
-queue = Queue(config_redis).build()
+worker_init = WorkerInit(
+    Broker=RedisStreamBroker, Backend=RedisAsyncResultBackend, RedisClient=Redis
+)
+queue = Queue(worker_init, config_redis).build()
 gate_path = Path(config_worker.GatePath)
 lifespan = Lifespan(
     LifespanContext(
         Locker=locker,
         AsyncSleep=async_sleep,
         SubProcess=subprocess,
-        Broker=RedisStreamBroker,
-        Backend=RedisAsyncResultBackend,
+
         EnqueueGate=gate_path.is_file(),
     )
 )
