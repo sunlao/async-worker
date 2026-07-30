@@ -1,10 +1,8 @@
 from asyncio import sleep as async_sleep, subprocess
 from pathlib import Path
-
 from redis.asyncio import Redis
 from taskiq import TaskiqState
 from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
-
 from cp.lifespan import Lifespan
 from cp.queue import Queue
 from shared.config.locker import Locker
@@ -14,27 +12,16 @@ from shared.models.worker import LifespanContext, WorkerInit
 locker = Locker()
 config_redis = locker.redis()
 config_worker = locker.worker()
-
+redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
+redis_client = Redis.from_url(redis_url)
 worker_init = WorkerInit(
     Broker=RedisStreamBroker,
     Backend=RedisAsyncResultBackend,
-    RedisClient=Redis,
+    RedisURL=redis_url,
+    RedisClient=redis_client,
 )
-
-redis_url = (
-    f"redis://{config_redis.redis.Host}:"
-    f"{config_redis.redis.Port}"
-)
-redis_client = worker_init.RedisClient.from_url(redis_url)
-
-queue = Queue(
-    worker=worker_init,
-    config=config_redis,
-    redis_client=redis_client,
-).build()
-
+queue = Queue(worker=worker_init, config=config_redis).build()
 gate_path = Path(config_worker.GatePath)
-
 lifespan = Lifespan(
     LifespanContext(
         Locker=locker,
@@ -43,7 +30,8 @@ lifespan = Lifespan(
         EnqueueGate=gate_path.is_file(),
     )
 )
-
+state = TaskiqState
+state.redis_client = worker_init.RedisClient
 
 async def startup(state: TaskiqState) -> None:
     state.redis = redis_client

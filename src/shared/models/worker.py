@@ -195,10 +195,10 @@ class LifespanContext(BaseModel):
     EnqueueGate: bool
 
 
-
 class WorkerInit(BaseModel):
     model_config = DTO_EDGE_CONFIG
 
     Broker: AsyncBroker
     Backend: AsyncResultBackend[Any]
+    RedisURL: str
     RedisClient: Redis

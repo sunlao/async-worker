@@ -1,20 +1,24 @@
+from redis.asyncio import Redis
 from taskiq import AsyncBroker
+
 from cp.unique_job import UniqueJob
-from shared.models.config import Redis
+from shared.models.config import Redis as RedisConfig
 from shared.models.worker import WorkerInit
 
 
 class Queue:
-    def __init__(self, worker: WorkerInit, config: Redis):
+    def __init__(self, worker: WorkerInit, config: RedisConfig) -> None:
         self.worker = worker
-        self.url = f"redis://{config.redis.Host}:{config.redis.Port}"
+        self.config = config
 
     def _broker(self) -> AsyncBroker:
-        backend = self.worker.Backend(redis_url=self.url, result_ex_time=14400)
+        backend = self.worker.Backend(
+            redis_url=self.worker.RedisURL,
+            result_ex_time=self.config.ResultExpirationSec,
+        )
         return self.worker.Broker(
-            url=self.url, ack_type="when_executed"
+            url=self.worker.RedisURL, ack_type=self.config.AckType
         ).with_result_backend(backend)
 
     def build(self) -> AsyncBroker:
-        unique_job = UniqueJob(self.worker.RedisClient.from_url(self.url))
-        return self._broker().with_middlewares(unique_job)
+        return self._broker().with_middlewares(UniqueJob(self.redis_client))
