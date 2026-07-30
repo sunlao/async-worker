@@ -19,9 +19,6 @@ class UniqueJob(TaskiqMiddleware):
     def _key(self, job_id: int | str) -> str:
         return f"{self._KEY_PREFIX}{job_id}"
 
-    async def exists(self, job_id: int | str) -> bool:
-        return bool(await self._redis.exists(self._key(job_id)))
-
     async def pre_send(self, message: TaskiqMessage) -> TaskiqMessage:
         job_id = message.labels[self._JOB_ID]
         claimed = await self._redis.set(self._key(job_id), 1, nx=True)
