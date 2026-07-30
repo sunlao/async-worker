@@ -1,8 +1,6 @@
 from typing import Any
-
 from redis.asyncio import Redis
 from taskiq import TaskiqMessage, TaskiqMiddleware, TaskiqResult
-from taskiq.exceptions import NoResultError
 
 
 class DuplicateJobError(RuntimeError):
@@ -29,7 +27,5 @@ class UniqueJob(TaskiqMiddleware):
     async def post_save(
         self, message: TaskiqMessage, result: TaskiqResult[Any]
     ) -> None:
-        if isinstance(result.error, NoResultError):
-            return
         job_id = message.labels[self._JOB_ID]
         await self._redis.delete(self._key(job_id))

@@ -1,7 +1,9 @@
 from pydantic import BaseModel
+from redis.asyncio import Redis as RedisClient
+from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
 from taskiq.middlewares import SmartRetryMiddleware
 from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
-from shared.models.constants import DBUser
+from shared.models.constants import DBUser, AckTypes
 from shared.models.constants import Environments
 from shared.models.policy import DTO_CONFIG
 
@@ -35,9 +37,8 @@ class Redis(BaseModel):
     Environment: Environments
     AppCode: str
     WaitFor: int
-    Broker: type[RedisStreamBroker]
-    Backend: type[RedisAsyncResultBackend]
-    Middleware: type[SmartRetryMiddleware]
+    ResultExpirationSec: int
+    AckType: AckTypes
 
 
 class Quiesce(BaseModel):

@@ -29,6 +29,8 @@ services:
       - DB_MAX_POOL=${DB_MAX_POOL_API}
       - REDIS_HOST=${APP_CODE}-redis
       - REDIS_PORT=${REDIS_PORT}
+      - ACK_TYPE=${ACK_TYPE}
+      - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
       - API_STATIC_DIR=${API_STATIC_DIR}
       - TZ=GMT
       - LOG_LEVEL=info
@@ -210,6 +212,8 @@ services:
   #     - ENV=${ENV}
   #     - REDIS_HOST=${APP_CODE}-redis
   #     - REDIS_PORT=${REDIS_PORT}
+  #     - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
+  #     - API_STATIC_DIR=${API_STATIC_DIR}  
   #     - DB_HOST=${APP_CODE}-postgres
   #     - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
   #     - DB_NAME=db_${APP_CODE}

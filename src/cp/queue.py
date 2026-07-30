@@ -1,4 +1,3 @@
-from redis.asyncio import Redis as RedisClient
 from taskiq.abc.broker import AsyncBroker
 from cp.unique_job import UniqueJob
 from shared.models.config import Redis
@@ -16,6 +15,5 @@ class Queue:
         ).with_result_backend(backend)
 
     def build(self) -> AsyncBroker:
-        unique_job = UniqueJob(RedisClient.from_url(self.url))
-        retry = self.redis.Middleware(default_retry_label=False, default_delay=60)
-        return self._broker().with_middlewares(unique_job, retry)
+        unique_job = UniqueJob(self.redis.Client.from_url(self.url))
+        return self._broker().with_middlewares(unique_job)

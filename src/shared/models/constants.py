@@ -2,6 +2,12 @@ from enum import StrEnum
 from typing import NamedTuple
 
 
+class AckTypes(StrEnum):
+    WHEN_RECEIVED = "when_received"
+    WHEN_EXECUTED = "when_executed"
+    WHEN_SAVED = "when_saved"
+
+
 class ActionTypes(StrEnum):
     """Job Constants for Action Types"""
 
