@@ -10,6 +10,8 @@ from typing import (
     Optional,
     Tuple,
 )
+from taskiq import AsyncBroker
+from taskiq.abc.result_backend import AsyncResultBackend
 from pydantic import BaseModel, Field, StrictStr, UUID4
 from shared.models.constants import (
     ActionTypes,
@@ -188,6 +190,12 @@ class LifespanContext(BaseModel):
     Locker: Any
     AsyncSleep: Callable[[float], Awaitable[None]]
     SubProcess: Any
-    Broker: Any
-    Backend: Any
     EnqueueGate: bool
+
+
+
+class WorkerInit(BaseModel):
+    model_config = DTO_EDGE_CONFIG
+
+    Broker: AsyncBroker
+    Backend: AsyncResultBackend[Any]
