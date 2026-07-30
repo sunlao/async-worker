@@ -14,8 +14,6 @@ class Queue:
         ).with_result_backend(backend)
 
     def build(self) -> AsyncBroker:
-        self.middleware = self.redis.Middleware(
-            default_retry_label=False, default_delay=60
-        )
+        middleware = self.redis.Middleware(default_retry_label=False, default_delay=60)
         broker = self._broker()
-        return broker.with_middlewares(self.middleware)
+        return broker.with_middlewares(middleware)

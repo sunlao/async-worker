@@ -35,8 +35,6 @@ class Redis(BaseModel):
     Environment: Environments
     AppCode: str
     WaitFor: int
-    AppCode: str
-    WaitFor: int
     Broker: type[RedisStreamBroker]
     Backend: type[RedisAsyncResultBackend]
     Middleware: type[SmartRetryMiddleware]
