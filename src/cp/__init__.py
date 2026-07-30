@@ -30,11 +30,9 @@ lifespan = Lifespan(
         EnqueueGate=gate_path.is_file(),
     )
 )
-state = TaskiqState
-state.redis_client = worker_init.RedisClient
 
 async def startup(state: TaskiqState) -> None:
-    state.redis = redis_client
+    state.redis_client = worker_init.RedisClient
     await lifespan.startup(state)
 
 

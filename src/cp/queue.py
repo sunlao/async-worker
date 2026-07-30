@@ -21,4 +21,4 @@ class Queue:
         ).with_result_backend(backend)
 
     def build(self) -> AsyncBroker:
-        return self._broker().with_middlewares(UniqueJob(self.redis_client))
+        return self._broker().with_middlewares(UniqueJob(self.worker))
