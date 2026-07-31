@@ -34,6 +34,6 @@ class UniqueJob(TaskiqMiddleware):
         self, message: TaskiqMessage, result: TaskiqResult[Any]
     ) -> None:
         """Use Taskiq's post_save middleware hook to remove the job claim after
-        acknowledgement (because ack_type=when_saved)."""
+        acknowledgement (because ack_type=when_executed)."""
         job_id = message.labels[self.JOB_ID]
         await self.context.RedisClient.delete(self._key(job_id))

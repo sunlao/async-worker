@@ -83,7 +83,7 @@ class Events(StrEnum):
 
 
 class JobTypes(StrEnum):
-    MOVEMENT = "movement"
+    HELLO = "hello"
     ADMIN = "admin"
 
 

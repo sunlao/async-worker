@@ -1,8 +1,12 @@
-from asyncio import sleep as async_sleep, subprocess
 from pathlib import Path
+from asyncio import sleep as async_sleep, subprocess
 from redis.asyncio import Redis
-from taskiq import TaskiqState
-from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
+from taskiq import TaskiqScheduler, TaskiqState
+from taskiq_redis import (
+    ListRedisScheduleSource,
+    RedisAsyncResultBackend,
+    RedisStreamBroker,
+)
 from cp.lifespan import Lifespan
 from cp.queue import Queue
 from shared.config.locker import Locker
@@ -21,6 +25,8 @@ worker_init = WorkerInitContext(
     RedisClient=redis_client,
 )
 queue = Queue(worker=worker_init, config=config_redis).build()
+delay_source = ListRedisScheduleSource(redis_url)
+delay_dispatcher = TaskiqScheduler(broker=queue, sources=[delay_source])
 gate_path = Path(config_worker.GatePath)
 lifespan = Lifespan(
     LifespanContext(
@@ -34,11 +40,14 @@ lifespan = Lifespan(
 
 async def startup(state: TaskiqState) -> None:
     state.redis_client = worker_init.RedisClient
+    state.delay_dispatcher = delay_dispatcher
+    await delay_dispatcher.startup()
     await lifespan.startup(state)
 
 
 async def shutdown(state: TaskiqState) -> None:
     await lifespan.shutdown(state)
+    await delay_dispatcher.shutdown()
     await redis_client.aclose()
 
 
