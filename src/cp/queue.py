@@ -10,6 +10,7 @@ class Queue:
     - configure
     - add Unique job middle ware
     """
+
     def __init__(self, worker: WorkerInitContext, config: RedisConfig) -> None:
         self.context = worker
         self.config = config
