@@ -1,6 +1,6 @@
 from typing import Any
 from taskiq import TaskiqMessage, TaskiqMiddleware, TaskiqResult
-from shared.models.worker import WorkerInit
+from shared.models.worker import WorkerInitContext
 
 
 class DuplicateJobError(RuntimeError):
@@ -12,7 +12,7 @@ class UniqueJob(TaskiqMiddleware):
     JOB_ID = "job_id"
     KEY_PREFIX = "taskiq:job:"
 
-    def __init__(self, context: WorkerInit) -> None:
+    def __init__(self, context: WorkerInitContext) -> None:
         self.context = context
 
     def _key(self, job_id: int | str) -> str:

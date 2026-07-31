@@ -6,7 +6,7 @@ from taskiq_redis import RedisAsyncResultBackend, RedisStreamBroker
 from cp.lifespan import Lifespan
 from cp.queue import Queue
 from shared.config.locker import Locker
-from shared.models.worker import LifespanContext, WorkerInit
+from shared.models.worker import LifespanContext, WorkerInitContext
 
 
 locker = Locker()
@@ -14,7 +14,7 @@ config_redis = locker.redis()
 config_worker = locker.worker()
 redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
 redis_client = Redis.from_url(redis_url)
-worker_init = WorkerInit(
+worker_init = WorkerInitContext(
     Broker=RedisStreamBroker,
     Backend=RedisAsyncResultBackend,
     RedisURL=redis_url,

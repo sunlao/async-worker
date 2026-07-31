@@ -195,7 +195,7 @@ class LifespanContext(BaseModel):
     EnqueueGate: bool
 
 
-class WorkerInit(BaseModel):
+class WorkerInitContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
 
     Broker: AsyncBroker

@@ -1,7 +1,7 @@
 from taskiq import AsyncBroker
 from cp.unique_job import UniqueJob
 from shared.models.config import Redis as RedisConfig
-from shared.models.worker import WorkerInit
+from shared.models.worker import WorkerInitContext
 
 
 class Queue:
@@ -10,7 +10,7 @@ class Queue:
     - configure
     - add Unique job middle ware
     """
-    def __init__(self, worker: WorkerInit, config: RedisConfig) -> None:
+    def __init__(self, worker: WorkerInitContext, config: RedisConfig) -> None:
         self.context = worker
         self.config = config
 
