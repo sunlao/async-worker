@@ -8,6 +8,7 @@ class DuplicateJobError(RuntimeError):
 
 
 class UniqueJob(TaskiqMiddleware):
+    """Extend taskiq to enforce unique jobs submission in support of idompotentcy"""
     JOB_ID = "job_id"
     KEY_PREFIX = "taskiq:job:"
 

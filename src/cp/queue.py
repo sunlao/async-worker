@@ -5,6 +5,11 @@ from shared.models.worker import WorkerInit
 
 
 class Queue:
+    """Create queue with Taskiq's broker
+    - set up backend with redis
+    - configure
+    - add Unique job middle ware
+    """
     def __init__(self, worker: WorkerInit, config: RedisConfig) -> None:
         self.context = worker
         self.config = config
