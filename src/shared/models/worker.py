@@ -114,6 +114,20 @@ class Health(BaseModel):
     Queued: int
 
 
+class HelloConfig(BaseModel):
+    model_config = DTO_CONFIG
+    Name: StrictStr = Field(..., min_length=1)
+    ActionType: ActionTypes
+    Cmd: str
+    ConnectorType: ConnectorTypes
+    TargetType: TargetTypes
+    Retry: int = Field(3, ge=0)
+    StartUp: bool = Field(False)
+    RunOnce: bool = Field(True)
+    RunNext: Optional[Tuple[int, ...]] = None
+    LastHash: Optional[str] = None
+
+
 class LogCoreInput(BaseModel):
     model_config = DTO_CONFIG
     ConfigLog: Config
@@ -151,21 +165,6 @@ class MovementEvent(BaseModel):
     DurationMs: int = Field(ge=0)
     Source: str
     Result: Optional[MovementJobResult] = None
-
-
-class HelloConfig(BaseModel):
-    model_config = DTO_CONFIG
-    Name: StrictStr = Field(..., min_length=1)
-    ActionType: ActionTypes
-    Cmd: str
-    ConnectorType: ConnectorTypes
-    SourceType: SourceTypes
-    TargetType: TargetTypes
-    Retry: int = Field(3, ge=0)
-    StartUp: bool = Field(False)
-    RunOnce: bool = Field(True)
-    RunNext: Optional[Tuple[int, ...]] = None
-    LastHash: Optional[str] = None
 
 
 class JobConfig(BaseModel, Generic[INPUTTYPE]):
