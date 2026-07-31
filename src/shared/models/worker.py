@@ -170,7 +170,7 @@ class MovementEvent(BaseModel):
 class JobConfig(BaseModel, Generic[INPUTTYPE]):
     model_config = DTO_CONFIG
     Type: JobTypes
-    Id: JobTypes
+    Id: int = Field(gt=0)
     Delay: int = Field(86400, ge=0)
     Config: INPUTTYPE
 
