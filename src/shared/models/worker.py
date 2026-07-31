@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field, StrictStr, UUID4
 from shared.models.constants import (
     ActionTypes,
     JobTypes,
+    ConnectorTypes,
     SourceTypes,
     TargetTypes,
 )
@@ -152,17 +153,14 @@ class MovementEvent(BaseModel):
     Result: Optional[MovementJobResult] = None
 
 
-class MovementConfig(BaseModel):
+class HelloConfig(BaseModel):
     model_config = DTO_CONFIG
-    Id: int = Field(gt=0)
     Name: StrictStr = Field(..., min_length=1)
     ActionType: ActionTypes
-    Source: StrictStr = Field(..., min_length=1)
-    SourceType: SourceTypes
     Cmd: str
-    Target: StrictStr = Field(..., min_length=1)
+    ConnectorType: ConnectorTypes
+    SourceType: SourceTypes
     TargetType: TargetTypes
-    Delay: int = Field(86400, ge=0)
     Retry: int = Field(3, ge=0)
     StartUp: bool = Field(False)
     RunOnce: bool = Field(True)
@@ -173,8 +171,9 @@ class MovementConfig(BaseModel):
 class JobConfig(BaseModel, Generic[INPUTTYPE]):
     model_config = DTO_CONFIG
     Type: JobTypes
+    Id: JobTypes
+    Delay: int = Field(86400, ge=0)
     Config: INPUTTYPE
-    KWARGS: Dict[Any, Any] = None
 
 
 class EnqueueRequest(BaseModel):

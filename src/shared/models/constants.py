@@ -116,6 +116,14 @@ class Services(StrEnum):
     QUIESCE = "awork-quiesce"
 
 
+class ConnectorTypes(StrEnum):
+    """Connectors for"""
+
+    RDBMS = "rdbms"
+    API = "api"
+    IO = "io"
+
+
 class SourceTypes(StrEnum):
     """Connectors for dealing with source systems external to worker"""
 
