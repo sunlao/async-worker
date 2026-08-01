@@ -18,7 +18,7 @@ class Client:
         )
         if request.Delay is not None:
             return await queue.schedule_by_interval(
-                request.WorkerState.delay_source,
+                request.WorkerState.delay_dispatcher,
                 timedelta(seconds=request.Delay),
                 config=request.JobConfig,
             )
