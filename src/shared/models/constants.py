@@ -11,13 +11,9 @@ class AckTypes(StrEnum):
 class ActionTypes(StrEnum):
     """Job Constants for Action Types"""
 
-    NA = "n/a"  # No Action needed (because Same as Source)
-    CTI = "C-TI"  # command + Truncate & Insert
-    BINU = "binu"  # Binary movement (i.e. uncompressed files)
-    BINC = "binc"  # Binary movement (i.e. compressed files)
-    FSTB = "FS-TB"  # File With Schema - Truncate & Bulk Load (PG-Copy)
-    CDC = "CDC"  # Change Data Capture
-    EXE = "execute"  # execute admin job
+    SELECT = "select" # select from rdmbs
+    ECHO = "echo"  # echo command via CLI io
+    GET = "get"  # GET response from API
 
 
 class ArqStatus(StrEnum):
@@ -155,11 +151,3 @@ class UserContext(StrEnum):
 
     APP = "APP"
     DATA = "DATA"
-
-
-class ProfileAction(StrEnum):
-    """ENUM for Profile create Actions"""
-
-    UPDATE = "UPDATE"
-    INSERT = "INSERT"
-    DELETE = "DELETE"

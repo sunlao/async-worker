@@ -3,10 +3,7 @@ from typing import (
     Any,
     Awaitable,
     Callable,
-    Dict,
     Generic,
-    List,
-    Mapping,
     Optional,
     Tuple,
 )
@@ -18,10 +15,8 @@ from shared.models.constants import (
     ActionTypes,
     JobTypes,
     ConnectorTypes,
-    SourceTypes,
     TargetTypes,
 )
-
 from shared.models.log import Config, TraceBackEvent
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 
@@ -59,36 +54,6 @@ class AdminEvent(BaseModel):
     Start: datetime
     End: datetime
     DurationMs: int = Field(ge=0)
-
-
-class SerializeInput(BaseModel):
-    """Input DTO for the Avro Helper to be used by all connectors.
-    Pass in Schema if available or helper will assign string to all data types"""
-
-    model_config = DTO_CONFIG
-    Rows: tuple[Mapping[str, object], ...]
-    Name: str
-    Schema: List[dict]
-
-
-class BinaryOutput(BaseModel):
-    """Output DTO for the Avro Helper to be used by all connectors"""
-
-    model_config = DTO_CONFIG
-    BytesSHA256: str
-    BytesLen: int
-
-
-class SerializeOutput(BaseModel):
-    """Output DTO for the Avro Helper to be used by all connectors"""
-
-    model_config = DTO_CONFIG
-    AvroBytes: bytes
-    SchemaJSON: Dict[str, Any]
-    SchemaSHA256: str
-    BytesSHA256: str
-    BytesLen: int
-    RowCount: int
 
 
 class ExecutionConfig(BaseModel, Generic[INPUTTYPE]):
