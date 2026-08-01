@@ -1,26 +1,20 @@
 from datetime import timedelta
-from taskiq import TaskiqState
-from shared.models.worker import JobConfig
+from shared.models.worker import EnqueueRequest
+
 
 class Client:
-    async def enqueue(
-        self,
-        state: TaskiqState,
-        job: JobConfig,
-        job_id: int,
-        delay: int | None,
-    ):
-        if state.enqueue_gate:
+    async def enqueue(self, request: EnqueueRequest):
+        if request.WorkerState.enqueue_gate:
             raise RuntimeError("Enqueue Gate Closed")
-
-        dispatcher = state.queue.task_by_name(job.Type)
-        kicker = dispatcher.kicker().with_labels(job_id=job_id)
-
-        if delay is not None:
-            return await kicker.schedule_by_interval(
-                state.delay_source,
-                timedelta(seconds=delay),
-                job=job,
+        queue = (
+            request.WorkerState.queue
+            .task_by_name(request.JobConfig.Type)
+            .kicker().with_labels(job_id=request.JobId)
+        )
+        if request.Delay is not None:
+            return await queue.schedule_by_interval(
+                request.WorkerState.delay_source,
+                timedelta(seconds=request.Delay),
+                job=request.JobConfig,
             )
-
-        return await kicker.kiq(job=job)
+        return await queue.kiq(job=request.JobConfig)

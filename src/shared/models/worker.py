@@ -11,7 +11,7 @@ from typing import (
     Tuple,
 )
 from redis.asyncio import Redis
-from taskiq import AsyncBroker
+from taskiq import AsyncBroker, TaskiqState
 from taskiq.abc.result_backend import AsyncResultBackend
 from pydantic import BaseModel, Field, StrictStr, UUID4
 from shared.models.constants import (
@@ -174,16 +174,13 @@ class JobConfig(BaseModel, Generic[INPUTTYPE]):
     Delay: int = Field(86400, ge=0)
     Config: INPUTTYPE
 
-
 class EnqueueRequest(BaseModel):
-    model_config = DTO_CONFIG
-    JobType: JobTypes
-    Job: JobConfig
-    EnqueueGate: bool
-    DeferBy: Optional[Any] = None
-    ReEnqueue: Optional[bool] = False
-    ReEnqueueId: Optional[str] = None
+    model_config = DTO_EDGE_CONFIG
 
+    JobId: int
+    Delay: int | None
+    JobConfig: JobConfig
+    WorkerState: TaskiqState
 
 class LifespanContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
