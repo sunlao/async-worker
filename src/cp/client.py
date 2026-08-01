@@ -20,6 +20,6 @@ class Client:
             return await queue.schedule_by_interval(
                 request.WorkerState.delay_source,
                 timedelta(seconds=request.Delay),
-                job=request.JobConfig,
+                config=request.JobConfig,
             )
         return await queue.kiq(job=request.JobConfig)
