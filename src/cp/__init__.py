@@ -44,6 +44,7 @@ router = Router()
 async def startup(context: TaskiqState) -> None:
     context.redis_client = worker_init.RedisClient
     context.delay_dispatcher = delay_dispatcher
+    context.delay_source = delay_source
     await delay_dispatcher.startup()
     await lifespan.startup(context)
 
