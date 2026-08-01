@@ -22,4 +22,4 @@ class Client:
                 timedelta(seconds=request.Delay),
                 config=request.JobConfig,
             )
-        return await queue.kiq(job=request.JobConfig)
+        return await queue.kiq(config=request.JobConfig)
