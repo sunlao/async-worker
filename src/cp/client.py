@@ -3,9 +3,15 @@ from shared.models.worker import EnqueueRequest
 
 
 class Client:
+
     async def enqueue(self, request: EnqueueRequest):
+        """Enqueue a job
+        - check gate for maintenance
+        - configure queue resource by type and job id
+        - enqeue with or with out a delay
+        """
         if request.WorkerState.enqueue_gate:
-            raise RuntimeError("Enqueue Gate Closed")
+            raise RuntimeError("Enqueue Gate Closed For Maintenance")
         queue = (
             request.WorkerState.queue
             .task_by_name(request.JobConfig.Type)
