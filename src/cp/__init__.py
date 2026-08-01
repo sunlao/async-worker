@@ -9,8 +9,10 @@ from taskiq_redis import (
 )
 from cp.lifespan import Lifespan
 from cp.queue import Queue
+from cp.router import Router
 from shared.config.locker import Locker
 from shared.models.worker import LifespanContext, WorkerInitContext
+from shared.models.constants import JobTypes
 
 
 locker = Locker()
@@ -36,20 +38,22 @@ lifespan = Lifespan(
         EnqueueGate=gate_path.is_file(),
     )
 )
+router = Router()
 
 
-async def startup(state: TaskiqState) -> None:
-    state.redis_client = worker_init.RedisClient
-    state.delay_dispatcher = delay_dispatcher
+async def startup(context: TaskiqState) -> None:
+    context.redis_client = worker_init.RedisClient
+    context.delay_dispatcher = delay_dispatcher
     await delay_dispatcher.startup()
-    await lifespan.startup(state)
+    await lifespan.startup(context)
 
 
-async def shutdown(state: TaskiqState) -> None:
-    await lifespan.shutdown(state)
+async def shutdown(context: TaskiqState) -> None:
+    await lifespan.shutdown(context)
     await delay_dispatcher.shutdown()
     await redis_client.aclose()
 
 
 queue.on_event("startup")(startup)
 queue.on_event("shutdown")(shutdown)
+queue.task(router.hello, task_name=JobTypes.HELLO)

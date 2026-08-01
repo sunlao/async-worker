@@ -139,6 +139,7 @@ class JobConfig(BaseModel, Generic[INPUTTYPE]):
     Delay: int = Field(86400, ge=0)
     Config: INPUTTYPE
 
+
 class EnqueueRequest(BaseModel):
     model_config = DTO_EDGE_CONFIG
 
@@ -146,6 +147,7 @@ class EnqueueRequest(BaseModel):
     Delay: int | None
     JobConfig: JobConfig
     WorkerState: TaskiqState
+
 
 class LifespanContext(BaseModel):
     model_config = DTO_EDGE_CONFIG

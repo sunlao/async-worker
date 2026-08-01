@@ -11,7 +11,7 @@ class AckTypes(StrEnum):
 class ActionTypes(StrEnum):
     """Job Constants for Action Types"""
 
-    SELECT = "select" # select from rdmbs
+    SELECT = "select"  # select from rdmbs
     ECHO = "echo"  # echo command via CLI io
     GET = "get"  # GET response from API
 

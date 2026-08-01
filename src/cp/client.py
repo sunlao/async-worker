@@ -3,7 +3,6 @@ from shared.models.worker import EnqueueRequest
 
 
 class Client:
-
     async def enqueue(self, request: EnqueueRequest):
         """Enqueue a job
         - check gate for maintenance
@@ -13,9 +12,9 @@ class Client:
         if request.WorkerState.enqueue_gate:
             raise RuntimeError("Enqueue Gate Closed For Maintenance")
         queue = (
-            request.WorkerState.queue
-            .task_by_name(request.JobConfig.Type)
-            .kicker().with_labels(job_id=request.JobId)
+            request.WorkerState.queue.task_by_name(request.JobConfig.Type)
+            .kicker()
+            .with_labels(job_id=request.JobId)
         )
         if request.Delay is not None:
             return await queue.schedule_by_interval(
