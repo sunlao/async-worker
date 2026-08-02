@@ -149,6 +149,14 @@ class EnqueueRequest(BaseModel):
     WorkerState: TaskiqState
 
 
+class EnqueueResponce(BaseModel):
+    model_config = DTO_EDGE_CONFIG
+
+    JobId: int
+    JobConfig: JobConfig
+
+
+
 class LifespanContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
     Locker: Any

@@ -1,25 +1,30 @@
 from datetime import timedelta
-from shared.models.worker import EnqueueRequest
+from taskiq import TaskiqState
+from shared.models.worker import JobConfig
 
 
 class Client:
-    async def enqueue(self, request: EnqueueRequest):
+
+    def __init__(self, context: TaskiqState):
+        self.context = context.state
+
+    async def enqueue(self, request: JobConfig):
         """Enqueue a job
         - check gate for maintenance
         - configure queue resource by type and job id
         - enqeue with or with out a delay
         """
-        if request.WorkerState.enqueue_gate:
+        if self.context.enqueue_gate:
             raise RuntimeError("Enqueue Gate Closed For Maintenance")
         queue = (
-            request.WorkerState.queue.task_by_name(request.JobConfig.Type)
+            self.context.queue.task_by_name(request.Type)
             .kicker()
-            .with_labels(job_id=request.JobId)
+            .with_labels(job_id=request.Id)
         )
         if request.Delay is not None:
             return await queue.schedule_by_interval(
-                request.WorkerState.delay_source,
+                self.context.delay_source,
                 timedelta(seconds=request.Delay),
-                config=request.JobConfig,
+                config=request,
             )
-        return await queue.kiq(config=request.JobConfig)
+        return await queue.kiq(config=request)
