@@ -43,15 +43,15 @@ class Reader:
         if job_type == JobTypes.HELLO:
             dto: JobConfig[HelloConfig] = JobConfig(
                 Type=job_type,
+                Id=config["id"],
                 Config=self._hello(config),
-                KWARGS=config.get("kwargs", {}),
+                KWARGS=tuple(config.get("kwargs", {}).items())
             )
             return dto
         raise RuntimeError(f"JobType: {job_type} is not Supported")
 
     def _hello(self, config) -> HelloConfig:
         return HelloConfig(
-            
             Name=config["name"],
             ActionType=config["action_type"],
             Target=config["target"],
