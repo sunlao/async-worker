@@ -1,5 +1,5 @@
 from pathlib import Path
-from asyncio import sleep as async_sleep, subprocess
+from asyncio import sleep as async_sleep, subprocess, gather
 from httpx import AsyncClient
 from redis.asyncio import Redis
 from taskiq import TaskiqScheduler, TaskiqState
@@ -11,9 +11,10 @@ from taskiq_redis import (
 from cp.lifespan import Lifespan
 from cp.queue import Queue
 from cp.router import Router
+from cp.client import Client
 from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
-from shared.models.worker import LifespanContext, WorkerInitContext
+from shared.models.worker import LifespanContext, WorkerInitContext, JobConfig
 from shared.models.constants import Events, LogLevel, JobTypes
 from shared.models.log import CoreError
 
@@ -39,9 +40,30 @@ lifespan = Lifespan(
         Locker=locker,
         AsyncSleep=async_sleep,
         SubProcess=subprocess,
+        Gather=gather,
         EnqueueGate=gate_path.is_file(),
     )
 )
+
+
+async def enqueue_all(context: TaskiqState, job_type: JobTypes) -> list:
+    configs = context.reader.startup_configs(job_type)
+    client = Client(context)
+    return await context.gather(*[client.enqueue(c, 0) for c in configs])
+
+
+async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
+    config_log = context.config_log
+    try:
+        response = await enqueue_all(context, job_type)
+        msg = f"{config_log.Service} startup. {job_type} Jobs Queued: {response}"
+        core = core_log(config_log, LogLevel.INFO, Events.STARTUP, msg)
+        context.log.write_core(core)
+    except Exception as e:  # pylint: disable=broad-except
+        msg = f"{config_log.Service} startup Failure for jobtype: {job_type}"
+        core = core_log(config_log, LogLevel.ERROR, Events.STARTUP, msg)
+        error = context.log_error_helper.trace_back_nfo(e)
+        context.log.write_core_error(CoreError(Core=core, Error=error))
 
 
 async def startup(context: TaskiqState) -> None:
@@ -50,6 +72,9 @@ async def startup(context: TaskiqState) -> None:
     context.delay_source = delay_source
     await delay_dispatcher.startup()
     await lifespan.startup(context)
+    if context.config_worker.StartUp is True:
+        for jt in JobTypes:
+            await jobs(context, jt)    
     config_log = context.config_log
     try:
         context.http_client = AsyncClient(timeout=60)

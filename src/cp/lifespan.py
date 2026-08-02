@@ -4,7 +4,7 @@ from shared.db import Engine
 from shared.log.helpers.error import Error
 from shared.log.writer import Writer
 from shared.models.config import ReaderConfig
-from shared.models.constants import UserContext
+from shared.models.constants import UserContext, JobTypes
 from shared.models.db import DBStartUpContext
 from shared.models.worker import LifespanContext
 
@@ -46,6 +46,7 @@ class Lifespan:
         context.config_log = self.config_log
         context.log_error_helper = Error()
         context.asubprocess = self.context.SubProcess
+        context.gather = self.context.Gather
         context.asleep = self.context.AsyncSleep
         context.data_dir = self.config_worker.DataDir
         context.config_worker = self.config_worker
