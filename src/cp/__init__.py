@@ -14,7 +14,7 @@ from cp.router import Router
 from cp.client import Client
 from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
-from shared.models.worker import LifespanContext, WorkerInitContext, JobConfig
+from shared.models.worker import LifespanContext, WorkerInitContext
 from shared.models.constants import Events, LogLevel, JobTypes
 from shared.models.log import CoreError
 
@@ -38,6 +38,7 @@ gate_path = Path(config_worker.GatePath)
 lifespan = Lifespan(
     LifespanContext(
         Locker=locker,
+        Queue=queue,
         AsyncSleep=async_sleep,
         SubProcess=subprocess,
         Gather=gather,
@@ -67,8 +68,6 @@ async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
 
 
 async def startup(context: TaskiqState) -> None:
-    context.queue = queue
-    context.redis_client = worker_init.RedisClient
     context.delay_dispatcher = delay_dispatcher
     context.delay_source = delay_source
     await delay_dispatcher.startup()

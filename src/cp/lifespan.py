@@ -4,7 +4,7 @@ from shared.db import Engine
 from shared.log.helpers.error import Error
 from shared.log.writer import Writer
 from shared.models.config import ReaderConfig
-from shared.models.constants import UserContext, JobTypes
+from shared.models.constants import UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.worker import LifespanContext
 
@@ -52,6 +52,7 @@ class Lifespan:
         context.config_worker = self.config_worker
         context.reader = self.reader
         context.enqueue_gate = self.context.EnqueueGate
+        context.queue = self.context.Queue
         await self._db_startup(
             context,
             DBStartUpContext(
