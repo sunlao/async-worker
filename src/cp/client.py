@@ -17,6 +17,8 @@ class Client:
     def _delay(
         job_delay: int | None = None, delay_overide: int | None = None
     ) -> int | None:
+        if delay_overide == 0:
+            return None
         if delay_overide is not None:
             return delay_overide
         return job_delay
