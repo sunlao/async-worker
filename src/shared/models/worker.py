@@ -143,7 +143,7 @@ class JobConfig(BaseModel, Generic[INPUTTYPE]):
 class EnqueueResponse(BaseModel):
     model_config = DTO_EDGE_CONFIG
     JobId: int
-    RunId: int
+    RunId: str
 
 
 class LifespanContext(BaseModel):
