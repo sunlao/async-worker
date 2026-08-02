@@ -91,8 +91,8 @@ class Reader:
             job_yml = safe_load(file_obj)
         return job_yml["jobs"]
 
-    def config(self, job_id: int) -> JobConfig:
-        return next(filter(lambda c: c.Config.Id == job_id, self.configs), None)
+    def config(self, job_id: int) -> JobConfig | None:
+        return next(filter(lambda c: c.Id == job_id, self.configs), None)
 
     def startup_configs(self, job_type: JobTypes) -> tuple[JobConfig, ...]:
         return tuple(
