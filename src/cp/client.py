@@ -33,7 +33,7 @@ class Client:
             .kicker()
             .with_labels(job_id=request.Id)
         )
-        delay = self._delay(request.Delay, delay_overide)
+        delay = self._delay(request.Config.Delay, delay_overide)
         if delay is not None:
             response = await queue.schedule_by_interval(
                 self.context.delay_source,

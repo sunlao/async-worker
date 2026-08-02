@@ -34,6 +34,6 @@ jobs:
   - job_type: admin
     id: 1004
     name: OpsLedger
-    startup: true
-    run_once: false
-    delay: 600
+    startup: false
+    run_once: True
+    delay: 0

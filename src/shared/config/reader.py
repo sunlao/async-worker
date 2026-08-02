@@ -20,7 +20,6 @@ class Reader:
 
     def _admin(self, config) -> AdminConfig:
         return AdminConfig(
-            Id=config["id"],
             Name=config["name"],
             Cmd=config.get("cmd", ""),
             **self._optional(config),
@@ -36,6 +35,7 @@ class Reader:
         if job_type == JobTypes.ADMIN:
             dto: JobConfig[AdminConfig] = JobConfig(
                 Type=job_type,
+                Id=config["id"],
                 Config=self._admin(config),
                 KWARGS=config.get("kwargs", {}),
             )
@@ -51,7 +51,7 @@ class Reader:
 
     def _hello(self, config) -> HelloConfig:
         return HelloConfig(
-            Id=config["id"],
+            
             Name=config["name"],
             ActionType=config["action_type"],
             Target=config["target"],
@@ -79,14 +79,9 @@ class Reader:
         """
         ids = [c.Config.Id for c in self.configs]
         names = [c.Config.Name for c in self.configs]
-        src_targs = [
-            f"{c.Config.Source}~{c.Config.Target}"
-            for c in self.configs
-            if c.Type == JobTypes.MOVEMENT
-        ]
         run_nexts = [c.Config.RunNext for c in self.configs if c.Config.RunNext]
         next_ids = [i for r in run_nexts for i in r]
-        tests = [{"Ids": ids}, {"Names": names}, {"Source:Target": src_targs}]
+        tests = [{"Ids": ids}, {"Names": names}]
         results = [self._check_obj(t) for t in tests]
         results.append({"next": False for i in next_ids if i not in ids})
         return [k for r in results for k, v in r.items() if v is False]

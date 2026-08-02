@@ -14,6 +14,7 @@ class ActionTypes(StrEnum):
     SELECT = "select"  # select from rdmbs
     ECHO = "echo"  # echo command via CLI io
     GET = "get"  # GET response from API
+    POST = "post" 
 
 
 class ArqStatus(StrEnum):
@@ -143,6 +144,8 @@ class Targets(StrEnum):
     UNITY_WORKER_DB = "unity_worker_db"
     UNITY_WORKER_API = "unity_worker_api"
     UNITY_WORKER_IO = "unity_worker_io"
+    UNITY_QUIESCE_API = "unity_quiesce_api"
+
 
 class TargetTypes(StrEnum):
     """Connectors for dealing with target systems external to worker"""

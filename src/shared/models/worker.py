@@ -5,7 +5,6 @@ from typing import (
     Callable,
     Generic,
     Optional,
-    Tuple,
 )
 from redis.asyncio import Redis
 from taskiq import AsyncBroker
@@ -14,7 +13,6 @@ from pydantic import BaseModel, Field, StrictStr, UUID4
 from shared.models.constants import (
     ActionTypes,
     JobTypes,
-    ConnectorTypes,
     Targets,
 )
 from shared.models.log import Config, TraceBackEvent
@@ -26,12 +24,13 @@ class AdminConfig(BaseModel):
     Id: int = Field(..., gt=0)
     Name: StrictStr = Field(..., min_length=1)
     Cmd: str = Field("")
-    ActionType: ActionTypes = Field(ActionTypes.EXE)
-    Delay: int = Field(86400, ge=0)
+    ActionType: ActionTypes = Field(ActionTypes.Post)
+    Target: Targets = Field(Targets.UNITY_QUIESCE_API)
+    Delay: int = Field(600, ge=0)
     Retry: int = Field(3, ge=0)
-    StartUp: bool = Field(False)
-    RunOnce: bool = Field(True)
-    RunNext: Optional[Tuple[int, ...]] = None
+    StartUp: bool = Field(True)
+    RunOnce: bool = Field(False)
+    RunNext: Optional[tuple[int, ...]] = None
 
 
 class AdminJobResult(BaseModel):
@@ -89,8 +88,16 @@ class HelloConfig(BaseModel):
     StartUp: bool = Field(False)
     Delay: int = Field(0, ge=0)
     RunOnce: bool = Field(True)
-    RunNext: Optional[Tuple[int, ...]] = None
+    RunNext: Optional[tuple[int, ...]] = None
     Retry: int = Field(3, ge=0)
+
+
+class JobConfig(BaseModel, Generic[INPUTTYPE]):
+    model_config = DTO_CONFIG
+    Type: JobTypes
+    Id: int = Field(gt=0)
+    KWARGS: tuple[tuple[Any, Any], ...] = ()
+    Config: INPUTTYPE
 
 
 class LogCoreInput(BaseModel):
@@ -114,8 +121,6 @@ class WorkerConfig(BaseModel):
     JobVersion: str
     DBMaxPool: int
     DataDir: str
-    JobPath: str
-    JobVersion: str
     GatePath: str
 
 
@@ -130,14 +135,6 @@ class MovementEvent(BaseModel):
     DurationMs: int = Field(ge=0)
     Source: str
     Result: Optional[MovementJobResult] = None
-
-
-class JobConfig(BaseModel, Generic[INPUTTYPE]):
-    model_config = DTO_CONFIG
-    Type: JobTypes
-    Id: int = Field(gt=0)
-    Delay: int = Field(86400, ge=0)
-    Config: INPUTTYPE
 
 
 class EnqueueResponse(BaseModel):
