@@ -23,39 +23,38 @@ class Lifespan:
         )
 
     async def _db_startup(
-        self,
-        state: TaskiqState,
-        context: DBStartUpContext,
+        self, worker_context: TaskiqState, db_context: DBStartUpContext
     ) -> None:
-        db = Engine(context)
+        db = Engine(db_context)
         await db.startup()
         async with db.client() as conn:
             row = await conn.fetchrow("select true as check")
         if row["check"] is not True:
             raise RuntimeError("DB probe failed")
 
-        state.db = db
+        worker_context.db = db
 
-    async def startup(self, state: TaskiqState) -> None:
-        state.log = Writer(self.config_log)
-        state.config_log = self.config_log
-        state.log_error_helper = Error()
-        state.asubprocess = self.context.SubProcess
-        state.asleep = self.context.AsyncSleep
-        state.data_dir = self.config_worker.DataDir
-        state.config_worker = self.config_worker
-        state.reader = self.reader
-        state.enqueue_gate = self.context.EnqueueGate
+    async def startup(self, context: TaskiqState) -> None:
+        context.log = Writer(self.config_log)
+        context.config_log = self.config_log
+        context.log_error_helper = Error()
+        context.asubprocess = self.context.SubProcess
+        context.asleep = self.context.AsyncSleep
+        context.data_dir = self.config_worker.DataDir
+        context.config_worker = self.config_worker
+        context.reader = self.reader
+        context.enqueue_gate = self.context.EnqueueGate
         await self._db_startup(
-            state,
+            context,
             DBStartUpContext(
-                Log=state.log,
+                Log=context.log,
                 UserContext=UserContext.DATA,
-                Config=state.config_log,
-                LogErrorHelper=state.log_error_helper,
+                Config=context.config_log,
+                LogErrorHelper=context.log_error_helper,
                 DBMaxPool=self.config_worker.DBMaxPool,
             ),
         )
 
-    async def shutdown(self, state: TaskiqState) -> None:
-        await state.db.shutdown()
+    async def shutdown(self, context: TaskiqState) -> None:
+        await context.db.shutdown()
+        await context.http_client.shutdown()

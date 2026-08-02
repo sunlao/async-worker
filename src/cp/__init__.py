@@ -67,7 +67,7 @@ async def startup(context: TaskiqState) -> None:
 async def shutdown(context: TaskiqState) -> None:
     config_log = context.config_log
     if context.get("db"):
-        await lifespan.db_shutdown(context)
+        await lifespan.shutdown(context)
         await delay_dispatcher.shutdown()
         await redis_client.aclose()
     if context.get("http_client"):

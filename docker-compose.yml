@@ -90,40 +90,6 @@ services:
     networks:
       - "${APP_CODE}net"
 
-  # quiesce:
-  #   build:
-  #     context: .
-  #     dockerfile: ./deploy/quiesce/Dockerfile
-  #   image: ${APP_CODE}-quiesce:latest
-  #   container_name: ${APP_CODE}-quiesce
-  #   command: ["python", "-m", "quiesce.control"]
-  #   environment:
-  #     - APP_CODE=${APP_CODE}
-  #     - SERVICE=${APP_CODE}-quiesce
-  #     - ENV=${ENV}
-  #     - TZ=GMT
-  #     - LOG_LEVEL=info
-  #     - LOG_DIR=/logs
-  #     - LOG_TO_FILE=true
-  #     - DB_HOST=${APP_CODE}-postgres
-  #     - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
-  #     - DB_NAME=db_${APP_CODE}
-  #     - DB_PORT=${DB_PORT}
-  #     - DB_MAX_POOL=${DB_MAX_POOL_QUIESCE}
-  #     - REDIS_HOST=${APP_CODE}-redis
-  #     - REDIS_PORT=${REDIS_PORT}      
-  #     - PYTHONUNBUFFERED=1
-  #     - PYTHONPATH=/app/src
-  #     - GATE_CLOSE_PATH=${GATE_CLOSE_PATH}      
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ./data/gate:/app/gate:rw
-  #     - ./src/quiesce:/app/src/quiesce:rw    
-  #     - ./src/shared:/app/src/shared:rw
-  #     - ./logs:/logs:rw
-  #   networks:
-  #     - "${APP_CODE}net"
-
   redis:
     image: redis:8.8.0-alpine
     container_name: ${APP_CODE}-redis
@@ -197,57 +163,6 @@ services:
         - ./data/gate:/app/gate:ro
       networks:
         - "${APP_CODE}net"
-
-  # worker:
-  #   build:
-  #     context: .
-  #     dockerfile: ./deploy/worker/Dockerfile
-  #   image: ${APP_CODE}-worker:latest
-  #   container_name: ${APP_CODE}-worker
-  #   entrypoint: bash -c "cd /app && arq src.worker.AppSettings --watch /app"
-  #   restart: unless-stopped
-  #   environment:
-  #     - APP_CODE=${APP_CODE}
-  #     - SERVICE=${APP_CODE}-worker
-  #     - ENV=${ENV}
-  #     - REDIS_HOST=${APP_CODE}-redis
-  #     - REDIS_PORT=${REDIS_PORT}
-  #     - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
-  #     - API_STATIC_DIR=${API_STATIC_DIR}  
-  #     - DB_HOST=${APP_CODE}-postgres
-  #     - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
-  #     - DB_NAME=db_${APP_CODE}
-  #     - DB_PORT=${DB_PORT}
-  #     - DB_MAX_POOL=${DB_MAX_POOL_WORKER}
-  #     - TZ=GMT
-  #     - LOG_LEVEL=info
-  #     - LOG_DIR=/logs
-  #     - DATA_DIR=/data
-  #     - LOG_TO_FILE=true
-  #     - BACKUP_COUNT=10
-  #     - PYTHONDONTWRITEBYTECODE=1
-  #     - WATCHFILES_FORCE_POLLING=1      
-  #     - PYTHONPATH=/app/src
-  #     - START_UP=${START_UP}
-  #     - JOB_PATH=${JOB_PATH}
-  #     - JOB_VERSION=${JOB_VERSION}
-  #     - GATE_CLOSE_PATH=${GATE_CLOSE_PATH}      
-  #   depends_on:
-  #     redis:
-  #       condition: service_started
-  #     db-deploy:
-  #       condition: service_completed_successfully          
-  #   links:
-  #     - redis
-  #   volumes:
-  #     - ./src/shared:/app/src/shared:rw
-  #     - ./src/worker:/app/src/worker:rw
-  #     - ./data:/data:rw
-  #     - ./logs:/logs:rw
-  #     - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r
-  #     - ./data/gate:/app/gate:ro
-  #   networks:
-  #     - "${APP_CODE}net"
 
   test:
     build:
