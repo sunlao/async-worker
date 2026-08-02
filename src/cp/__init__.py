@@ -48,6 +48,8 @@ async def startup(context: TaskiqState) -> None:
     context.redis_client = worker_init.RedisClient
     context.delay_dispatcher = delay_dispatcher
     context.delay_source = delay_source
+    await delay_dispatcher.startup()
+    await lifespan.startup(context)
     config_log = context.config_log
     try:
         context.http_client = AsyncClient(timeout=60)
@@ -63,9 +65,15 @@ async def startup(context: TaskiqState) -> None:
 
 
 async def shutdown(context: TaskiqState) -> None:
-    await lifespan.shutdown(context)
-    await delay_dispatcher.shutdown()
-    await redis_client.aclose()
+    config_log = context.config_log
+    if context.get("db"):
+        await lifespan.db_shutdown(context)
+        await delay_dispatcher.shutdown()
+        await redis_client.aclose()
+    if context.get("http_client"):
+        await context.http_client.aclose()
+    core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
+    context.log.write_core(core)
 
 
 queue.task(router.hello, task_name=JobTypes.HELLO)
