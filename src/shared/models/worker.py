@@ -145,7 +145,7 @@ class EnqueueResponse(BaseModel):
 class LifespanContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
     Locker: Any
-    Queue=AsyncBroker
+    Queue: AsyncBroker
     AsyncSleep: Callable[[float], Awaitable[None]]
     Gather: Callable[..., Awaitable[list[Any]]]
     SubProcess: Any
