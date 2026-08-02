@@ -38,7 +38,6 @@ lifespan = Lifespan(
         EnqueueGate=gate_path.is_file(),
     )
 )
-router = Router()
 
 
 async def startup(context: TaskiqState) -> None:
@@ -47,6 +46,8 @@ async def startup(context: TaskiqState) -> None:
     context.delay_source = delay_source
     await delay_dispatcher.startup()
     await lifespan.startup(context)
+    router = Router(context)
+    queue.task(router.hello, task_name=JobTypes.HELLO)
 
 
 async def shutdown(context: TaskiqState) -> None:
@@ -57,4 +58,3 @@ async def shutdown(context: TaskiqState) -> None:
 
 queue.on_event("startup")(startup)
 queue.on_event("shutdown")(shutdown)
-queue.task(router.hello, task_name=JobTypes.HELLO)

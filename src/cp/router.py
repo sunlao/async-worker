@@ -8,6 +8,6 @@ class Router:
 
     def __init__(self, context: TaskiqState = TaskiqDepends()):
         self.context = context
-    
+
     async def hello(self, config: JobConfig[HelloConfig]) -> None:
         await Hello(self.context).handle(config)

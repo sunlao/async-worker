@@ -4,7 +4,6 @@ from shared.models.worker import JobConfig
 
 
 class Client:
-
     def __init__(self, context: TaskiqState):
         self.context = context.state
 

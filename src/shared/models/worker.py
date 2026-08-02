@@ -156,7 +156,6 @@ class EnqueueResponce(BaseModel):
     JobConfig: JobConfig
 
 
-
 class LifespanContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
     Locker: Any
