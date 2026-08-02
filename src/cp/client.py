@@ -9,7 +9,7 @@ class Client:
     """
 
     def __init__(self, context: TaskiqState):
-        self.context = context.state
+        self.context = context
         if self.context.enqueue_gate:
             raise RuntimeError("Enqueue Gate Closed For Maintenance")
 
@@ -18,8 +18,8 @@ class Client:
         job_delay: int | None = None, delay_overide: int | None = None
     ) -> int | None:
         if delay_overide is not None:
-            return job_delay
-        return delay_overide
+            return delay_overide
+        return job_delay
 
     async def enqueue(self, request: JobConfig, delay_overide: int | None = None):
         """Enquue operations
@@ -40,6 +40,6 @@ class Client:
                 timedelta(seconds=delay),
                 config=request,
             )
-            return EnqueueResponse(JobId=request.Id, RunId=response.task_id)
+            return EnqueueResponse(JobId=request.Id, DelayId=response.schedule_id)
         response = await queue.kiq(config=request)
         return EnqueueResponse(JobId=request.Id, RunId=response.task_id)
