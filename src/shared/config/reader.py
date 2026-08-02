@@ -37,7 +37,7 @@ class Reader:
                 Type=job_type,
                 Id=config["id"],
                 Config=self._admin(config),
-                KWARGS=config.get("kwargs", {}),
+                KWARGS=tuple(config.get("kwargs", {}).items())
             )
             return dto
         if job_type == JobTypes.HELLO:
@@ -77,7 +77,7 @@ class Reader:
         - source target combinations must be unique
         - every id in a RunNext list must exist as an id
         """
-        ids = [c.Config.Id for c in self.configs]
+        ids = [c.Id for c in self.configs]
         names = [c.Config.Name for c in self.configs]
         run_nexts = [c.Config.RunNext for c in self.configs if c.Config.RunNext]
         next_ids = [i for r in run_nexts for i in r]

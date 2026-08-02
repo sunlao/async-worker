@@ -21,10 +21,9 @@ from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 
 class AdminConfig(BaseModel):
     model_config = DTO_CONFIG
-    Id: int = Field(..., gt=0)
     Name: StrictStr = Field(..., min_length=1)
     Cmd: str = Field("")
-    ActionType: ActionTypes = Field(ActionTypes.Post)
+    ActionType: ActionTypes = Field(ActionTypes.POST)
     Target: Targets = Field(Targets.UNITY_QUIESCE_API)
     Delay: int = Field(600, ge=0)
     Retry: int = Field(3, ge=0)
@@ -46,7 +45,7 @@ class AdminEvent(BaseModel):
     model_config = DTO_CONFIG
     JobId: int = Field(gt=0)
     JobName: str
-    ActionType: ActionTypes = Field(ActionTypes.EXE)
+    ActionType: ActionTypes = Field(ActionTypes.POST)
     Message: str
     Status: bool
     AdminResults: Optional[AdminJobResult] = None
@@ -80,7 +79,6 @@ class Health(BaseModel):
 
 class HelloConfig(BaseModel):
     model_config = DTO_CONFIG
-    Id: int = Field(..., gt=0)
     Name: StrictStr = Field(..., min_length=1)
     ActionType: ActionTypes
     Target: Targets
