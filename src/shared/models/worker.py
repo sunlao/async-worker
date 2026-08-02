@@ -140,20 +140,10 @@ class JobConfig(BaseModel, Generic[INPUTTYPE]):
     Config: INPUTTYPE
 
 
-class EnqueueRequest(BaseModel):
+class EnqueueResponse(BaseModel):
     model_config = DTO_EDGE_CONFIG
-
     JobId: int
-    Delay: int | None
-    JobConfig: JobConfig
-    WorkerState: TaskiqState
-
-
-class EnqueueResponce(BaseModel):
-    model_config = DTO_EDGE_CONFIG
-
-    JobId: int
-    JobConfig: JobConfig
+    RunId: int
 
 
 class LifespanContext(BaseModel):

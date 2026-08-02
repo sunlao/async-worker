@@ -49,7 +49,6 @@ async def startup(context: TaskiqState) -> None:
     await lifespan.startup(context)
 
 
-
 async def shutdown(context: TaskiqState) -> None:
     await lifespan.shutdown(context)
     await delay_dispatcher.shutdown()

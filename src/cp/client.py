@@ -1,6 +1,6 @@
 from datetime import timedelta
 from taskiq import TaskiqState
-from shared.models.worker import JobConfig
+from shared.models.worker import JobConfig, EnqueueResponse
 
 
 class Client:
@@ -21,9 +21,10 @@ class Client:
             .with_labels(job_id=request.Id)
         )
         if request.Delay is not None:
-            return await queue.schedule_by_interval(
+            response = await queue.schedule_by_interval(
                 self.context.delay_source,
                 timedelta(seconds=request.Delay),
                 config=request,
             )
-        return await queue.kiq(config=request)
+        response = await queue.kiq(config=request)
+        return EnqueueResponse(JobId=request.Id , RunId=response.task_id)
