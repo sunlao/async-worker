@@ -37,7 +37,7 @@ class Reader:
                 Type=job_type,
                 Id=config["id"],
                 Config=self._admin(config),
-                KWARGS=tuple(config.get("kwargs", {}).items())
+                KWARGS=tuple(config.get("kwargs", {}).items()),
             )
             return dto
         if job_type == JobTypes.HELLO:
@@ -45,7 +45,7 @@ class Reader:
                 Type=job_type,
                 Id=config["id"],
                 Config=self._hello(config),
-                KWARGS=tuple(config.get("kwargs", {}).items())
+                KWARGS=tuple(config.get("kwargs", {}).items()),
             )
             return dto
         raise RuntimeError(f"JobType: {job_type} is not Supported")

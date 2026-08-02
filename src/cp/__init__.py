@@ -1,5 +1,6 @@
 from pathlib import Path
 from asyncio import sleep as async_sleep, subprocess
+from httpx import AsyncClient
 from redis.asyncio import Redis
 from taskiq import TaskiqScheduler, TaskiqState
 from taskiq_redis import (
@@ -11,8 +12,10 @@ from cp.lifespan import Lifespan
 from cp.queue import Queue
 from cp.router import Router
 from shared.config.locker import Locker
+from shared.log.helpers.core import build as core_log
 from shared.models.worker import LifespanContext, WorkerInitContext
-from shared.models.constants import JobTypes
+from shared.models.constants import Events, LogLevel, JobTypes
+from shared.models.log import CoreError
 
 
 locker = Locker()
@@ -45,8 +48,18 @@ async def startup(context: TaskiqState) -> None:
     context.redis_client = worker_init.RedisClient
     context.delay_dispatcher = delay_dispatcher
     context.delay_source = delay_source
-    await delay_dispatcher.startup()
-    await lifespan.startup(context)
+    config_log = context.config_log
+    try:
+        context.http_client = AsyncClient(timeout=60)
+        core = core_log(
+            config_log, LogLevel.INFO, Events.STARTUP, "http client startup"
+        )
+        context.log.write_core(core)
+    except Exception as e:  # pylint: disable=broad-except
+        msg = "http client startup Failure"
+        core = core_log(config_log, LogLevel.ERROR, Events.STARTUP, msg)
+        error = context.log_error_helper.trace_back_nfo(e)
+        context.log.write_core_error(CoreError(Core=core, Error=error))
 
 
 async def shutdown(context: TaskiqState) -> None:

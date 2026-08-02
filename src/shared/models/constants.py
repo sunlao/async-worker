@@ -14,7 +14,7 @@ class ActionTypes(StrEnum):
     SELECT = "select"  # select from rdmbs
     ECHO = "echo"  # echo command via CLI io
     GET = "get"  # GET response from API
-    POST = "post" 
+    POST = "post"
 
 
 class ArqStatus(StrEnum):
