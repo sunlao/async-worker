@@ -10,6 +10,13 @@ from shared.models.worker import LifespanContext
 
 
 class Lifespan:
+    """Worker helper to facilitate starup
+     - configure context 
+        - resources 
+        - side effect injection
+     - db startup / shutdown
+     """
+
     def __init__(self, context: LifespanContext):
         self.context = context
         locker = context.Locker
@@ -57,4 +64,3 @@ class Lifespan:
 
     async def shutdown(self, context: TaskiqState) -> None:
         await context.db.shutdown()
-        await context.http_client.shutdown()
