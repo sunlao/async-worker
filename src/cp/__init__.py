@@ -16,6 +16,7 @@ from shared.models.constants import JobTypes
 
 
 locker = Locker()
+router = Router()
 config_redis = locker.redis()
 config_worker = locker.worker()
 redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
@@ -46,8 +47,7 @@ async def startup(context: TaskiqState) -> None:
     context.delay_source = delay_source
     await delay_dispatcher.startup()
     await lifespan.startup(context)
-    router = Router(context)
-    queue.task(router.hello, task_name=JobTypes.HELLO)
+
 
 
 async def shutdown(context: TaskiqState) -> None:
@@ -56,5 +56,6 @@ async def shutdown(context: TaskiqState) -> None:
     await redis_client.aclose()
 
 
+queue.task(router.hello, task_name=JobTypes.HELLO)
 queue.on_event("startup")(startup)
 queue.on_event("shutdown")(shutdown)
