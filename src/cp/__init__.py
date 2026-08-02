@@ -67,6 +67,7 @@ async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
 
 
 async def startup(context: TaskiqState) -> None:
+    context.queue = queue
     context.redis_client = worker_init.RedisClient
     context.delay_dispatcher = delay_dispatcher
     context.delay_source = delay_source
