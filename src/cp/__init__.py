@@ -72,12 +72,12 @@ async def startup(context: TaskiqState) -> None:
     context.delay_source = delay_source
     await delay_dispatcher.startup()
     await lifespan.startup(context)
-    if context.config_worker.StartUp is True:
-        for jt in JobTypes:
-            await jobs(context, jt)    
     config_log = context.config_log
     try:
         context.http_client = AsyncClient(timeout=60)
+        if context.config_worker.StartUp is True:
+            for jt in JobTypes:
+                await jobs(context, jt)    
         core = core_log(
             config_log, LogLevel.INFO, Events.STARTUP, "http client startup"
         )
