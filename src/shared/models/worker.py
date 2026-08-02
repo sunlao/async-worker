@@ -155,7 +155,7 @@ class LifespanContext(BaseModel):
 class WorkerInitContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
 
-    Broker: AsyncBroker
-    Backend: AsyncResultBackend[Any]
+    Broker: type[AsyncBroker]
+    Backend: type[AsyncResultBackend[Any]]
     RedisURL: str
     RedisClient: Redis
