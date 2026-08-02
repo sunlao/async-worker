@@ -1,170 +1,39 @@
 jobs:
-  - job_type: movement
+  - job_type: hello
     id: 100
-    name: Hello-Enqueue-Only
-    action_type: C-TI
-    source: hello_job
-    source_type: cli
-    cmd: >
-      echo '{"source_word":"word$RANDOM","source_time":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}'
-    target: raw.hello_job
-    target_type: pg
+    name: Hello-DB
+    action_type: select
+    target: unity_worker_db
+    cmd: hello_db
     startup: true
     delay: 600
-    retry: 0
+    run_once: false
+    run_next: [101]
     kwargs:
       sleep: 3
-  - job_type: movement
+  - job_type: hello
     id: 101
-    name: Hello-Re-Enqueue
-    action_type: C-TI
-    source: hello_api_job
-    source_type: cli
-    cmd: >
-      echo '{"source_word":"word$RANDOM","source_time":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}'
-    target: raw.hello_api_job
-    target_type: pg
-    run_once: false
-    retry: 0   
-  - job_type: movement
+    name: Hello-Api
+    action_type: get
+    target: unity_worker_api
+    cmd: /info
+  - job_type: hello
     id: 102
-    name: TestHelloAPI
-    action_type: C-TI
-    source: hello_test_api
-    source_type: cli
-    cmd: >
-      echo '{"source_word":"word$RANDOM","source_time":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}'
-    target: raw.hello_test_api
-    target_type: pg
-    retry: 0   
-  - job_type: movement
+    name: Hello-Manual-Io
+    action_type: echo
+    target: unity_worker_io
+    cmd: >-
+      python -c "import json,datetime,uuid; print(json.dumps({'hello':'id-'+uuid.uuid4().hex[:8],'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')}))"
+  - job_type: hello
     id: 103
-    name: TestHelloFail
-    action_type: C-TI
-    source: hello_test_api_fail
-    source_type: cli
-    cmd: >
-      echo '{"source_word":"word$RANDOM","source_time":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}'
-    target: raw.hello_test_api_fail
-    target_type: pg
-    retry: 0
-    kwargs: 
-      key1: fail
-  - job_type: movement
-    id: 104
-    name: TestContoller-hello
-    action_type: C-TI
-    source: hello_test_api
-    source_type: cli
-    cmd: >
-      echo '{"source_word":"word$RANDOM","source_time":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}'
-    target: raw.hello_test_controller
-    target_type: pg
-    retry: 0
-  - job_type: movement
-    id: 1000
-    name: ISOCountry
-    action_type: "C-TI"
-    source: countries
-    source_type: cli
-    cmd: >
-      bash -lc 'python -m pip install -q --disable-pip-version-check --no-cache-dir -U pycountry >/dev/null 2>&1 || true;
-      python -c "import json; from pycountry import countries;
-      [print(json.dumps({\"code\": c.alpha_2, \"name\": c.name})) for c in countries]"'
-    target: raw.iso_country
-    target_type: pg
-    retry: 3
-    startup: true
-    run_once: false
-    run_next: [1005]    
-  - job_type: movement
-    id: 1001
-    name: ISOsubdivisions
-    action_type: "C-TI"
-    source: subdivisions
-    source_type: cli
-    cmd: >
-      bash -lc 'python -m pip install -q --disable-pip-version-check --no-cache-dir -U pycountry >/dev/null 2>&1 || true;
-      python -c "import json; from pycountry import subdivisions;
-      [print(json.dumps({\"country_code\": s.country_code, \"code\": s.code, \"name\": s.name})) for s in subdivisions]"'
-    target: raw.iso_subdivision
-    target_type: pg
-    retry: 3
-    startup: true
-    run_once: false
-    run_next: [1005]    
-  - job_type: movement
-    id: 1002
-    name: CitiesDL-Unzip
-    action_type: binc
-    source: cities1000.zip
-    source_type: api
-    cmd: "https://download.geonames.org/export/dump/cities1000.zip"
-    target: cities1000.zip
-    target_type: cli
-    startup: true
-    run_once: false
-    run_next: [1003]
-  - job_type: movement
-    id: 1003
-    name: CitiesLoad
-    action_type: FS-TB
-    source: cities1000.txt
-    source_type: cli
-    cmd: ""
-    target: raw.cities
-    target_type: pg
-    run_next: [1005]
-    kwargs: {"column_filters": ["geonameid", "asciiname", "country_code", "admin1_code", "admin2_code", "timezone", "latitude", "longitude", "modification_date"]}
+    name: Hello-Manual-Io-Error
+    action_type: echo
+    target: unity_worker_io
+    cmd: >-
+      python -c "raise RuntimeError('Manual Error')"
   - job_type: admin
-    id: 1006
+    id: 1004
     name: OpsLedger
     startup: true
     run_once: false
     delay: 600
-  - job_type: movement
-    id: 1007
-    name: Admin2CodesDL
-    action_type: binu
-    source: admin2codes.txt
-    source_type: api
-    cmd: "https://download.geonames.org/export/dump/admin2Codes.txt"
-    target: admin2codes.txt
-    target_type: na
-    startup: true
-    run_once: false
-    run_next: [1008]
-  - job_type: movement
-    id: 1008
-    name: Admin2CodesLoad
-    action_type: FS-TB
-    source: admin2codes.txt
-    source_type: cli
-    cmd: ""
-    target: raw.admin2
-    target_type: pg
-    run_next: [1005]
-    kwargs: {"column_filters": ["code", "name", "asciiname", "geonameid"]}
-  - job_type: movement
-    id: 1009
-    name: Admin1CodesASCIIDL
-    action_type: binu
-    source: admin1CodesASCII.txt
-    source_type: api
-    cmd: "https://download.geonames.org/export/dump/admin1CodesASCII.txt"
-    target: admin1CodesASCII.txt
-    target_type: na
-    startup: true
-    run_once: false
-    run_next: [1010]
-  - job_type: movement
-    id: 1010
-    name: Admin1CodesASCIILoad
-    action_type: FS-TB
-    source: admin1CodesASCII.txt
-    source_type: cli
-    cmd: ""
-    target: raw.admin1
-    target_type: pg
-    run_next: [1005]
-    kwargs: {"column_filters": ["code", "name", "asciiname", "geonameid"]}

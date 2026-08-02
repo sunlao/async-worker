@@ -8,14 +8,14 @@ from typing import (
     Tuple,
 )
 from redis.asyncio import Redis
-from taskiq import AsyncBroker, TaskiqState
+from taskiq import AsyncBroker
 from taskiq.abc.result_backend import AsyncResultBackend
 from pydantic import BaseModel, Field, StrictStr, UUID4
 from shared.models.constants import (
     ActionTypes,
     JobTypes,
     ConnectorTypes,
-    TargetTypes,
+    Targets,
 )
 from shared.models.log import Config, TraceBackEvent
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
@@ -81,16 +81,16 @@ class Health(BaseModel):
 
 class HelloConfig(BaseModel):
     model_config = DTO_CONFIG
+    Id: int = Field(..., gt=0)
     Name: StrictStr = Field(..., min_length=1)
     ActionType: ActionTypes
+    Target: Targets
     Cmd: str
-    ConnectorType: ConnectorTypes
-    TargetType: TargetTypes
-    Retry: int = Field(3, ge=0)
     StartUp: bool = Field(False)
+    Delay: int = Field(0, ge=0)
     RunOnce: bool = Field(True)
     RunNext: Optional[Tuple[int, ...]] = None
-    LastHash: Optional[str] = None
+    Retry: int = Field(3, ge=0)
 
 
 class LogCoreInput(BaseModel):
@@ -143,8 +143,8 @@ class JobConfig(BaseModel, Generic[INPUTTYPE]):
 class EnqueueResponse(BaseModel):
     model_config = DTO_EDGE_CONFIG
     JobId: int
-    DelayId: str = None 
-    RunId: str = None
+    DelayId: str | None = None
+    RunId: str | None = None
 
 
 class LifespanContext(BaseModel):

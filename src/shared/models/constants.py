@@ -133,6 +133,17 @@ class Tags(StrEnum):
     TEST = "test"
 
 
+class Targets(StrEnum):
+    """Worker Target Names
+    - unity service pod components
+    - unity centrally managed components
+    - external component names (tbd)
+    """
+
+    UNITY_WORKER_DB = "unity_worker_db"
+    UNITY_WORKER_API = "unity_worker_api"
+    UNITY_WORKER_IO = "unity_worker_io"
+
 class TargetTypes(StrEnum):
     """Connectors for dealing with target systems external to worker"""
 

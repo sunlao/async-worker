@@ -3,7 +3,7 @@ from pathlib import Path
 from yaml import safe_load
 from shared.models.constants import JobTypes
 from shared.models.config import ReaderConfig
-from shared.models.worker import AdminConfig, JobConfig, MovementConfig
+from shared.models.worker import AdminConfig, JobConfig, HelloConfig
 
 
 class Reader:
@@ -40,36 +40,33 @@ class Reader:
                 KWARGS=config.get("kwargs", {}),
             )
             return dto
-        if job_type == JobTypes.MOVEMENT:
-            dto: JobConfig[MovementConfig] = JobConfig(
+        if job_type == JobTypes.HELLO:
+            dto: JobConfig[HelloConfig] = JobConfig(
                 Type=job_type,
-                Config=self._movement(config),
+                Config=self._hello(config),
                 KWARGS=config.get("kwargs", {}),
             )
             return dto
         raise RuntimeError(f"JobType: {job_type} is not Supported")
 
-    def _movement(self, config) -> MovementConfig:
-        return MovementConfig(
+    def _hello(self, config) -> HelloConfig:
+        return HelloConfig(
             Id=config["id"],
             Name=config["name"],
             ActionType=config["action_type"],
-            Source=config["source"],
-            SourceType=config["source_type"],
-            Cmd=config["cmd"],
             Target=config["target"],
-            TargetType=config["target_type"],
+            Cmd=config["cmd"],
             **self._optional(config),
         )
 
     @staticmethod
     def _optional(config) -> dict:
         keymap = {
-            "delay": "Delay",
-            "retry": "Retry",
             "startup": "StartUp",
+            "delay": "Delay",
             "run_once": "RunOnce",
             "run_next": "RunNext",
+            "retry": "Retry",
         }
         return {v: config[k] for k, v in keymap.items() if k in config}
 
