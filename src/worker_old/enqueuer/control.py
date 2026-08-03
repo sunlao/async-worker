@@ -3,7 +3,7 @@ from taskiq import TaskiqState
 from worker_old.enqueuer.helper import delay
 from shared.models.api import EnqueueResponse
 from shared.models.constants import JobTypes, TargetTypes
-from shared.models.worker import EnqueueRequest, JobConfig, MovementJobResult
+from shared.models.worker import EnqueueRequest, JobConfig, HelloJobResult
 
 
 class Control:
@@ -13,7 +13,7 @@ class Control:
         self.run_id = state.get("job_id")
 
     def _update_config(
-        self, re_enqueue: bool, config: JobConfig, result: MovementJobResult = None
+        self, re_enqueue: bool, config: JobConfig, result: HelloJobResult = None
     ):
         if re_enqueue is False:
             return config
@@ -43,7 +43,7 @@ class Control:
         re_enqueue: bool,
         job_type: JobTypes,
         job_info: JobConfig,
-        target_result: MovementJobResult = None,
+        target_result: HelloJobResult = None,
     ) -> EnqueueResponse:
         target_type = getattr(job_info.Config, "TargetType", "n/a")
         if job_type == JobTypes.MOVEMENT and target_type not in (TargetTypes.PG):

@@ -11,11 +11,11 @@ from shared.models.worker import LifespanContext
 
 class Lifespan:
     """Worker helper to facilitate starup
-     - configure context 
-        - resources 
-        - side effect injection
-     - db startup / shutdown
-     """
+    - configure context
+       - resources
+       - side effect injection
+    - db startup / shutdown
+    """
 
     def __init__(self, context: LifespanContext):
         self.context = context

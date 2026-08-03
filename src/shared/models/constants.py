@@ -17,23 +17,6 @@ class ActionTypes(StrEnum):
     POST = "post"
 
 
-class ArqStatus(StrEnum):
-    """Arq Constants for Status to support API service with interpeting
-    worker run results"""
-
-    COMPLETE = "complete"
-    FINISHED = "finished"
-    SUCCESS = "success"
-    SUCCEEDED = "succeeded"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
-    DEFERRED = "deferred"
-    NOT_FOUND = "not_found"
-    UNKNOWN = "unknown"
-    QUEUED = "queued"
-    INPROGRESS = "in_progress"
-
-
 class Audit(NamedTuple):
     last_hash: str | None
 
@@ -110,7 +93,6 @@ class Services(StrEnum):
     WORKER = "awork-worker"
     DB = "awork-postgres"
     TEST = "awork-test"
-    QUIESCE = "awork-quiesce"
 
 
 class ConnectorTypes(StrEnum):
@@ -126,7 +108,6 @@ class SourceTypes(StrEnum):
 
     CLI = "cli"
     API = "api"
-    ARQ = "arq"
 
 
 class Tags(StrEnum):

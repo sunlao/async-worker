@@ -2,7 +2,7 @@ from taskiq import TaskiqState
 from shared.helper.target_audit_detail import TargetAuditDetail
 from shared.models.api import EnqueueResponse
 from shared.models.constants import JobTypes
-from shared.models.worker import JobConfig, MovementJobResult
+from shared.models.worker import JobConfig, HelloJobResult
 from worker_old.enqueuer.control import Control
 
 
@@ -20,7 +20,7 @@ class Route:
         re_enqueue: bool,
         job_type: JobTypes,
         enqueue_config: JobConfig,
-        target_result: MovementJobResult = None,
+        target_result: HelloJobResult = None,
     ) -> EnqueueResponse:
         """Enqueue and re-enqueue jobs"""
         if enqueue_config.Config.RunOnce is True and re_enqueue is True:
@@ -46,7 +46,7 @@ class Route:
         re_enqueue: bool,
         job_type: JobTypes,
         enqueue_config: JobConfig,
-        target_result: MovementJobResult = None,
+        target_result: HelloJobResult = None,
     ) -> EnqueueResponse:
         response = await self._enqueue(
             re_enqueue, job_type, enqueue_config, target_result

@@ -7,7 +7,7 @@ from shared.models.log import Event, EventError
 from shared.models.worker import (
     ExecutionConfig,
     MovementConfig,
-    MovementEvent,
+    HelloEvent,
     HandleExecution,
     MovementJobResult,
     ActionTypes,
@@ -39,7 +39,7 @@ class Movement:
         except Exception as e:  # pylint: disable=broad-except
             error_flag = True
             trace_back_nfo = self.ctx["log_error_helper"].trace_back_nfo(e)
-        results: HandleExecution[MovementEvent] = HandleExecution(
+        results: HandleExecution[HelloEvent] = HandleExecution(
             Event=job_event_dto, ErrorFlag=error_flag, TraceBackEvent=trace_back_nfo
         )
         return results
@@ -50,7 +50,7 @@ class Movement:
         core_msg = (f"Failed to execute {config_job.Name} Job",)
         core = core_log(self.ctx["config_log"], LogLevel.ERROR, Events.JOB, core_msg)
         error_result = MovementJobResult(ActionType=ActionTypes.NA, RowCount=0)
-        event_dto = MovementEvent(
+        event_dto = HelloEvent(
             JobId=config_job.Id,
             JobName=config_job.Name,
             Source=config_job.Source,
@@ -61,7 +61,7 @@ class Movement:
             End=self.config_log.Now(UTC),
             DurationMs=int((self.config_log.TimeCounter() - self.start_counter) * 1000),
         )
-        dto: EventError[MovementEvent] = EventError(
+        dto: EventError[HelloEvent] = EventError(
             Core=core, Event=event_dto, Error=results.TraceBackEvent
         )
         self.ctx["log"].write_event_error(dto)
@@ -70,7 +70,7 @@ class Movement:
     def _log(self, results: HandleExecution, config_job: MovementConfig) -> Event:
         msg = f"Execute Job: {config_job.Name}"
         core = core_log(self.config_log, LogLevel.INFO, Events.JOB, msg)
-        dto: Event[MovementEvent] = Event(Core=core, Event=results.Event)
+        dto: Event[HelloEvent] = Event(Core=core, Event=results.Event)
         self.ctx["log"].write_event(dto)
         return dto
 

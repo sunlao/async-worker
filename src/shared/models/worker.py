@@ -1,20 +1,10 @@
 from datetime import datetime
-from typing import (
-    Any,
-    Awaitable,
-    Callable,
-    Generic,
-    Optional,
-)
+from typing import Any, Awaitable, Callable, Generic, Optional
 from redis.asyncio import Redis
 from taskiq import AsyncBroker
 from taskiq.abc.result_backend import AsyncResultBackend
 from pydantic import BaseModel, Field, StrictStr, UUID4
-from shared.models.constants import (
-    ActionTypes,
-    JobTypes,
-    Targets,
-)
+from shared.models.constants import ActionTypes, JobTypes, Targets
 from shared.models.log import Config, TraceBackEvent
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 
@@ -54,6 +44,13 @@ class AdminEvent(BaseModel):
     DurationMs: int = Field(ge=0)
 
 
+class EnqueueResponse(BaseModel):
+    model_config = DTO_EDGE_CONFIG
+    JobId: int
+    DelayId: str | None = None
+    RunId: str | None = None
+
+
 class ExecutionConfig(BaseModel, Generic[INPUTTYPE]):
     model_config = DTO_CONFIG
     JobConfig: INPUTTYPE
@@ -90,39 +87,14 @@ class HelloConfig(BaseModel):
     Retry: int = Field(3, ge=0)
 
 
-class JobConfig(BaseModel, Generic[INPUTTYPE]):
-    model_config = DTO_CONFIG
-    Type: JobTypes
-    Id: int = Field(gt=0)
-    KWARGS: tuple[tuple[Any, Any], ...] = ()
-    Config: INPUTTYPE
-
-
-class LogCoreInput(BaseModel):
-    model_config = DTO_CONFIG
-    ConfigLog: Config
-    TransactionID: UUID4
-    Name: str
-
-
-class MovementJobResult(BaseModel):
+class HelloJobResult(BaseModel):
     model_config = DTO_CONFIG
     RowCount: int
     ActionType: ActionTypes
     LastHash: Optional[str] = None
 
 
-class WorkerConfig(BaseModel):
-    model_config = DTO_CONFIG
-    StartUp: bool
-    JobPath: str
-    JobVersion: str
-    DBMaxPool: int
-    DataDir: str
-    GatePath: str
-
-
-class MovementEvent(BaseModel):
+class HelloEvent(BaseModel):
     model_config = DTO_CONFIG
     JobId: int = Field(gt=0)
     JobName: str
@@ -132,14 +104,15 @@ class MovementEvent(BaseModel):
     End: datetime
     DurationMs: int = Field(ge=0)
     Source: str
-    Result: Optional[MovementJobResult] = None
+    Result: Optional[HelloJobResult] = None
 
 
-class EnqueueResponse(BaseModel):
-    model_config = DTO_EDGE_CONFIG
-    JobId: int
-    DelayId: str | None = None
-    RunId: str | None = None
+class JobConfig(BaseModel, Generic[INPUTTYPE]):
+    model_config = DTO_CONFIG
+    Type: JobTypes
+    Id: int = Field(gt=0)
+    KWARGS: tuple[tuple[Any, Any], ...] = ()
+    Config: INPUTTYPE
 
 
 class LifespanContext(BaseModel):
@@ -152,9 +125,25 @@ class LifespanContext(BaseModel):
     EnqueueGate: bool
 
 
+class LogCoreInput(BaseModel):
+    model_config = DTO_CONFIG
+    ConfigLog: Config
+    TransactionID: UUID4
+    Name: str
+
+
+class WorkerConfig(BaseModel):
+    model_config = DTO_CONFIG
+    StartUp: bool
+    JobPath: str
+    JobVersion: str
+    DBMaxPool: int
+    DataDir: str
+    GatePath: str
+
+
 class WorkerInitContext(BaseModel):
     model_config = DTO_EDGE_CONFIG
-
     Broker: AsyncBroker
     Backend: AsyncResultBackend[Any]
     RedisURL: str

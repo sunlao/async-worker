@@ -6,7 +6,7 @@ from shared.models.worker import (
     ActionTypes,
     MovementConfig,
     SerializeOutput,
-    MovementJobResult,
+    HelloJobResult,
 )
 
 
@@ -36,7 +36,7 @@ class Postgres:
 
     async def _copy(
         self, config_job: MovementConfig, avo_dto: SerializeOutput
-    ) -> MovementJobResult:
+    ) -> HelloJobResult:
         cols, rows = self._avro_to_rows(avo_dto)
         schema, table = config_job.Target.split(".", 1)
 
@@ -49,7 +49,7 @@ class Postgres:
         )
         sql = f"SELECT count(*) as count FROM {schema}.{table}"  # nosec B608
         row_cnt = await self.conn.fetchrow(sql)
-        return MovementJobResult(
+        return HelloJobResult(
             RowCount=row_cnt["count"],
             ActionType=config_job.ActionType,
             LastHash=avo_dto.BytesSHA256,
@@ -57,7 +57,7 @@ class Postgres:
 
     async def _insert(
         self, config_job: MovementConfig, avo_dto: SerializeOutput
-    ) -> MovementJobResult:
+    ) -> HelloJobResult:
         cols, rows = self._avro_to_rows(avo_dto)
         sql = self._sql_insert(config_job, cols)
         if len(rows) == 1:
@@ -65,7 +65,7 @@ class Postgres:
         else:
             # many rows: pass list[tuple] directly
             await self.conn.executemany(sql, rows)
-        return MovementJobResult(
+        return HelloJobResult(
             RowCount=len(rows),
             ActionType=config_job.ActionType,
             LastHash=avo_dto.BytesSHA256,
@@ -82,7 +82,7 @@ class Postgres:
 
     async def target(
         self, config_job: MovementConfig, avo_dto: SerializeOutput
-    ) -> MovementJobResult:
+    ) -> HelloJobResult:
         if config_job.ActionType == ActionTypes.CTI:
             await self._truncate(config_job.Target)
             return await self._insert(config_job, avo_dto)

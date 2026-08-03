@@ -1,12 +1,7 @@
 from datetime import datetime
 from typing import Optional, Any
 from pydantic import BaseModel, Field, StrictStr, UUID4
-from shared.models.constants import (
-    ActionTypes,
-    JobTypes,
-    SourceTypes,
-    TargetTypes,
-)
+from shared.models.constants import ActionTypes, JobTypes, SourceTypes, TargetTypes
 from shared.models.config import Quiesce
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG
 

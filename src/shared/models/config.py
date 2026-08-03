@@ -35,10 +35,3 @@ class Redis(BaseModel):
     WaitFor: int
     ResultExpirationSec: int
     AckType: AckTypes
-
-
-class Quiesce(BaseModel):
-    model_config = DTO_CONFIG
-    GatePath: str
-    TimeOut: int
-    DBMaxPool: int
