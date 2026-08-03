@@ -1,7 +1,7 @@
 from re import compile as recompile
 from shared.models.constants import UserContext
 from shared.models.log import Config
-from shared.models.config import DBSecrets, Redis
+from shared.models.config import DBConfig, Redis
 
 
 def test_app_version(locker):
@@ -21,7 +21,7 @@ def test_log(locker):
 
 def test_db(locker):
     config = locker.db(UserContext.APP)
-    assert isinstance(config, DBSecrets)
+    assert isinstance(config, DBConfig)
 
 
 def test_db_config(locker):

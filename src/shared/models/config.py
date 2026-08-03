@@ -4,7 +4,23 @@ from shared.models.constants import Environments
 from shared.models.policy import DTO_CONFIG
 
 
-class DBSecrets(BaseModel):
+class IOConfig(BaseModel):
+    """DTO for Secret Config"""
+
+    model_config = DTO_CONFIG
+    HOST: str
+    DB_NAME: str
+
+
+class APIConfig(BaseModel):
+    """DTO for Secret Config"""
+
+    model_config = DTO_CONFIG
+    HOST: str
+    PORT: int
+
+
+class DBConfig(BaseModel):
     """DTO for Secret Config"""
 
     model_config = DTO_CONFIG

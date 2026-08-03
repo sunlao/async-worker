@@ -9,10 +9,15 @@ class AckTypes(StrEnum):
 
 
 class ActionTypes(StrEnum):
-    """Job Constants for Action Types"""
+    """Job Constants for Action Types
+    - clients 
+    """
 
-    SELECT = "select"  # select from rdmbs
-    ECHO = "echo"  # echo command via CLI io
+    SELECT_ONE = "select_one"  # select one w/ optional args in the KWARG
+    SELECT_MANY = "select_many"  # select many w/ optional args in the KWARG
+    EXECUTE_ONE = "execute_one"  # exeucte one w/ optional args in the KWARG
+    EXECUTE_MANY = "execute_many"  # execute many w/ optional args in the KWARG
+    SUBPROCESS = "SUBPROCESS"  # issue subprocces command
     GET = "get"  # GET response from API
     POST = "post"
 
@@ -98,17 +103,9 @@ class Services(StrEnum):
 class ConnectorTypes(StrEnum):
     """Connectors for"""
 
-    RDBMS = "rdbms"
+    DB = "db"
     API = "api"
     IO = "io"
-
-
-class SourceTypes(StrEnum):
-    """Connectors for dealing with source systems external to worker"""
-
-    CLI = "cli"
-    API = "api"
-
 
 class Tags(StrEnum):
     NATAL = "natal"
@@ -126,14 +123,6 @@ class Targets(StrEnum):
     UNITY_WORKER_API = "unity_worker_api"
     UNITY_WORKER_IO = "unity_worker_io"
     UNITY_QUIESCE_API = "unity_quiesce_api"
-
-
-class TargetTypes(StrEnum):
-    """Connectors for dealing with target systems external to worker"""
-
-    PG = "pg"
-    CLI = "cli"
-    NA = "na"
 
 
 class TouchStatuses(StrEnum):

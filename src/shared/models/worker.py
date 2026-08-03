@@ -4,7 +4,7 @@ from redis.asyncio import Redis
 from taskiq import AsyncBroker
 from taskiq.abc.result_backend import AsyncResultBackend
 from pydantic import BaseModel, Field, StrictStr, UUID4
-from shared.models.constants import ActionTypes, JobTypes, Targets
+from shared.models.constants import ActionTypes, JobTypes, Targets, ConnectorTypes
 from shared.models.log import Config, TraceBackEvent
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 
@@ -44,6 +44,15 @@ class AdminEvent(BaseModel):
     DurationMs: int = Field(ge=0)
 
 
+class ConnectionProfile(BaseModel, Generic[INPUTTYPE]):
+    model_config = DTO_EDGE_CONFIG
+    Name: str
+    Type: ConnectorTypes
+    Config: INPUTTYPE
+
+
+
+
 class EnqueueResponse(BaseModel):
     model_config = DTO_EDGE_CONFIG
     JobId: int
@@ -78,8 +87,8 @@ class Health(BaseModel):
 class HelloConfig(BaseModel):
     model_config = DTO_CONFIG
     Name: StrictStr = Field(..., min_length=1)
+    ConnectionProfile: str
     ActionType: ActionTypes
-    Target: Targets
     Cmd: str
     StartUp: bool = Field(False)
     Delay: int = Field(0, ge=0)

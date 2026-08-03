@@ -6,7 +6,7 @@ from uuid import uuid4
 from urllib.parse import quote
 from shared.models.api import aworkConfig
 from shared.models.constants import DBUser, UserContext
-from shared.models.config import DBSecrets, Quiesce, Redis
+from shared.models.config import DBConfig, Redis
 from shared.models.log import Config
 from shared.models.worker import WorkerConfig
 
@@ -41,12 +41,12 @@ class Locker:
             version = file_obj.read()
         return version
 
-    def db(self, user_context: UserContext) -> DBSecrets:
+    def db(self, user_context: UserContext) -> DBConfig:
         """Get DB secrets with config. Only supports retrieval from environment
         Variables"""
         app_code = getenv("APP_CODE")
         if self.env in {"dev", "ci"}:
-            return DBSecrets(
+            return DBConfig(
                 HOST=f"{app_code}-postgres",
                 USER=getattr(DBUser, user_context),
                 PASSWORD=quote(getenv(f"DB_{user_context}_PWD")),
@@ -97,12 +97,4 @@ class Locker:
             WaitFor=int(getenv("WaitFor", "2")),
             ResultExpirationSec=int(getenv("RESULT_EXPIRATION_SEC")),
             AckType=int(getenv("ACK_TYPE")),
-        )
-
-    @staticmethod
-    def quiesce() -> Quiesce:
-        return Quiesce(
-            GatePath=getenv("GATE_CLOSE_PATH", "dev"),
-            TimeOut=1800,
-            DBMaxPool=int(getenv("DB_MAX_POOL")),
         )

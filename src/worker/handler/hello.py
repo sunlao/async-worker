@@ -37,10 +37,7 @@ class Hello:
             StartCounter=self.start_counter,
         )
         try:
-            async with self.context["db"].client() as conn:
-                job_event_dto = await Controller(self.context, conn).execute(
-                    config, **job.KWARGS
-                )
+            job_event_dto = await Controller(self.context).execute(config, **job.KWARGS)
         except Exception as e:  # pylint: disable=broad-except
             error_flag = True
             trace_back_nfo = self.context["log_error_helper"].trace_back_nfo(e)
@@ -52,7 +49,7 @@ class Hello:
     def _log_error(
         self, job: JobConfig[HelloConfig], results: HandleExecution
     ) -> EventError:
-        core_msg = (f"Failed to execute {job.Config.Name} Job")
+        core_msg = f"Failed to execute {job.Config.Name} Job"
         core = core_log(
             self.context["config_log"], LogLevel.ERROR, Events.JOB, core_msg
         )
