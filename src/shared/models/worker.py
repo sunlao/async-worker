@@ -51,8 +51,6 @@ class ConnectionProfile(BaseModel, Generic[INPUTTYPE]):
     Config: INPUTTYPE
 
 
-
-
 class EnqueueResponse(BaseModel):
     model_config = DTO_EDGE_CONFIG
     JobId: int

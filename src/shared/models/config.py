@@ -9,7 +9,7 @@ class IOConfig(BaseModel):
 
     model_config = DTO_CONFIG
     HOST: str
-    DB_NAME: str
+    PORT: str
 
 
 class APIConfig(BaseModel):

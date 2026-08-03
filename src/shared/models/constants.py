@@ -10,7 +10,7 @@ class AckTypes(StrEnum):
 
 class ActionTypes(StrEnum):
     """Job Constants for Action Types
-    - clients 
+    - clients
     """
 
     SELECT_ONE = "select_one"  # select one w/ optional args in the KWARG
@@ -106,6 +106,7 @@ class ConnectorTypes(StrEnum):
     DB = "db"
     API = "api"
     IO = "io"
+
 
 class Tags(StrEnum):
     NATAL = "natal"
