@@ -4,7 +4,7 @@ from redis.asyncio import Redis
 from taskiq import AsyncBroker
 from taskiq.abc.result_backend import AsyncResultBackend
 from pydantic import BaseModel, Field, StrictStr, UUID4
-from shared.models.constants import ActionTypes, JobTypes, Targets, ConnectorTypes
+from shared.models.constants import ActionTypes, JobTypes, Targets, ConnectionProfileTypes
 from shared.models.log import Config, TraceBackEvent
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 
@@ -13,16 +13,16 @@ class AdminConfig(BaseModel):
     model_config = DTO_CONFIG
     Name: StrictStr = Field(..., min_length=1)
     SourceConnectionProfile: str
-    SourceActionType: ActionTypes = Field(ActionTypes.SELECT_MANY)
+    SourceActionType: ActionTypes = Field(default=ActionTypes.SELECT_MANY)
     SourceCmd: str = Field("")
     TargetConnectionProfile: str
-    TargetActionType: ActionTypes = Field(ActionTypes.EXECUTE_MANY)
+    TargetActionType: ActionTypes = Field(default=ActionTypes.EXECUTE_MANY)
     TargetCmd: str = Field("")
-    StartUp: bool = Field(True)
-    Delay: int = Field(600, ge=0)
-    RunOnce: bool = Field(False)
+    StartUp: bool = Field(default=True)
+    Delay: int = Field(default=600, ge=0)
+    RunOnce: bool = Field(default=False)
     RunNext: Optional[tuple[int, ...]] = None
-    Retry: int = Field(3, ge=0)
+    Retry: int = Field(default=3, ge=0)
 
 
 class AdminJobResult(BaseModel):
@@ -50,7 +50,7 @@ class AdminEvent(BaseModel):
 class ConnectionProfile(BaseModel, Generic[INPUTTYPE]):
     model_config = DTO_EDGE_CONFIG
     Name: str
-    Type: ConnectorTypes
+    Type: ConnectionProfileTypes
     PlatformResource: Any | None = None
     Config: INPUTTYPE | None = None
 
@@ -92,11 +92,11 @@ class HelloConfig(BaseModel):
     ConnectionProfile: str
     ActionType: ActionTypes
     Cmd: str
-    StartUp: bool = Field(False)
-    Delay: int = Field(0, ge=0)
-    RunOnce: bool = Field(True)
+    StartUp: bool = Field(default=False)
+    Delay: int = Field(default=0, ge=0)
+    RunOnce: bool = Field(default=True)
     RunNext: Optional[tuple[int, ...]] = None
-    Retry: int = Field(3, ge=0)
+    Retry: int = Field(default=3, ge=0)
 
 
 class HelloJobResult(BaseModel):

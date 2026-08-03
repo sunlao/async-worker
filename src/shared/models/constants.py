@@ -95,7 +95,7 @@ class PathParts(StrEnum):
 
 
 class Services(StrEnum):
-    """Async Services"""
+    """Async Services used for logging from each container"""
 
     API = "awork-api"
     WORKER = "awork-worker"
@@ -103,8 +103,16 @@ class Services(StrEnum):
     TEST = "awork-test"
 
 
-class ConnectorTypes(StrEnum):
-    """Connectors for"""
+class ConnectionProfileTypes(StrEnum):
+    """Defines a ConnectionProfile type
+    - Platform ConnectionProfileTypes: 
+        - DB_POOL, API_CLIENT, REDIS_CLIENT are created at platform startup and passed in
+        from the edge
+        - have None for Config attribute
+    - External ConnectionProfileTypes:
+        - are built from yml configs with secrets injected as environment variables
+        - use a composed Config model
+    """
 
     DB = "db"
     API = "api"

@@ -21,16 +21,18 @@ class APIConfig(BaseModel):
 
 
 class DBConfig(BaseModel):
-    """DTO for DB Config"""
+    """DTO for DB Config
+    - can be used by the service or as config for ConnectionProfile
+    """
 
     model_config = DTO_CONFIG
-    PLATFORM: DBPlatforms = Field(DBPlatforms.POSTGRES)
+    PLATFORM: DBPlatforms = Field(default=DBPlatforms.POSTGRES)
     SERVICE: str | None = None
     HOST: str
     USER: str | None = None
     DB_NAME: str | None = None
     PORT: int
-    AUTHTYPE: AuthTypes = Field(AuthTypes.PASSWORD)
+    AUTHTYPE: AuthTypes = Field(default=AuthTypes.PASSWORD)
     PASSWORD: str | None = None
     TOKEN: str | None = None
     SSL: bool | None = None
