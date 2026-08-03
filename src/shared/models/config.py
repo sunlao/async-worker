@@ -1,11 +1,11 @@
-from pydantic import BaseModel
-from shared.models.constants import DBUser, AckTypes
+from pydantic import BaseModel, Field
+from shared.models.constants import DBUser, DBPlatforms, AckTypes, AuthTypes
 from shared.models.constants import Environments
 from shared.models.policy import DTO_CONFIG
 
 
 class IOConfig(BaseModel):
-    """DTO for Secret Config"""
+    """DTO for IO Config"""
 
     model_config = DTO_CONFIG
     HOST: str
@@ -13,7 +13,7 @@ class IOConfig(BaseModel):
 
 
 class APIConfig(BaseModel):
-    """DTO for Secret Config"""
+    """DTO for API Config"""
 
     model_config = DTO_CONFIG
     HOST: str
@@ -21,15 +21,19 @@ class APIConfig(BaseModel):
 
 
 class DBConfig(BaseModel):
-    """DTO for Secret Config"""
+    """DTO for DB Config"""
 
     model_config = DTO_CONFIG
+    PLATFORM: DBPlatforms = Field(DBPlatforms.POSTGRES)
+    SERVICE: str | None = None
     HOST: str
     USER: DBUser
-    PASSWORD: str
     DB_NAME: str
     PORT: int
-    SERVICE: str
+    AUTHTYPE: AuthTypes = Field(AuthTypes.PASSWORD)
+    PASSWORD: str | None = None
+    TOKEN: str | None = None
+    SSL: bool | None = None
 
 
 class ReaderConfig(BaseModel):

@@ -26,6 +26,16 @@ class Audit(NamedTuple):
     last_hash: str | None
 
 
+class AuthTypes(StrEnum):
+    PASSWORD = "password"
+    TOKEN = "token"
+    CERTIFICATE = "certificate"
+
+
+class DBPlatforms(StrEnum):
+    POSTGRES = "postgres"
+
+
 class DBPoolOutcome(StrEnum):
     """Constants for DB logging types outcomes"""
 

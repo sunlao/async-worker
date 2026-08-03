@@ -28,7 +28,7 @@ jobs:
     id: 103
     name: Hello-Manual-Io-Error
     action_type: subprocess
-    target: unity_worker_io
+    connection_profile: unity_worker_io
     cmd: >-
       python -c "raise RuntimeError('Manual Error')"
   - job_type: admin
