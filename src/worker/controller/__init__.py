@@ -11,7 +11,7 @@ from taskiq_redis import (
 from worker.core.lifespan import Lifespan
 from worker.core.queue import Queue
 from worker.core.router import Router
-from worker.client import Client
+from shared.queue.client import Client
 from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
 from shared.models.worker import LifespanContext, WorkerInitContext

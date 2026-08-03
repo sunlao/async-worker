@@ -26,11 +26,11 @@ class Hello:
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
 
-    async def _execution(self, config_job: MovementConfig, **kwargs) -> HandleExecution:
+    async def _execution(self, config_job: HelloConfig, **kwargs) -> HandleExecution:
         error_flag = False
         trace_back_nfo = None
         job_event_dto = None
-        config: ExecutionConfig[MovementConfig] = ExecutionConfig(
+        config: ExecutionConfig[HelloConfig] = ExecutionConfig(
             JobConfig=config_job, Start=self.start, StartCounter=self.start_counter
         )
         try:
@@ -47,7 +47,7 @@ class Hello:
         return results
 
     def _log_error(
-        self, config_job: MovementConfig, results: HandleExecution
+        self, config_job: HelloConfig, results: HandleExecution
     ) -> EventError:
         core_msg = (f"Failed to execute {config_job.Name} Job",)
         core = core_log(
@@ -71,7 +71,7 @@ class Hello:
         self.context["log"].write_event_error(dto)
         return dto
 
-    def _log(self, results: HandleExecution, config_job: MovementConfig) -> Event:
+    def _log(self, results: HandleExecution, config_job: HelloConfig) -> Event:
         msg = f"Execute Job: {config_job.Name}"
         core = core_log(self.config_log, LogLevel.INFO, Events.JOB, msg)
         dto: Event[HelloEvent] = Event(Core=core, Event=results.Event)

@@ -31,13 +31,13 @@ class Hello:
         self.gate = ctx["enqueue_gate"]
 
     async def _avro_to_trg(
-        self, config_job: MovementConfig, avo_dto: SerializeOutput
+        self, config_job: HelloConfig, avo_dto: SerializeOutput
     ) -> HelloJobResult:
         if config_job.TargetType == TargetTypes.PG:
             return await Postgres(self.ctx, self.conn).target(config_job, avo_dto)
 
     async def _binary_to_trg(
-        self, config_job: MovementConfig, output: BinaryOutput
+        self, config_job: HelloConfig, output: BinaryOutput
     ) -> HelloJobResult:
         if config_job.ActionType == ActionTypes.BINC:
             CLI(self.ctx).unzip(config_job.Target)
@@ -74,13 +74,11 @@ class Hello:
             Result=result,
         )
 
-    async def _src_to_avro(
-        self, config_job: MovementConfig, **kwargs
-    ) -> SerializeOutput:
+    async def _src_to_avro(self, config_job: HelloConfig, **kwargs) -> SerializeOutput:
         if config_job.SourceType in SourceTypes.CLI:
             return await CLI(self.ctx).source_data(config_job, **kwargs)
 
-    async def _src_to_binary(self, config_job: MovementConfig) -> BinaryOutput:
+    async def _src_to_binary(self, config_job: HelloConfig) -> BinaryOutput:
         if config_job.SourceType == SourceTypes.API:
             return await API(self.ctx).download(
                 config_job.Cmd, config_job.Source, config_job.ActionType
