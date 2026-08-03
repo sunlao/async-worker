@@ -51,7 +51,8 @@ class ConnectionProfile(BaseModel, Generic[INPUTTYPE]):
     model_config = DTO_EDGE_CONFIG
     Name: str
     Type: ConnectorTypes
-    Config: INPUTTYPE
+    PlatformResource: Any | None = None
+    Config: INPUTTYPE | None = None
 
 
 class EnqueueResponse(BaseModel):

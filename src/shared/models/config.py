@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from shared.models.constants import DBUser, DBPlatforms, AckTypes, AuthTypes
+from shared.models.constants import DBPlatforms, AckTypes, AuthTypes
 from shared.models.constants import Environments
 from shared.models.policy import DTO_CONFIG
 
@@ -27,8 +27,8 @@ class DBConfig(BaseModel):
     PLATFORM: DBPlatforms = Field(DBPlatforms.POSTGRES)
     SERVICE: str | None = None
     HOST: str
-    USER: DBUser
-    DB_NAME: str
+    USER: str | None = None
+    DB_NAME: str | None = None
     PORT: int
     AUTHTYPE: AuthTypes = Field(AuthTypes.PASSWORD)
     PASSWORD: str | None = None

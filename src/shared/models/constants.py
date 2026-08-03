@@ -45,13 +45,6 @@ class DBPoolOutcome(StrEnum):
     FAIL = "fail_connection"
 
 
-class DBUser(StrEnum):
-    """Constants for allowed DB users"""
-
-    APP = "awork_app"
-    DATA = "awork_data"
-
-
 class DebugStatus(StrEnum):
     OK = "ok"
     ERROR = "error"
@@ -116,6 +109,9 @@ class ConnectorTypes(StrEnum):
     DB = "db"
     API = "api"
     IO = "io"
+    DB_POOL = "db_pool"
+    API_CLIENT = "api_client"
+    REDIS_CLIENT = "redis_client"
 
 
 class Tags(StrEnum):
