@@ -53,6 +53,7 @@ class EnqueueResponse(BaseModel):
 
 class ExecutionConfig(BaseModel, Generic[INPUTTYPE]):
     model_config = DTO_CONFIG
+    JobId: int = Field(gt=0)
     JobConfig: INPUTTYPE
     Start: datetime
     StartCounter: float
@@ -98,12 +99,12 @@ class HelloEvent(BaseModel):
     model_config = DTO_CONFIG
     JobId: int = Field(gt=0)
     JobName: str
+    Target: Targets
     Status: bool
     Message: str
     Start: datetime
     End: datetime
     DurationMs: int = Field(ge=0)
-    Source: str
     Result: Optional[HelloJobResult] = None
 
 

@@ -1,7 +1,7 @@
 # pylint: disable=duplicate-code
 from datetime import UTC
 from taskiq import TaskiqState
-from worker.controller.hello import Movement as Controller
+from worker.controller.hello import Hello as Controller
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel
 from shared.models.log import Event, EventError
@@ -26,17 +26,20 @@ class Hello:
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
 
-    async def _execution(self, config_job: HelloConfig, **kwargs) -> HandleExecution:
+    async def _execution(self, config_job: JobConfig[HelloConfig]) -> HandleExecution:
         error_flag = False
         trace_back_nfo = None
         job_event_dto = None
         config: ExecutionConfig[HelloConfig] = ExecutionConfig(
-            JobConfig=config_job, Start=self.start, StartCounter=self.start_counter
+            JobId=config_job.Id,
+            JobConfig=config_job.Config, 
+            Start=self.start, 
+            StartCounter=self.start_counter,
         )
         try:
             async with self.context["db"].client() as conn:
                 job_event_dto = await Controller(self.context, conn).execute(
-                    config, **kwargs
+                    config, **config_job.KWARGS
                 )
         except Exception as e:  # pylint: disable=broad-except
             error_flag = True
@@ -57,10 +60,10 @@ class Hello:
         event_dto = HelloEvent(
             JobId=config_job.Id,
             JobName=config_job.Name,
-            Source=config_job.Source,
+            Target=config_job.Target,
             Status=False,
             Result=error_result,
-            Message="Movement Handler",
+            Message="Hello Handler",
             Start=self.start,
             End=self.config_log.Now(UTC),
             DurationMs=int((self.config_log.TimeCounter() - self.start_counter) * 1000),
