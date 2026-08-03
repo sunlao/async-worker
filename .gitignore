@@ -128,3 +128,5 @@ bandit-report.json
 
 # stick log output in a file like format.py and run black logs to make pretty
 logs/*.py
+
+*.code-workspace
