@@ -21,7 +21,10 @@ class Reader:
     def _admin(self, config) -> AdminConfig:
         return AdminConfig(
             Name=config["name"],
-            Cmd=config.get("cmd", ""),
+            SourceConnectionProfile=config["source_connection_profile"],
+            SourceCmd=config.get("source_cmd", ""),
+            TargetConnectionProfile=config.get("target_connection_profile", ""),
+            TargetCmd=config.get("target_cmd", ""),
             **self._optional(config),
         )
 
@@ -54,7 +57,7 @@ class Reader:
         return HelloConfig(
             Name=config["name"],
             ActionType=config["action_type"],
-            Target=config["target"],
+            ConnectionProfile=config["connection_profile"],
             Cmd=config["cmd"],
             **self._optional(config),
         )

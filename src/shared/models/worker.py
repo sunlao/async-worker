@@ -17,13 +17,12 @@ class AdminConfig(BaseModel):
     SourceCmd: str = Field("")
     TargetConnectionProfile: str
     TargetActionType: ActionTypes = Field(ActionTypes.EXECUTE_MANY)
-    Target: Targets = Field(Targets.UNITY_QUIESCE_API)
-    SourceCmd: str = Field("")
-    Delay: int = Field(600, ge=0)
-    Retry: int = Field(3, ge=0)
+    TargetCmd: str = Field("")
     StartUp: bool = Field(True)
+    Delay: int = Field(600, ge=0)
     RunOnce: bool = Field(False)
     RunNext: Optional[tuple[int, ...]] = None
+    Retry: int = Field(3, ge=0)
 
 
 class AdminJobResult(BaseModel):
