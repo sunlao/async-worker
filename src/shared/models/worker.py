@@ -12,9 +12,13 @@ from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 class AdminConfig(BaseModel):
     model_config = DTO_CONFIG
     Name: StrictStr = Field(..., min_length=1)
-    Cmd: str = Field("")
-    ActionType: ActionTypes = Field(ActionTypes.POST)
+    SourceConnectionProfile: str
+    SourceActionType: ActionTypes = Field(ActionTypes.SELECT_MANY)
+    SourceCmd: str = Field("")
+    TargetConnectionProfile: str
+    TargetActionType: ActionTypes = Field(ActionTypes.EXECUTE_MANY)
     Target: Targets = Field(Targets.UNITY_QUIESCE_API)
+    SourceCmd: str = Field("")
     Delay: int = Field(600, ge=0)
     Retry: int = Field(3, ge=0)
     StartUp: bool = Field(True)

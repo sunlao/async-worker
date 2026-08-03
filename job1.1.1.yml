@@ -2,8 +2,8 @@ jobs:
   - job_type: hello
     id: 100
     name: Hello-DB
-    action_type: select
-    target: unity_worker_db
+    action_type: select_one
+    connection_profile: unity_worker_db
     cmd: hello_db
     startup: true
     delay: 600
@@ -15,25 +15,29 @@ jobs:
     id: 101
     name: Hello-Api
     action_type: get
-    target: unity_worker_api
+    connection_profile: unity_worker_api
     cmd: /info
   - job_type: hello
     id: 102
     name: Hello-Manual-Io
-    action_type: echo
-    target: unity_worker_io
+    action_type: subprocess
+    connection_profile: unity_worker_io
     cmd: >-
       python -c "import json,datetime,uuid; print(json.dumps({'hello':'id-'+uuid.uuid4().hex[:8],'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')}))"
   - job_type: hello
     id: 103
     name: Hello-Manual-Io-Error
-    action_type: echo
+    action_type: subprocess
     target: unity_worker_io
     cmd: >-
       python -c "raise RuntimeError('Manual Error')"
   - job_type: admin
     id: 1004
     name: OpsLedger
+    source_connection_profile: unity_worker_redis
+    source_cmd: tbd
+    target_connection_profile: unity_worker_db
+    target_cmd: admin_bulk_insert
     startup: false
     run_once: True
     delay: 0

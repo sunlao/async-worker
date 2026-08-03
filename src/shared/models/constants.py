@@ -17,7 +17,7 @@ class ActionTypes(StrEnum):
     SELECT_MANY = "select_many"  # select many w/ optional args in the KWARG
     EXECUTE_ONE = "execute_one"  # exeucte one w/ optional args in the KWARG
     EXECUTE_MANY = "execute_many"  # execute many w/ optional args in the KWARG
-    SUBPROCESS = "SUBPROCESS"  # issue subprocces command
+    SUBPROCESS = "subprocess"  # issue subprocces command
     GET = "get"  # GET response from API
     POST = "post"
 
