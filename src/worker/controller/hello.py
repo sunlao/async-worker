@@ -66,7 +66,7 @@ class Hello:
 
     async def execute(self, exe: ExecutionConfig[HelloConfig], **kwargs) -> HelloEvent:
         """Controller to execute Hello jobs Action Types by controller"""
-        action_type = exe.JobConfig.ActionType
+        action_type = exe.JobConfig.ConnectionProfile
         if action_type in (
             ActionTypes.SELECT_ONE,
             ActionTypes.SELECT_MANY,

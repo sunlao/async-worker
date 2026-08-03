@@ -1,0 +1,10 @@
+profiles:
+  - name: unity_worker_db
+    type: DB_POOL
+    PlatformResource:
+  - name: unity_worker_api
+    type: API_CLIENT
+    PlatformResource:
+  - name: unity_worker_io
+    type: ASUBPROCESS
+    PlatformResource:

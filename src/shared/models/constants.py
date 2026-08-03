@@ -102,8 +102,8 @@ class Services(StrEnum):
     DB = "awork-postgres"
     TEST = "awork-test"
 
-
-class ConnectionProfileTypes(StrEnum):
+    
+class ResourceTypes(StrEnum):
     """Defines a ConnectionProfile type
     - Platform ConnectionProfileTypes: 
         - DB_POOL, API_CLIENT, REDIS_CLIENT are created at platform startup and passed in
@@ -114,12 +114,16 @@ class ConnectionProfileTypes(StrEnum):
         - use a composed Config model
     """
 
-    DB = "db"
-    API = "api"
-    IO = "io"
+
     DB_POOL = "db_pool"
     API_CLIENT = "api_client"
     REDIS_CLIENT = "redis_client"
+    ASUBPROCESS = "asubprocess"
+
+class ConnectorTypes(StrEnum):
+    DB = "db"
+    API = "api"
+    IO = "io"
 
 
 class Tags(StrEnum):
