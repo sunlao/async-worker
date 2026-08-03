@@ -27,7 +27,6 @@ from shared.models.api import ASGIEvent, RootResponse
 from shared.models.db import DBStartUpContext
 from shared.models.log import EventError
 
-
 locker = Locker()
 config_log = locker.log()
 config_awork = locker.awork()

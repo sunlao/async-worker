@@ -26,20 +26,20 @@ class Hello:
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
 
-    async def _execution(self, config_job: JobConfig[HelloConfig]) -> HandleExecution:
+    async def _execution(self, job: JobConfig[HelloConfig]) -> HandleExecution:
         error_flag = False
         trace_back_nfo = None
         job_event_dto = None
         config: ExecutionConfig[HelloConfig] = ExecutionConfig(
-            JobId=config_job.Id,
-            JobConfig=config_job.Config, 
-            Start=self.start, 
+            JobId=job.Id,
+            JobConfig=job.Config,
+            Start=self.start,
             StartCounter=self.start_counter,
         )
         try:
             async with self.context["db"].client() as conn:
                 job_event_dto = await Controller(self.context, conn).execute(
-                    config, **config_job.KWARGS
+                    config, **job.KWARGS
                 )
         except Exception as e:  # pylint: disable=broad-except
             error_flag = True
@@ -50,17 +50,17 @@ class Hello:
         return results
 
     def _log_error(
-        self, config_job: HelloConfig, results: HandleExecution
+        self, job: JobConfig[HelloConfig], results: HandleExecution
     ) -> EventError:
-        core_msg = (f"Failed to execute {config_job.Name} Job",)
+        core_msg = (f"Failed to execute {job.Config.Name} Job",)
         core = core_log(
             self.context["config_log"], LogLevel.ERROR, Events.JOB, core_msg
         )
         error_result = HelloJobResult(ActionType=ActionTypes.NA, RowCount=0)
         event_dto = HelloEvent(
-            JobId=config_job.Id,
-            JobName=config_job.Name,
-            Target=config_job.Target,
+            JobId=job.Id,
+            JobName=job.Config.Name,
+            Target=job.Config.Target,
             Status=False,
             Result=error_result,
             Message="Hello Handler",
@@ -74,18 +74,18 @@ class Hello:
         self.context["log"].write_event_error(dto)
         return dto
 
-    def _log(self, results: HandleExecution, config_job: HelloConfig) -> Event:
-        msg = f"Execute Job: {config_job.Name}"
+    def _log(self, results: HandleExecution, job: JobConfig[HelloConfig]) -> Event:
+        msg = f"Execute Job: {job.Config.Name}"
         core = core_log(self.config_log, LogLevel.INFO, Events.JOB, msg)
         dto: Event[HelloEvent] = Event(Core=core, Event=results.Event)
         self.context["log"].write_event(dto)
         return dto
 
-    async def handle(self, config_job: JobConfig[HelloConfig]):
+    async def handle(self, job: JobConfig[HelloConfig]):
         """Handle movement job types"""
-        results = await self._execution(config_job)
+        results = await self._execution(job)
         if results.ErrorFlag:
-            dto_error = self._log_error(config_job, results)
+            dto_error = self._log_error(job, results)
             return dto_error
-        dto = self._log(results, config_job)
+        dto = self._log(results, job)
         return dto

@@ -18,7 +18,6 @@ from worker.core.lifespan import Lifespan
 from worker.core.queue import Queue
 from worker.core.router import Router
 
-
 locker = Locker()
 router = Router()
 config_redis = locker.redis()

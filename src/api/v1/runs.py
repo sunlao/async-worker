@@ -2,7 +2,6 @@ from fastapi import APIRouter, Request, status
 from api.v1.helpers.run_serializer import RunSerializer
 from shared.models.api import RunResponse, RunsResponse
 
-
 router = APIRouter()
 
 

@@ -1,6 +1,5 @@
 import re
 
-
 # precompiled patterns (case-insensitive where needed)
 _AUTH_BEARER = re.compile(r"(?i)(authorization\s*:\s*bearer\s+)([^\s,;]+)")
 _KV_SECRET = re.compile(

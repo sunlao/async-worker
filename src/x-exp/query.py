@@ -2,7 +2,6 @@ import os
 import asyncio
 from redis.asyncio import Redis
 
-
 STREAM = "taskiq"
 GROUP = "taskiq"
 
