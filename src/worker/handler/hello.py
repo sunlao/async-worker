@@ -52,7 +52,7 @@ class Hello:
     def _log_error(
         self, job: JobConfig[HelloConfig], results: HandleExecution
     ) -> EventError:
-        core_msg = (f"Failed to execute {job.Config.Name} Job",)
+        core_msg = (f"Failed to execute {job.Config.Name} Job")
         core = core_log(
             self.context["config_log"], LogLevel.ERROR, Events.JOB, core_msg
         )
