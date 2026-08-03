@@ -8,9 +8,9 @@ from taskiq_redis import (
     RedisAsyncResultBackend,
     RedisStreamBroker,
 )
-from cp.lifespan import Lifespan
-from cp.queue import Queue
-from cp.router import Router
+from cp.core.lifespan import Lifespan
+from cp.core.queue import Queue
+from cp.core.router import Router
 from cp.client import Client
 from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
