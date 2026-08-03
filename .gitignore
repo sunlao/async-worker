@@ -130,3 +130,5 @@ bandit-report.json
 logs/*.py
 
 *.code-workspace
+
+.markdownlint.json
