@@ -1,7 +1,7 @@
 from asyncio import gather
 from typing import Tuple, Sequence
 from taskiq import TaskiqState
-from worker.enqueuer.route import Route
+from worker_old.enqueuer.route import Route
 from shared.models.constants import Audit, JobTypes, TargetTypes
 from shared.models.worker import JobConfig
 

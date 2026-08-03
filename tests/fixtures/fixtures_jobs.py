@@ -1,5 +1,5 @@
 from pytest import fixture
-from worker.controller.movement import Movement
+from worker_old.controller.movement import Movement
 from shared.models.constants import JobTypes
 from shared.models.worker import EnqueueRequest
 

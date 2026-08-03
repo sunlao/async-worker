@@ -1,5 +1,5 @@
 from taskiq import TaskiqState, TaskiqDepends
-from cp.handler.hello import Hello
+from worker.handler.hello import Hello
 from shared.models.worker import JobConfig, HelloConfig
 
 

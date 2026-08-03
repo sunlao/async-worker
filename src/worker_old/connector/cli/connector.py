@@ -6,8 +6,8 @@ from json import load
 from contextlib import suppress
 from typing import Any, Dict
 from asyncio import wait_for, TimeoutError as ATimeoutError
-from worker.connector.helpers.json_parser import JSONParser
-from worker.connector.helpers.avro import Avro
+from worker_old.connector.helpers.json_parser import JSONParser
+from worker_old.connector.helpers.avro import Avro
 from shared.models.worker import (
     MovementConfig,
     SerializeInput,

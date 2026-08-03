@@ -1,8 +1,8 @@
 from datetime import UTC
-from worker.connector.cli.connector import Connector as CLI
-from worker.connector.api.connector import Connector as API
-from worker.connector.db.postgres import Postgres
-from worker.enqueuer.route import Route
+from worker_old.connector.cli.connector import Connector as CLI
+from worker_old.connector.api.connector import Connector as API
+from worker_old.connector.db.postgres import Postgres
+from worker_old.enqueuer.route import Route
 from shared.models.constants import JobTypes, ActionTypes, SourceTypes, TargetTypes
 from shared.models.worker import (
     MovementEvent,

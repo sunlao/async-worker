@@ -1,6 +1,6 @@
 from datetime import timedelta
 from taskiq import TaskiqState
-from worker.enqueuer.helper import delay
+from worker_old.enqueuer.helper import delay
 from shared.models.api import EnqueueResponse
 from shared.models.constants import JobTypes, TargetTypes
 from shared.models.worker import EnqueueRequest, JobConfig, MovementJobResult

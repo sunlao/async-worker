@@ -1,7 +1,7 @@
 # src/worker/connector/db/postgres.py
 
 from typing import List, Tuple
-from worker.connector.helpers.avro import Avro
+from worker_old.connector.helpers.avro import Avro
 from shared.models.worker import (
     ActionTypes,
     MovementConfig,

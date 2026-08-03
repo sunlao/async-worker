@@ -1,6 +1,6 @@
 # pylint: disable=duplicate-code
 from datetime import UTC
-from worker.enqueuer.route import Route
+from worker_old.enqueuer.route import Route
 from shared.helper.ops_ledger import OpsLedger
 from shared.models.constants import JobTypes
 from shared.models.worker import (

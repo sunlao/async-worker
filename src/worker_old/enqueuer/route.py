@@ -3,7 +3,7 @@ from shared.helper.target_audit_detail import TargetAuditDetail
 from shared.models.api import EnqueueResponse
 from shared.models.constants import JobTypes
 from shared.models.worker import JobConfig, MovementJobResult
-from worker.enqueuer.control import Control
+from worker_old.enqueuer.control import Control
 
 
 class Route:
