@@ -1,9 +1,6 @@
 from datetime import UTC
 from worker.connector.io.connector import Connector as CLI
 from worker.connector.api.connector import Connector as API
-
-# from worker.connector.db.postgres import Postgres
-# from worker.enqueuer.route import Route
 from shared.models.constants import JobTypes, ActionTypes, Targets
 from shared.models.worker import (
     HelloEvent,
