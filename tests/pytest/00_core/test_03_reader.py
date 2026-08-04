@@ -1,6 +1,6 @@
 from pytest import raises
 from shared.config.job import Job
-from shared.models.constants import ActionTypes, JobTypes, SourceTypes, TargetTypes
+from shared.models.constants import ActionTypes, JobTypes
 
 
 def test_start_configs(worker_ctx):

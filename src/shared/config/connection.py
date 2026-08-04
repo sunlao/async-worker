@@ -1,14 +1,14 @@
 # edge-allow: pathlib, open, yaml.safe_load
 from pathlib import Path
 from yaml import safe_load
-from shared.models.config import ConnectionConfig
+from shared.models.config import ConnectionInputConfig
 from shared.models.worker import ConnectionProfile
 
 
 class Connection:
     """Read connection-profile declarations during startup."""
 
-    def __init__(self, config: ConnectionConfig):
+    def __init__(self, config: ConnectionInputConfig):
         path = Path(config.ConnectionPath)
         file = f"connection{config.ConnectionVersion}.yml"
         self.yml_path = path.joinpath(file)

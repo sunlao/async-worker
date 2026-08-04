@@ -5,7 +5,7 @@ from time import perf_counter
 from uuid import uuid4
 from urllib.parse import quote
 from shared.models.api import aworkConfig
-from shared.models.constants import DBUser, UserContext
+from shared.models.constants import UserContext
 from shared.models.config import DBConfig, Redis
 from shared.models.log import Config
 from shared.models.worker import WorkerConfig
@@ -43,15 +43,15 @@ class Locker:
             version = file_obj.read()
         return version
 
-    def db(self, user_context: UserContext) -> DBConfig:
+    def db(self, user: UserContext) -> DBConfig:
         """Get DB secrets with config. Only supports retrieval from environment
         Variables"""
         app_code = getenv("APP_CODE")
         if self.env in {"dev", "ci"}:
             return DBConfig(
                 HOST=f"{app_code}-postgres",
-                USER=getattr(DBUser, user_context),
-                PASSWORD=quote(getenv(f"DB_{user_context}_PWD")),
+                USER=f"DB_{user}_USER",
+                PASSWORD=quote(getenv(f"DB_{user}_PWD")),
                 DB_NAME=f"db_{app_code}",
                 PORT=int(getenv("DB_PORT")),
                 SERVICE=getenv("SERVICE"),

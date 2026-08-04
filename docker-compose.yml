@@ -51,6 +51,7 @@ services:
       - ./src/shared:/app/src/shared:rw
       - ./logs:/logs:rw
       - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r
+      - ./connection${CONNECTION_VERSION}.yml:/app/connection${CONNECTION_VERSION}.yml:r      
     depends_on:
       db-deploy:
         condition: service_completed_successfully            
@@ -111,7 +112,7 @@ services:
       command:
         - taskiq
         - worker
-        - sw:broker
+        - worker:queue
         - --workers
         - ${TASKIQ_WORKERS}
         - --max-async-tasks
@@ -148,6 +149,8 @@ services:
         - START_UP=${START_UP}
         - JOB_PATH=${JOB_PATH}
         - JOB_VERSION=${JOB_VERSION}
+        - CONNECTION_PATH=${CONNECTION_PATH}
+        - CONNECTION_VERSION=${CONNECTION_VERSION}
         - GATE_CLOSE_PATH=${GATE_CLOSE_PATH}      
       depends_on:
         redis:
@@ -162,6 +165,7 @@ services:
         - ./data:/data:rw
         - ./logs:/logs:rw
         - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r
+        - ./connection${CONNECTION_VERSION}.yml:/app/connection${CONNECTION_VERSION}.yml:r
         - ./data/gate:/app/gate:ro
       networks:
         - "${APP_CODE}net"
@@ -201,6 +205,7 @@ services:
       - ./data:/data:rw
       - ./src:/app/src:rw
       - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r
+      - ./connection${CONNECTION_VERSION}.yml:/app/connection${CONNECTION_VERSION}.yml:r
       - ./data/gate:/app/gate:rw
     networks:
       - "${APP_CODE}net"

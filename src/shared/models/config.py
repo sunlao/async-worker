@@ -4,7 +4,7 @@ from shared.models.constants import Environments
 from shared.models.policy import DTO_CONFIG
 
 
-class ConnectionConfig(BaseModel):
+class ConnectionInputConfig(BaseModel):
     model_config = DTO_CONFIG
     ConnectionPath: str
     ConnectionVersion: str
@@ -44,7 +44,7 @@ class DBConfig(BaseModel):
     SSL: bool | None = None
 
 
-class JobConfig(BaseModel):
+class JobInputConfig(BaseModel):
     model_config = DTO_CONFIG
     JobPath: str
     JobVersion: str
