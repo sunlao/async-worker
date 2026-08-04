@@ -126,6 +126,7 @@ services:
         - SERVICE=${APP_CODE}-worker
         - ENV=${ENV}
         - ACK_TYPE=${ACK_TYPE}
+        - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
         - REDIS_HOST=${APP_CODE}-redis
         - REDIS_PORT=${REDIS_PORT}
         - TASKIQ_WORKERS=${TASKIQ_WORKERS}
