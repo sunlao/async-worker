@@ -132,3 +132,4 @@ logs/*.py
 *.code-workspace
 
 .markdownlint.json
+docs/code_coverage/*.*
