@@ -1,10 +1,7 @@
-from uuid import UUID
-from datetime import datetime
-from typing import Optional, Any, Mapping, Tuple
+from typing import Optional, Any, Mapping
 from http import HTTPMethod, HTTPStatus
 from pydantic import BaseModel, Field
 from fastapi import Request, Response
-from shared.models.constants import ArqStatus, ProfileAction
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG
 
 
@@ -15,74 +12,6 @@ class aworkConfig(BaseModel):
     AppVersion: str
     DBMaxPool: int
     GatePath: str
-
-
-class Countries(BaseModel):
-    model_config = DTO_CONFIG
-    Countries: Tuple[str, ...]
-    Count: int
-
-
-class StatesRequest(BaseModel):
-    model_config = DTO_CONFIG
-    Country: str
-
-
-class States(BaseModel):
-    model_config = DTO_CONFIG
-    States: Tuple[Tuple[str, str], ...]
-    Count: int
-
-
-class CountiesRequest(BaseModel):
-    model_config = DTO_CONFIG
-    Country: str
-    State: str
-
-
-class Counties(BaseModel):
-    model_config = DTO_CONFIG
-    Counties: Tuple[Tuple[str, str, str], ...]
-    Count: int
-
-
-class ProfileRequest(BaseModel):
-    model_config = DTO_CONFIG
-    LocationId: UUID
-    Name: str
-    BirthDateTime: datetime
-
-
-class Profile(BaseModel):
-    model_config = DTO_CONFIG
-    ProfileId: UUID
-    Action: ProfileAction
-
-
-class Cities(BaseModel):
-    model_config = DTO_CONFIG
-    Cities: Tuple[Tuple[str, str, str, str], ...]
-    Count: int
-
-
-class CitiesRequest(BaseModel):
-    model_config = DTO_CONFIG
-    Country: str
-    State: str
-    County: str
-
-
-class LocationRequest(BaseModel):
-    model_config = DTO_CONFIG
-    Country: str
-    State: str
-    County: str
-    City: str
-
-
-class Location(BaseModel):
-    model_config = DTO_CONFIG
-    LocationId: UUID
 
 
 class APIEvent(BaseModel):
@@ -141,7 +70,7 @@ class RunResponse(BaseModel):
 
     model_config = DTO_CONFIG
     RunID: str
-    Status: ArqStatus
+    Status: str
     Info: Optional[Any]
     Error: Optional[Any]
 
