@@ -53,11 +53,11 @@ class Hello:
         core = core_log(
             self.context["config_log"], LogLevel.ERROR, Events.JOB, core_msg
         )
-        error_result = HelloJobResult(ActionType=ActionTypes.NA, RowCount=0)
+        error_result = HelloJobResult(ActionType=job.Config.ActionType, RowCount=0)
         event_dto = HelloEvent(
             JobId=job.Id,
             JobName=job.Config.Name,
-            Target=job.Config.Target,
+            ConnectionProfile=job.Config.ConnectionProfile,
             Status=False,
             Result=error_result,
             Message="Hello Handler",

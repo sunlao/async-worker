@@ -105,7 +105,7 @@ async def shutdown(context: TaskiqState) -> None:
 
 
 async def hello(
-    self, config: JobConfig[HelloConfig], context: TaskiqState = TaskiqDepends()
+    config: JobConfig[HelloConfig], context: TaskiqState = TaskiqDepends()
 ) -> None:
     await Hello(context).handle(config)
 

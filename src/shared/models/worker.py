@@ -117,7 +117,7 @@ class HelloEvent(BaseModel):
     model_config = DTO_CONFIG
     JobId: int = Field(gt=0)
     JobName: str
-    Target: Targets
+    ConnectionProfile: str
     Status: bool
     Message: str
     Start: datetime
