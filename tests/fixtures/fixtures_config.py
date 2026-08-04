@@ -1,6 +1,6 @@
 from pytest import fixture
 from shared.config.locker import Locker
-from shared.config.job import Job, ReaderConfig
+from shared.config.job import Job, JobConfig
 
 
 @fixture(scope="session", name="locker")
@@ -31,5 +31,5 @@ def f_config_worker(locker):
 @fixture(name="reader")
 def f_reader(locker):
     awork = locker.awork()
-    reader = ReaderConfig(JobPath=awork.JobPath, JobVersion=awork.JobVersion)
+    reader = JobConfig(JobPath=awork.JobPath, JobVersion=awork.JobVersion)
     return Job(reader)

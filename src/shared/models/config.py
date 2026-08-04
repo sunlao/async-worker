@@ -4,6 +4,12 @@ from shared.models.constants import Environments
 from shared.models.policy import DTO_CONFIG
 
 
+class ConnectionConfig(BaseModel):
+    model_config = DTO_CONFIG
+    ConnectionPath: str
+    ConnectionVersion: str
+
+
 class IOConfig(BaseModel):
     """DTO for IO Config"""
 
@@ -38,7 +44,7 @@ class DBConfig(BaseModel):
     SSL: bool | None = None
 
 
-class ReaderConfig(BaseModel):
+class JobConfig(BaseModel):
     model_config = DTO_CONFIG
     JobPath: str
     JobVersion: str

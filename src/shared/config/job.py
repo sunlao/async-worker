@@ -2,14 +2,14 @@
 from pathlib import Path
 from yaml import safe_load
 from shared.models.constants import JobTypes
-from shared.models.config import ReaderConfig
+from shared.models.config import JobConfig
 from shared.models.worker import AdminConfig, JobConfig, HelloConfig
 
 
 class Job:
     """Utility to Read Job yml during queue Startup"""
 
-    def __init__(self, config: ReaderConfig):
+    def __init__(self, config: JobConfig):
         job_path = Path(config.JobPath)
         file = f"job{config.JobVersion}.yml"
         self.yml_path = job_path.joinpath(file)

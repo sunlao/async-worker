@@ -108,15 +108,14 @@ class Services(StrEnum):
     DB = "awork-postgres"
     TEST = "awork-test"
 
-    
+
 class ResourceTypes(StrEnum):
     """ConnectionProfile Resource Types
-    - Platform ConnectionProfileTypes: 
+    - Platform ConnectionProfileTypes:
         - platform startup and passed in
         from the edge
         - have None for Config attribute
     """
-
 
     DB_POOL = "db_pool"
     API_CLIENT = "api_client"

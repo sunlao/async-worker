@@ -4,7 +4,7 @@ from pytest_asyncio import fixture
 from shared.config.job import Job
 from shared.log.writer import Writer
 from shared.log.helpers.error import Error
-from shared.models.config import ReaderConfig
+from shared.models.config import JobConfig
 
 
 test_data = Path.cwd() / "tests" / "data"
@@ -19,12 +19,12 @@ async def worker_ctx(config_log, config_worker, engine, arq_client):
     job_version_bad = "_test_bad"
 
     reader = Job(
-        ReaderConfig(
+        JobConfig(
             JobPath=str(job_path),
             JobVersion=job_version,
         )
     )
-    config_reader_bad = ReaderConfig(
+    config_reader_bad = JobConfig(
         JobPath=str(job_path),
         JobVersion=job_version_bad,
     )

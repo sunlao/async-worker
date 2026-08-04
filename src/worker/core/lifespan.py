@@ -3,7 +3,7 @@ from shared.config.job import Job
 from shared.db import Engine
 from shared.log.helpers.error import Error
 from shared.log.writer import Writer
-from shared.models.config import ReaderConfig
+from shared.models.config import JobConfig
 from shared.models.constants import UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.worker import LifespanContext
@@ -23,7 +23,7 @@ class Lifespan:
         self.config_log = locker.log()
         self.config_worker = locker.worker()
         self.reader = Job(
-            ReaderConfig(
+            JobConfig(
                 JobPath=self.config_worker.JobPath,
                 JobVersion=self.config_worker.JobVersion,
             )
