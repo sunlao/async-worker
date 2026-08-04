@@ -64,7 +64,7 @@ class Lifespan:
         state.enqueue_gate = self.enqueue_gate
         db_startup_ctx = DBStartUpContext(
             Log=state.log,
-            UserContext=UserContext.DATA,
+            UserContext=UserContext.SUPPORT,
             Config=state.config_log,
             LogErrorHelper=state.log_error_helper,
             DBMaxPool=self.config_worker.DBMaxPool,

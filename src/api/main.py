@@ -16,12 +16,10 @@ from api.v1.info import ready, info
 from shared.log.helpers.api_log_serializer import LogSerializer
 from shared.db import Engine
 from shared.config.locker import Locker
-from shared.config.job import Job
 from shared.log.writer import Writer
 from shared.log.helpers.error import Error
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import UserContext
-from shared.models.config import JobConfig
 from shared.models.constants import Events, LogLevel
 from shared.models.api import ASGIEvent, RootResponse
 from shared.models.db import DBStartUpContext

@@ -9,6 +9,8 @@ class aworkConfig(BaseModel):
     model_config = DTO_CONFIG
     JobPath: str
     JobVersion: str
+    ConnectionPath: str
+    ConnectionVersion: str    
     AppVersion: str
     DBMaxPool: int
     GatePath: str

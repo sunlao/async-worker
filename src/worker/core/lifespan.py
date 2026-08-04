@@ -65,7 +65,7 @@ class Lifespan:
             context,
             DBStartUpContext(
                 Log=context.log,
-                UserContext=UserContext.DATA,
+                UserContext=UserContext.SUPPORT,
                 Config=context.config_log,
                 LogErrorHelper=context.log_error_helper,
                 DBMaxPool=self.config_worker.DBMaxPool,
