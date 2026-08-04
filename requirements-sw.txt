@@ -1,2 +1,0 @@
-taskiq[reload]==0.12.4
-taskiq-redis==1.2.2

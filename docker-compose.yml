@@ -161,7 +161,7 @@ services:
         - redis
       volumes:
         - ./src/shared:/app/src/shared:ro
-        - ./src/sw:/app/src/sw:ro
+        - ./src/worker:/app/src/worker:ro
         - ./data:/data:rw
         - ./logs:/logs:rw
         - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r

@@ -4,7 +4,7 @@ from shared.config.connection import Connection
 from shared.db import Engine
 from shared.log.helpers.error import Error
 from shared.log.writer import Writer
-from shared.models.config import JobConfig, ConnectionConfig
+from shared.models.config import JobInputConfig, ConnectionInputConfig
 from shared.models.constants import UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.worker import LifespanContext
@@ -24,13 +24,13 @@ class Lifespan:
         self.config_log = locker.log()
         self.config_worker = locker.worker()
         self.job = Job(
-            JobConfig(
+            JobInputConfig(
                 JobPath=self.config_worker.JobPath,
                 JobVersion=self.config_worker.JobVersion,
             )
         )
         self.connection = Connection(
-            ConnectionConfig(
+            ConnectionInputConfig(
                 ConnectionPath=self.config_worker.ConnectionPath,
                 ConnectionVersion=self.config_worker.ConnectionVersion,
             )
