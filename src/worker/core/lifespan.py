@@ -1,9 +1,10 @@
 from taskiq import TaskiqState
 from shared.config.job import Job
+from shared.config.connection import Connection
 from shared.db import Engine
 from shared.log.helpers.error import Error
 from shared.log.writer import Writer
-from shared.models.config import JobConfig
+from shared.models.config import JobConfig, ConnectionConfig
 from shared.models.constants import UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.worker import LifespanContext
@@ -22,12 +23,18 @@ class Lifespan:
         locker = context.Locker
         self.config_log = locker.log()
         self.config_worker = locker.worker()
-        self.reader = Job(
+        self.job = Job(
             JobConfig(
                 JobPath=self.config_worker.JobPath,
                 JobVersion=self.config_worker.JobVersion,
             )
         )
+        self.connection = Connection(
+            ConnectionConfig(
+                ConnectionPath=self.config_worker.ConnectionPath,
+                ConnectionVersion=self.config_worker.ConnectionVersion,
+            )
+        )        
 
     async def _db_startup(
         self, worker_context: TaskiqState, db_context: DBStartUpContext
@@ -50,7 +57,8 @@ class Lifespan:
         context.asleep = self.context.AsyncSleep
         context.data_dir = self.config_worker.DataDir
         context.config_worker = self.config_worker
-        context.reader = self.reader
+        context.job = self.job
+        context.connection = self.connection
         context.enqueue_gate = self.context.EnqueueGate
         context.queue = self.context.Queue
         await self._db_startup(

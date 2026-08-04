@@ -29,6 +29,8 @@ class Locker:
         return aworkConfig(
             JobPath=getenv("JOB_PATH"),
             JobVersion=getenv("JOB_VERSION"),
+            ConnectionPath=getenv("CONNECTION_PATH"),
+            ConnectionVersion=getenv("CONNECTION_VERSION"),   
             AppVersion=self._app_version(),
             DBMaxPool=int(getenv("DB_MAX_POOL")),
             GatePath=getenv("GATE_CLOSE_PATH", "dev"),
@@ -62,6 +64,8 @@ class Locker:
             StartUp=start_up,
             JobPath=getenv("JOB_PATH"),
             JobVersion=getenv("JOB_VERSION"),
+            ConnectionPath=getenv("CONNECTION_PATH"),
+            ConnectionVersion=getenv("CONNECTION_VERSION"),    
             DBMaxPool=int(getenv("DB_MAX_POOL")),
             DataDir=getenv("DATA_DIR"),
             GatePath=getenv("GATE_CLOSE_PATH", "dev"),

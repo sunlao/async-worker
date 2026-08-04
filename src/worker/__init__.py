@@ -47,7 +47,7 @@ lifespan = Lifespan(
 
 
 async def enqueue_all(context: TaskiqState, job_type: JobTypes) -> list:
-    configs = context.reader.startup_configs(job_type)
+    configs = context.job.startup_configs(job_type)
     client = Client(context)
     return await context.gather(*[client.enqueue(c, 0) for c in configs])
 

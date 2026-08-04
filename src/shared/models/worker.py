@@ -156,6 +156,8 @@ class WorkerConfig(BaseModel):
     StartUp: bool
     JobPath: str
     JobVersion: str
+    ConnectionPath: str
+    ConnectionVersion: str
     DBMaxPool: int
     DataDir: str
     GatePath: str
