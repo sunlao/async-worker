@@ -1,5 +1,5 @@
 from pytest import raises
-from shared.config.reader import Reader
+from shared.config.job import Job
 from shared.models.constants import ActionTypes, JobTypes, SourceTypes, TargetTypes
 
 
@@ -43,7 +43,7 @@ def test_config(worker_ctx):
 def test_validation(worker_ctx):
     config = worker_ctx["config_reader_bad"]
     with raises(RuntimeError) as err:
-        Reader(config)
+        Job(config)
     msg = "Config is not valid for ['Ids', 'Names', 'Source:Target', 'next']"
     assert str(err.value) == msg
 

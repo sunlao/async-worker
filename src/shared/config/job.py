@@ -6,7 +6,7 @@ from shared.models.config import ReaderConfig
 from shared.models.worker import AdminConfig, JobConfig, HelloConfig
 
 
-class Reader:
+class Job:
     """Utility to Read Job yml during queue Startup"""
 
     def __init__(self, config: ReaderConfig):

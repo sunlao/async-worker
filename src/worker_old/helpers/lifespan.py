@@ -1,6 +1,6 @@
 from taskiq import TaskiqState
 from taskiq.abc.broker import AsyncBroker
-from shared.config.reader import Reader
+from shared.config.job import Job
 from shared.db import Engine
 from shared.log.writer import Writer
 from shared.log.helpers.error import Error
@@ -24,7 +24,7 @@ class Lifespan:
         config_redis = locker.redis()
         self.config_log = locker.log()
         self.config_worker = locker.worker()
-        self.reader = Reader(
+        self.reader = Job(
             ReaderConfig(
                 JobPath=self.config_worker.JobPath,
                 JobVersion=self.config_worker.JobVersion,
