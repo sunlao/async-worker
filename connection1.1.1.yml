@@ -1,10 +1,10 @@
 profiles:
   - name: unity_worker_db
-    type: DB_POOL
-    PlatformResource:
+    connector_type: db
+    resource_type: db_pool
   - name: unity_worker_api
-    type: API_CLIENT
-    PlatformResource:
+    connector_type: api
+    resource_type: api_client
   - name: unity_worker_io
-    type: ASUBPROCESS
-    PlatformResource:
+    connector_type: io
+    resource_type: asubprocess

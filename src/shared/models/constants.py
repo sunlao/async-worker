@@ -32,6 +32,12 @@ class AuthTypes(StrEnum):
     CERTIFICATE = "certificate"
 
 
+class ConnectorTypes(StrEnum):
+    DB = "db"
+    API = "api"
+    IO = "io"
+
+
 class DBPlatforms(StrEnum):
     POSTGRES = "postgres"
 
@@ -104,14 +110,11 @@ class Services(StrEnum):
 
     
 class ResourceTypes(StrEnum):
-    """Defines a ConnectionProfile type
+    """ConnectionProfile Resource Types
     - Platform ConnectionProfileTypes: 
-        - DB_POOL, API_CLIENT, REDIS_CLIENT are created at platform startup and passed in
+        - platform startup and passed in
         from the edge
         - have None for Config attribute
-    - External ConnectionProfileTypes:
-        - are built from yml configs with secrets injected as environment variables
-        - use a composed Config model
     """
 
 
@@ -119,11 +122,6 @@ class ResourceTypes(StrEnum):
     API_CLIENT = "api_client"
     REDIS_CLIENT = "redis_client"
     ASUBPROCESS = "asubprocess"
-
-class ConnectorTypes(StrEnum):
-    DB = "db"
-    API = "api"
-    IO = "io"
 
 
 class Tags(StrEnum):
