@@ -99,7 +99,6 @@ async def shutdown(context: TaskiqState) -> None:
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
     context.log.write_core(core)
 
-
-queue.task(router.hello, task_name=JobTypes.HELLO)
+queue.task(task_name=JobTypes.HELLO)(router.hello)
 queue.on_event("startup")(startup)
 queue.on_event("shutdown")(shutdown)
