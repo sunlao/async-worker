@@ -34,7 +34,7 @@ class Lifespan:
                 ConnectionPath=self.config_worker.ConnectionPath,
                 ConnectionVersion=self.config_worker.ConnectionVersion,
             )
-        )        
+        )
 
     async def _db_startup(
         self, worker_context: TaskiqState, db_context: DBStartUpContext
