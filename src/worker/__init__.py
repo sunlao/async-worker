@@ -2,7 +2,7 @@ from pathlib import Path
 from asyncio import sleep as async_sleep, subprocess, gather
 from httpx import AsyncClient
 from redis.asyncio import Redis
-from taskiq import TaskiqScheduler, TaskiqState
+from taskiq import TaskiqScheduler, TaskiqState, TaskiqDepends
 from taskiq_redis import (
     ListRedisScheduleSource,
     RedisAsyncResultBackend,
@@ -12,14 +12,14 @@ from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel, JobTypes
 from shared.models.log import CoreError
-from shared.models.worker import LifespanContext, WorkerInitContext
+from shared.models.worker import LifespanContext, WorkerInitContext, JobConfig, HelloConfig
 from shared.queue.client import Client
 from worker.core.lifespan import Lifespan
 from worker.core.queue import Queue
-from worker.core.router import Router
+from worker.handler.hello import Hello
+
 
 locker = Locker()
-router = Router()
 config_redis = locker.redis()
 config_worker = locker.worker()
 redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
@@ -99,6 +99,13 @@ async def shutdown(context: TaskiqState) -> None:
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
     context.log.write_core(core)
 
-queue.task(task_name=JobTypes.HELLO)(router.hello)
+
+async def hello(
+    self, config: JobConfig[HelloConfig], context: TaskiqState = TaskiqDepends()
+) -> None:
+    await Hello(context).handle(config)
+
+
+queue.task(task_name=JobTypes.HELLO)(hello)
 queue.on_event("startup")(startup)
 queue.on_event("shutdown")(shutdown)
