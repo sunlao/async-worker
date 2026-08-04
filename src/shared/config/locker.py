@@ -100,5 +100,4 @@ class Locker:
             AppCode=getenv("APP_CODE", "awork"),
             WaitFor=int(getenv("WaitFor", "2")),
             ResultExpirationSec=int(getenv("RESULT_EXPIRATION_SEC")),
-            AckType=getenv("ACK_TYPE"),
         )

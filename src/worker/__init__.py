@@ -12,12 +12,16 @@ from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel, JobTypes
 from shared.models.log import CoreError
-from shared.models.worker import LifespanContext, WorkerInitContext, JobConfig, HelloConfig
+from shared.models.worker import (
+    LifespanContext,
+    WorkerInitContext,
+    JobConfig,
+    HelloConfig,
+)
 from shared.queue.client import Client
 from worker.core.lifespan import Lifespan
 from worker.core.queue import Queue
 from worker.handler.hello import Hello
-
 
 locker = Locker()
 config_redis = locker.redis()

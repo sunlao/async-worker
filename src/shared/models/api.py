@@ -10,7 +10,7 @@ class aworkConfig(BaseModel):
     JobPath: str
     JobVersion: str
     ConnectionPath: str
-    ConnectionVersion: str    
+    ConnectionVersion: str
     AppVersion: str
     DBMaxPool: int
     GatePath: str

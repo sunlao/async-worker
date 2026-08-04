@@ -62,4 +62,3 @@ class Redis(BaseModel):
     AppCode: str
     WaitFor: int
     ResultExpirationSec: int
-    AckType: AckTypes

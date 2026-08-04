@@ -29,7 +29,6 @@ services:
       - DB_MAX_POOL=${DB_MAX_POOL_API}
       - REDIS_HOST=${APP_CODE}-redis
       - REDIS_PORT=${REDIS_PORT}
-      - ACK_TYPE=${ACK_TYPE}
       - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
       - API_STATIC_DIR=${API_STATIC_DIR}
       - TZ=GMT
@@ -119,13 +118,14 @@ services:
         - ${TASKIQ_MAX_ASYNC_TASKS}
         - --max-prefetch
         - ${TASKIQ_MAX_PREFETCH}
+        - --ack-type
+        - ${ACK_TYPE}
         - --reload
       restart: unless-stopped
       environment:
         - APP_CODE=${APP_CODE}
         - SERVICE=${APP_CODE}-worker
         - ENV=${ENV}
-        - ACK_TYPE=${ACK_TYPE}
         - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
         - REDIS_HOST=${APP_CODE}-redis
         - REDIS_PORT=${REDIS_PORT}

@@ -20,9 +20,9 @@ class Queue:
             redis_url=self.context.RedisURL,
             result_ex_time=self.config.ResultExpirationSec,
         )
-        return self.context.Broker(
-            url=self.context.RedisURL, ack_type=self.config.AckType
-        ).with_result_backend(backend)
+        return self.context.Broker(url=self.context.RedisURL).with_result_backend(
+            backend
+        )
 
     def build(self) -> AsyncBroker:
         return self._broker().with_middlewares(UniqueJob(self.context))
