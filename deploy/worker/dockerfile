@@ -3,9 +3,9 @@ FROM python:3.13-slim
 WORKDIR /app
 
 # Install Python packages
-COPY requirements-sw.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements-sw.txt
+    pip install --no-cache-dir -r requirements.txt
 
 COPY VERSION .
 COPY . .
