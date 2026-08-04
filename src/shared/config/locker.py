@@ -50,8 +50,8 @@ class Locker:
         if self.env in {"dev", "ci"}:
             return DBConfig(
                 HOST=f"{app_code}-postgres",
-                USER=f"DB_{user}_USER",
-                PASSWORD=quote(getenv(f"DB_{user}_PWD")),
+                USER=f"{app_code}_{user}",
+                PASSWORD=quote(getenv(f"DB_{user}_PWD".upper())),
                 DB_NAME=f"db_{app_code}",
                 PORT=int(getenv("DB_PORT")),
                 SERVICE=getenv("SERVICE"),

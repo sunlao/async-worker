@@ -149,5 +149,5 @@ class TouchStatuses(StrEnum):
 class UserContext(StrEnum):
     """ENUM for AsyncServ Profiles"""
 
-    APP = "APP"
-    SUPPORT = "SUPPORT"
+    APP = "app"
+    SUPPORT = "support"

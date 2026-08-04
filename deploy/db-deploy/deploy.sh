@@ -91,7 +91,7 @@ sleep 3
 
 APP_SCHEMA=${APP_CODE}
 DB_ADMIN_USER="${APP_CODE}_admin"
-DB_SUPPORT_USER="${APP_CODE}_data"
+DB_SUPPORT_USER="${APP_CODE}_support"
 DB_APP_USER="${APP_CODE}_app"
 DB_HOST="${APP_CODE}-postgres"
 DB_NAME="db_${APP_CODE}"
