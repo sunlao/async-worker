@@ -12,7 +12,6 @@ from shared.models.worker import (
     HelloEvent,
     HandleExecution,
     HelloJobResult,
-    ActionTypes,
 )
 
 
@@ -37,7 +36,7 @@ class Hello:
             StartCounter=self.start_counter,
         )
         try:
-            job_event_dto = await Controller(self.context).execute(config, *dict(job.KWARGS))
+            job_event_dto = await Controller(self.context).execute(config, **dict(job.KWARGS))
         except Exception as e:  # pylint: disable=broad-except
             error_flag = True
             trace_back_nfo = self.context["log_error_helper"].trace_back_nfo(e)

@@ -1,13 +1,14 @@
 from datetime import UTC
 from worker.connector.io.connector import Connector as CLI
 from worker.connector.api.connector import Connector as API
-from shared.models.constants import JobTypes, ActionTypes, Targets
+from shared.models.constants import JobTypes, ActionTypes, ConnectorTypes
 from shared.models.worker import (
     HelloEvent,
     ExecutionConfig,
     HelloConfig,
     JobConfig,
     HelloJobResult,
+    ConnectionProfile,
 )
 
 
@@ -21,18 +22,25 @@ class HelloErrorHandling(Exception):
 class Hello:
     """Hello Controller demonstrates worker functionality"""
 
-    def __init__(self, ctx):
-        self.ctx = ctx
-        self.log = self.ctx["config_log"]
-        self.gate = ctx["enqueue_gate"]
+    def __init__(self, context):
+        self.context = context
+        self.log = self.context["config_log"]
+        self.gate = context["enqueue_gate"]
+        self.connection = context.connection
 
-    async def _api_actions(self, exe: ExecutionConfig[HelloConfig], **kwargs):
+    async def _api_actions(
+        self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
+    ):
         pass
 
-    async def _db_actions(self, exe: ExecutionConfig[HelloConfig], **kwargs):
+    async def _db_actions(
+        self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
+    ):
         pass
 
-    async def _io_actions(self, exe: ExecutionConfig[HelloConfig], **kwargs):
+    async def _io_actions(
+        self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
+    ):
         pass
 
     async def _enqueue(
@@ -44,7 +52,7 @@ class Hello:
     ) -> HelloEvent:
         config_job = config_exe.JobConfig
         dto = JobConfig(Type=JobTypes.MOVEMENT, Config=config_job, KWARGS=kwargs)
-        enqueue = await Route(self.ctx).execute(True, JobTypes.MOVEMENT, dto, result)
+        enqueue = await Route(self.context).execute(True, JobTypes.MOVEMENT, dto, result)
         e_msg = f"{msg}" f" - {enqueue.Message} with status {enqueue.Status}"
         return self._event(config_exe, e_msg, result)
 
@@ -65,17 +73,13 @@ class Hello:
 
     async def execute(self, exe: ExecutionConfig[HelloConfig], **kwargs) -> HelloEvent:
         """Controller to execute Hello jobs Action Types by controller"""
-        action_type = exe.JobConfig.ConnectionProfile
-        if action_type in (
-            ActionTypes.SELECT_ONE,
-            ActionTypes.SELECT_MANY,
-            ActionTypes.EXECUTE_MANY,
-            ActionTypes.EXECUTE_ONE,
-        ):
-            self._db_actions(exe, **kwargs)
-        if action_type in (ActionTypes.ECHO):
-            self._io_actions(exe, **kwargs)
-        if action_type in (ActionTypes.GET, ActionTypes.POST):
-            self._api_actions(exe, **kwargs)
+        profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
+        connector_type = profile.ConnectorType
+        if connector_type == ConnectorTypes.DB:
+            result = self._db_actions(exe, profile, **kwargs)
+        if connector_type == ConnectorTypes.IO:
+            result = self._io_actions(exe, profile, **kwargs)
+        if connector_type == ConnectorTypes.API:
+            result = self._api_actions(exe, profile, **kwargs)
         msg = "Movement Controller: Completed run"
-        return await self._enqueue(config_exe, msg, trg_result, **kwargs)
+        return await self._enqueue(exe, msg, result, **kwargs)
