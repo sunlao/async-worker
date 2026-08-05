@@ -44,17 +44,6 @@ class Hello:
     ):
         pass
 
-    async def _enqueue(
-        self,
-        config_exe: ExecutionConfig[HelloConfig],
-        msg: str,
-        result: HelloJobResult,
-        **kwargs,
-    ) -> HelloEvent:
-        config_job = config_exe.JobConfig
-        # e_msg = f"{msg}" f" - {enqueue.Message} with status {enqueue.Status}"
-        return self._event(config_exe, e_msg, result)
-
     def _event(
         self, exe: ExecutionConfig[HelloConfig], msg: str, result: HelloJobResult
     ) -> HelloEvent:
@@ -75,11 +64,11 @@ class Hello:
         profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
-            result = self._db_actions(exe, profile, **kwargs)
+            result = await self._db_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.IO:
-            result = self._io_actions(exe, profile, **kwargs)
+            result = await self._io_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.API:
-            result = self._api_actions(exe, profile, **kwargs)
+            result = await self._api_actions(exe, profile, **kwargs)
         msg = "Movement Controller: Completed run"
         result = HelloJobResult(Pass=True)
 
