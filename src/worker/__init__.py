@@ -12,43 +12,38 @@ from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel, JobTypes
 from shared.models.log import CoreError
-from shared.models.worker import (
-    LifespanContext,
-    WorkerInitContext,
-)
+from shared.models.worker import LifespanContext, WorkerInitContext
 from shared.queue.client import Client
 from worker.core.lifespan import Lifespan
 from worker.core.queue import Queue
 from worker.core.router import register
-
 
 locker = Locker()
 config_redis = locker.redis()
 config_worker = locker.worker()
 redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
 redis_client = Redis.from_url(redis_url)
-worker_init = WorkerInitContext(
+worker_context = WorkerInitContext(
     Broker=RedisStreamBroker,
     Backend=RedisAsyncResultBackend,
     RedisURL=redis_url,
     RedisClient=redis_client,
 )
 
-queue = Queue(worker=worker_init, config=config_redis).build()
+queue = Queue(worker_context, config_redis).build()
 register(queue)
 delay_source = ListRedisScheduleSource(redis_url)
 delay_dispatcher = TaskiqScheduler(broker=queue, sources=[delay_source])
 gate_path = Path(config_worker.GatePath)
-lifespan = Lifespan(
-    LifespanContext(
-        Locker=locker,
-        Queue=queue,
-        AsyncSleep=async_sleep,
-        SubProcess=subprocess,
-        Gather=gather,
-        EnqueueGate=gate_path.is_file(),
-    )
+lifespan_context = LifespanContext(
+    Locker=locker,
+    Queue=queue,
+    AsyncSleep=async_sleep,
+    SubProcess=subprocess,
+    Gather=gather,
+    EnqueueGate=gate_path.is_file(),
 )
+lifespan = Lifespan(lifespan_context)
 
 
 async def enqueue_all(context: TaskiqState, job_type: JobTypes) -> list:
@@ -100,6 +95,7 @@ async def shutdown(context: TaskiqState) -> None:
         await context.http_client.aclose()
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
     context.log.write_core(core)
+
 
 queue.on_event(TaskiqEvents.WORKER_STARTUP)(startup)
 queue.on_event(TaskiqEvents.WORKER_SHUTDOWN)(shutdown)
