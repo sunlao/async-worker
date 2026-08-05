@@ -2,7 +2,7 @@ from pathlib import Path
 from asyncio import sleep as async_sleep, subprocess, gather
 from httpx import AsyncClient
 from redis.asyncio import Redis
-from taskiq import TaskiqScheduler, TaskiqState, TaskiqDepends
+from taskiq import TaskiqDepends, TaskiqEvents, TaskiqScheduler, TaskiqState
 from taskiq_redis import (
     ListRedisScheduleSource,
     RedisAsyncResultBackend,
@@ -73,7 +73,6 @@ async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
 async def startup(context: TaskiqState) -> None:
     context.delay_dispatcher = delay_dispatcher
     context.delay_source = delay_source
-    await delay_dispatcher.startup()
     await lifespan.startup(context)
     config_log = context.config_log
     try:
@@ -111,5 +110,5 @@ async def hello(
 
 
 queue.task(task_name=JobTypes.HELLO)(hello)
-queue.on_event("startup")(startup)
-queue.on_event("shutdown")(shutdown)
+queue.on_event(TaskiqEvents.WORKER_STARTUP)(startup)
+queue.on_event(TaskiqEvents.WORKER_SHUTDOWN)(shutdown)

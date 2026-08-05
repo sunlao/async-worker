@@ -31,7 +31,7 @@ class Client:
           - Use job config delay if exists and delay overide is none
         """
         queue = (
-            self.context.queue.task_by_name(request.Type)
+            self.context.queue.find_task(request.Type)
             .kicker()
             .with_labels(job_id=request.Id)
         )
