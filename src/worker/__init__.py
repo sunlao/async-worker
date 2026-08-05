@@ -71,7 +71,6 @@ async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
 
 
 async def startup(context: TaskiqState) -> None:
-    context.delay_dispatcher = delay_dispatcher
     context.delay_source = delay_source
     await lifespan.startup(context)
     config_log = context.config_log
@@ -95,7 +94,6 @@ async def shutdown(context: TaskiqState) -> None:
     config_log = context.config_log
     if context.get("db"):
         await lifespan.shutdown(context)
-        await delay_dispatcher.shutdown()
         await redis_client.aclose()
     if context.get("http_client"):
         await context.http_client.aclose()
