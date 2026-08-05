@@ -21,9 +21,8 @@ class HelloErrorHandling(Exception):
 class Hello:
     """Hello Controller demonstrates worker functionality"""
 
-    def __init__(self, ctx, conn):
+    def __init__(self, ctx):
         self.ctx = ctx
-        self.conn = conn
         self.log = self.ctx["config_log"]
         self.gate = ctx["enqueue_gate"]
 
