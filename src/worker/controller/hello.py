@@ -37,9 +37,7 @@ class Hello:
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
     ):
         if prof.ResourceType == ResourceTypes.DB_POOL:
-            async with self.context["db"].client() as conn:
-                return await DB().execute_db_pool(exe, prof, conn, **kwargs)
-            return
+            return await DB(self.context).execute_db_pool(exe, prof, **kwargs)
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
     async def _io_actions(
