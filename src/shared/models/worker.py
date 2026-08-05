@@ -108,9 +108,7 @@ class HelloConfig(BaseModel):
 
 class HelloJobResult(BaseModel):
     model_config = DTO_CONFIG
-    RowCount: int
-    ActionType: ActionTypes
-    LastHash: Optional[str] = None
+    Pass: bool
 
 
 class HelloEvent(BaseModel):

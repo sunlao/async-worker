@@ -36,7 +36,9 @@ class Hello:
             StartCounter=self.start_counter,
         )
         try:
-            job_event_dto = await Controller(self.context).execute(config, **dict(job.KWARGS))
+            job_event_dto = await Controller(self.context).execute(
+                config, **dict(job.KWARGS)
+            )
         except Exception as e:  # pylint: disable=broad-except
             error_flag = True
             trace_back_nfo = self.context["log_error_helper"].trace_back_nfo(e)
@@ -83,5 +85,10 @@ class Hello:
         if results.ErrorFlag:
             dto_error = self._log_error(job, results)
             return dto_error
-        dto = self._log(results, job)
+        try:
+            dto = self._log(results, job)
+        except Exception as e:  # pylint: disable=broad-except
+            core_msg = "Handler execution failed"
+            trace_back_nfo = self.context["log_error_helper"].trace_back_nfo(e)
+            raise RuntimeError(f"{core_msg}: {trace_back_nfo}")
         return dto

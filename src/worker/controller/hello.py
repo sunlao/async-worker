@@ -1,7 +1,7 @@
 from datetime import UTC
 from worker.connector.io.connector import Connector as CLI
 from worker.connector.api.connector import Connector as API
-from shared.models.constants import JobTypes, ActionTypes, ConnectorTypes
+from shared.models.constants import JobTypes, ConnectorTypes
 from shared.models.worker import (
     HelloEvent,
     ExecutionConfig,
@@ -36,6 +36,7 @@ class Hello:
     async def _db_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
     ):
+        print(f"action_type: {exe.JobConfig.ActionType}")
         pass
 
     async def _io_actions(
@@ -51,9 +52,7 @@ class Hello:
         **kwargs,
     ) -> HelloEvent:
         config_job = config_exe.JobConfig
-        dto = JobConfig(Type=JobTypes.MOVEMENT, Config=config_job, KWARGS=kwargs)
-        enqueue = await Route(self.context).execute(True, JobTypes.MOVEMENT, dto, result)
-        e_msg = f"{msg}" f" - {enqueue.Message} with status {enqueue.Status}"
+        # e_msg = f"{msg}" f" - {enqueue.Message} with status {enqueue.Status}"
         return self._event(config_exe, e_msg, result)
 
     def _event(
@@ -62,7 +61,7 @@ class Hello:
         return HelloEvent(
             JobId=exe.JobId,
             JobName=exe.JobConfig.Name,
-            Target=exe.JobConfig.Target,
+            ConnectionProfile=exe.JobConfig.ConnectionProfile,
             Status=True,
             Message=msg,
             Start=exe.Start,
@@ -82,4 +81,6 @@ class Hello:
         if connector_type == ConnectorTypes.API:
             result = self._api_actions(exe, profile, **kwargs)
         msg = "Movement Controller: Completed run"
-        return await self._enqueue(exe, msg, result, **kwargs)
+        result = HelloJobResult(Pass=True)
+
+        return self._event(exe, "g2g", result)
