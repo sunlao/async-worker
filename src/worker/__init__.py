@@ -2,7 +2,7 @@ from pathlib import Path
 from asyncio import sleep as async_sleep, subprocess, gather
 from httpx import AsyncClient
 from redis.asyncio import Redis
-from taskiq import TaskiqDepends, TaskiqEvents, TaskiqScheduler, TaskiqState
+from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState
 from taskiq_redis import (
     ListRedisScheduleSource,
     RedisAsyncResultBackend,
@@ -15,13 +15,12 @@ from shared.models.log import CoreError
 from shared.models.worker import (
     LifespanContext,
     WorkerInitContext,
-    JobConfig,
-    HelloConfig,
 )
 from shared.queue.client import Client
 from worker.core.lifespan import Lifespan
 from worker.core.queue import Queue
-from worker.handler.hello import Hello
+from worker.core.router import register
+
 
 locker = Locker()
 config_redis = locker.redis()
@@ -34,7 +33,9 @@ worker_init = WorkerInitContext(
     RedisURL=redis_url,
     RedisClient=redis_client,
 )
+
 queue = Queue(worker=worker_init, config=config_redis).build()
+register(queue)
 delay_source = ListRedisScheduleSource(redis_url)
 delay_dispatcher = TaskiqScheduler(broker=queue, sources=[delay_source])
 gate_path = Path(config_worker.GatePath)
@@ -100,13 +101,5 @@ async def shutdown(context: TaskiqState) -> None:
     core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, "Worker Shutdown")
     context.log.write_core(core)
 
-
-async def hello(
-    config: JobConfig[HelloConfig], context: TaskiqState = TaskiqDepends()
-) -> None:
-    await Hello(context).handle(config)
-
-
-queue.task(task_name=JobTypes.HELLO)(hello)
 queue.on_event(TaskiqEvents.WORKER_STARTUP)(startup)
 queue.on_event(TaskiqEvents.WORKER_SHUTDOWN)(shutdown)
