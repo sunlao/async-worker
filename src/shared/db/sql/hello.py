@@ -1,6 +1,7 @@
 class Hello:
     hello_audit = "select * from raw.audit_dtl($1)"
     hello_count = "select count(*) from awork.hello_world"
+    hello_db = "select 'hello' world, 'test' data"
     hello_delete_job = "delete from raw.hello_job where job_id = $1"
     hello_insert = "INSERT INTO awork.hello_world(col1, col2) VALUES ($1, $2)"
     hello_get_job = "SELECT count(*) FROM raw.hello_job"

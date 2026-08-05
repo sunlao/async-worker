@@ -1,12 +1,12 @@
 from datetime import UTC
 from worker.connector.io.connector import Connector as CLI
 from worker.connector.api.connector import Connector as API
-from shared.models.constants import JobTypes, ConnectorTypes
+from worker.connector.db.connector import Connector as DB
+from shared.models.constants import ConnectorTypes, ResourceTypes
 from shared.models.worker import (
     HelloEvent,
     ExecutionConfig,
     HelloConfig,
-    JobConfig,
     HelloJobResult,
     ConnectionProfile,
 )
@@ -36,8 +36,11 @@ class Hello:
     async def _db_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
     ):
-        print(f"action_type: {exe.JobConfig.ActionType}")
-        pass
+        if prof.ResourceType == ResourceTypes.DB_POOL:
+            async with self.context["db"].client() as conn:
+                return await DB().execute_db_pool(exe, prof, conn, **kwargs)
+            return
+        raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
     async def _io_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
@@ -69,7 +72,5 @@ class Hello:
             result = await self._io_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.API:
             result = await self._api_actions(exe, profile, **kwargs)
-        msg = "Movement Controller: Completed run"
         result = HelloJobResult(Pass=True)
-
         return self._event(exe, "g2g", result)
