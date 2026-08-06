@@ -37,7 +37,9 @@ class Hello:
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
     ):
         if prof.ResourceType == ResourceTypes.DB_POOL:
-            return await DB(self.context).execute_db_pool(exe, prof, **kwargs)
+            row = await DB(self.context).execute_db_pool(exe, prof, **kwargs)
+            print(f"print row: {row}")
+            return row
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
     async def _io_actions(
@@ -65,10 +67,10 @@ class Hello:
         profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
-            result = await self._db_actions(exe, profile, **kwargs)
+            result1 = await self._db_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.IO:
-            result = await self._io_actions(exe, profile, **kwargs)
+            result2 = await self._io_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.API:
-            result = await self._api_actions(exe, profile, **kwargs)
+            result3 = await self._api_actions(exe, profile, **kwargs)
         result = HelloJobResult(Pass=True)
         return self._event(exe, "g2g", result)

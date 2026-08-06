@@ -12,7 +12,7 @@ class DBConnectorError(RuntimeError):
 
 
 class Connector:
-    """CLI connector to interface"""
+    """DB connector for all controllers"""
 
     def __init__(self, context):
         self.db = context["db"]
@@ -21,10 +21,7 @@ class Connector:
     async def execute_db_pool(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
     ):
+        sql = self.query.get(exe.JobConfig.Cmd)
         async with self.db.client() as conn:
-            sql = self.query.get(exe.JobConfig.Cmd)
             if exe.JobConfig.ActionType == ActionTypes.SELECT_ONE:
-                row = await conn.fetchrow(sql)
-                print(f"row: {row}")
-        print(f"action type: {exe.JobConfig.ActionType}")
-        pass
+                return await conn.fetchrow(sql)
