@@ -3,7 +3,7 @@ from pathlib import Path
 from yaml import safe_load
 from shared.models.constants import JobTypes
 from shared.models.config import JobInputConfig
-from shared.models.worker import AdminConfig, JobConfig, HelloConfig
+from shared.models.worker import AdminConfig, JobConfig, HelloConfig, Query
 
 
 class Job:
@@ -54,11 +54,21 @@ class Job:
         raise RuntimeError(f"JobType: {job_type} is not Supported")
 
     def _hello(self, config) -> HelloConfig:
+        query = tuple(
+            Query(
+                Name=query["name"],
+                ActionType=query["action_type"],
+                Args=tuple(
+                    (arg_name, arg_value)
+                    for arg_name, arg_value in query.get("args", {}).items()
+                ),
+            )
+            for query in config["queries"]
+        )
         return HelloConfig(
             Name=config["name"],
-            ActionType=config["action_type"],
             ConnectionProfile=config["connection_profile"],
-            Cmd=config["cmd"],
+            Queries=query,
             **self._optional(config),
         )
 
