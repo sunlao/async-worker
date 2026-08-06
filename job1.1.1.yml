@@ -11,11 +11,12 @@ jobs:
       action_type: select_one
       args: null
     - name: hello_select_one_canary
-      action_type: select-one
+      action_type: select_one
       args:
-        - [$1, ABC, $2, ABC]
+        - [$1, ABC]
+        - [$2, ABC]
     - name: execute_many_canary
-      action_type: execute-many
+      action_type: execute_many
       args: None
     startup: true
     delay: 600

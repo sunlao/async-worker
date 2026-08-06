@@ -58,10 +58,7 @@ class Job:
             Query(
                 Name=query["name"],
                 ActionType=query["action_type"],
-                Args=tuple(
-                    (arg_name, arg_value)
-                    for arg_name, arg_value in query.get("args", {}).items()
-                ),
+                Args=tuple(tuple(arg) for arg in (query.get("args") or ())),
             )
             for query in config.get("queries", ())
         )
