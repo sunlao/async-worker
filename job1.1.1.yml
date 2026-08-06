@@ -6,24 +6,19 @@ jobs:
     queries:
     - name: hello_truncate_canary
       action_type: execute_one
-      args: null
     - name: hello_select_count_canary
       action_type: select_one
-      args: null
-    - name: hello_select_one_canary
-      action_type: select_one
-      args:
-        - [$1, ABC]
-        - [$2, ABC]
+    - name: hello_select_canary
+      action_type: select_many
     - name: execute_many_canary
       action_type: execute_many
-      args: None
+      args:
+        - [$1, ABC]
+        - [$2, DEF]
     startup: true
     delay: 600
     run_once: false
     run_next: [101]
-    kwargs:
-      sleep: 3
   - job_type: hello
     id: 101
     name: Hello-Api

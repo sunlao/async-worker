@@ -37,7 +37,7 @@ class Hello:
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
     ):
         if prof.ResourceType == ResourceTypes.DB_POOL:
-            row = await DB(self.context).execute_db_pool(exe, prof, **kwargs)
+            row = await DB(self.context).execute_db_pool_all(exe, prof, **kwargs)
             print(f"print row: {row}")
             return row
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")

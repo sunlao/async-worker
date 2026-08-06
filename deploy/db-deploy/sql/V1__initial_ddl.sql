@@ -1,8 +1,14 @@
 -- TABLES
 CREATE TABLE IF NOT EXISTS awork.hello_world (
-	col1 varchar null,
+	col1 text null,
 	col2 int4 null
 );
+
+CREATE TABLE IF NOT EXISTS awork.hello_job (
+	col1 text null,
+	col2 text null
+);
+
 
 CREATE TABLE IF NOT EXISTS  support.ops_ledger (
     job_type        text NOT NULL,

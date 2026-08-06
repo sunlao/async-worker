@@ -9,7 +9,20 @@ class Hello:
     hello_test_api_cnt = "SELECT count(*) FROM raw.hello_test_api"
     hello_test_trunc = "truncate table raw.hello_test_api"
     hello_test_api_fail = "SELECT count(*) FROM raw.hello_test_api_fail"
-
+    hello_truncate_canary = "TRUNCATE TABLE awork.hello_job"
+    hello_select_count_canary = "select count(*) from awork.hello_job"
+    hello_select_canary = """
+    select 'DEF'  from awork.hello_job
+    union all
+    select 'GHI'  from awork.hello_job
+    """
+    execute_many_canary = """
+    INSERT INTO raw.hello_job (col1, col2)
+    VALUES
+    (1000, $1),
+    (1001, $2);
+    """
+    
     hello_insert_job = """
 WITH ins AS (
     INSERT INTO raw.hello_job (job_id, execution_time)
