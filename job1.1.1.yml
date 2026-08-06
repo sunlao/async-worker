@@ -26,7 +26,6 @@ jobs:
   - job_type: hello
     id: 101
     name: Hello-Api
-    action_type: get
     connection_profile: unity_worker_api
     cmd: /info
   - job_type: hello

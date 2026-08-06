@@ -75,6 +75,8 @@ class Job:
     @staticmethod
     def _optional(config) -> dict:
         keymap = {
+            "cmd": "Cmd",
+            "action_type": "ActionType",
             "startup": "StartUp",
             "delay": "Delay",
             "run_once": "RunOnce",
