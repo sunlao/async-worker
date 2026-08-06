@@ -93,12 +93,18 @@ class Health(BaseModel):
     Queued: int
 
 
+class Query(BaseModel):
+    model_config = DTO_CONFIG
+    Name: str
+    ActionType: ActionTypes
+    Args: tuple[tuple[str, Any], ...] = ()
+
+
 class HelloConfig(BaseModel):
     model_config = DTO_CONFIG
     Name: StrictStr = Field(..., min_length=1)
     ConnectionProfile: str
-    ActionType: ActionTypes
-    Cmd: str
+    Queries: tuple[Query, ...]
     StartUp: bool = Field(default=False)
     Delay: int = Field(default=0, ge=0)
     RunOnce: bool = Field(default=True)
