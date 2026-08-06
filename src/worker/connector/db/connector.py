@@ -21,7 +21,12 @@ class Connector:
     async def execute_db_pool(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
     ):
-        sql = self.query.get(exe.JobConfig.Cmd)
-        async with self.db.client() as conn:
-            if exe.JobConfig.ActionType == ActionTypes.SELECT_ONE:
-                return await conn.fetchrow(sql)
+        queries = exe.JobConfig.Queries
+        print(f"queries: {queries}")
+        for q in queries:
+            print(f"q: {q}")
+        
+        # sql = self.query.get(exe.JobConfig.Cmd)
+        # async with self.db.client() as conn:
+        #     if exe.JobConfig.ActionType == ActionTypes.SELECT_ONE:
+        #         return await conn.fetchrow(sql)

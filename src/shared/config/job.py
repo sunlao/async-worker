@@ -63,7 +63,7 @@ class Job:
                     for arg_name, arg_value in query.get("args", {}).items()
                 ),
             )
-            for query in config["queries"]
+            for query in config.get("queries", ())
         )
         return HelloConfig(
             Name=config["name"],

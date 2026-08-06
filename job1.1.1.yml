@@ -3,20 +3,20 @@ jobs:
     id: 100
     name: Hello-DB
     connection_profile: unity_worker_db
-    Queries:
-    - Name: hello_truncate_canary
-      ActionType: execute_one
-      Args: null
-    - Name: hello_select_count_canary
-      ActionType: select_one
-      Args: null
-    - Name: hello_select_one_canary
-      ActionType: select-one
-      Args:
+    queries:
+    - name: hello_truncate_canary
+      action_type: execute_one
+      args: null
+    - name: hello_select_count_canary
+      action_type: select_one
+      args: null
+    - name: hello_select_one_canary
+      action_type: select-one
+      args:
         - [$1, ABC, $2, ABC]
-    - Name: execute_many_canary
-      ActionType: execute-many
-      Args: None
+    - name: execute_many_canary
+      action_type: execute-many
+      args: None
     startup: true
     delay: 600
     run_once: false
