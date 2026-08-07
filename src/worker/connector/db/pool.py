@@ -33,8 +33,6 @@ class Pool:
         return tuple(kwargs.get("args_orveride", None))
 
     async def execute(self, input: ConnecterDBPoolInput, **kwargs):
-        print(f"ARGS: {input.ARGS}")
-        print(f"kwarg: {kwargs.get("args_orveride", None)}")
         args = self._args(input.ARGS, **kwargs)
         print(f"args: {args}")
         async with self.db.client() as conn:
