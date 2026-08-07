@@ -45,6 +45,7 @@ class Hello:
                     ActionType=q.ActionType, SQLName=q.Name, ARGS=q.Args
                 )
                 print(f"name: {q.Name}")
+                print(f"q: {q.PassResultFlag}")
                 row = await Pool(self.context).execute(input, **pass_args)
                 print(f"row: {row}")
             return True

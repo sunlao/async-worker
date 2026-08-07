@@ -106,6 +106,7 @@ class Query(BaseModel):
     Name: str
     ActionType: ActionTypes
     Args: tuple[tuple[str, Any], ...] = ()
+    PassResultFlag: bool = False
 
 
 class HelloConfig(BaseModel):

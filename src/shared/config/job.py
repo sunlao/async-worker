@@ -79,6 +79,7 @@ class Job:
             "run_once": "RunOnce",
             "run_next": "RunNext",
             "retry": "Retry",
+            "pass_result_flag": "PassResultFlag"
         }
         return {v: config[k] for k, v in keymap.items() if k in config}
 

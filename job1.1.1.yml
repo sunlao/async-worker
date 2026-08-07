@@ -10,6 +10,7 @@ jobs:
       action_type: select_one
     - name: hello_select_canary
       action_type: select_many
+      pass_result_flag: true
     - name: execute_many_canary
       action_type: execute_many
       args:
