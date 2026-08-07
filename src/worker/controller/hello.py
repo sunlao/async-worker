@@ -1,4 +1,5 @@
 from datetime import UTC
+from typing import Any
 from worker.connector.io.connector import Connector as CLI
 from worker.connector.api.connector import Connector as API
 from worker.connector.db.pool import Pool
@@ -37,17 +38,23 @@ class Hello:
     async def _db_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile
     ):
-        pass_args = {}
         if prof.ResourceType == ResourceTypes.DB_EDGE:
             queries = exe.JobConfig.Queries
+            pass_kwargs = {}
             for q in queries:
                 input = ConnecterDBPoolInput(
                     ActionType=q.ActionType, SQLName=q.Name, ARGS=q.Args
                 )
                 print(f"name: {q.Name}")
                 print(f"q: {q.PassResultFlag}")
-                row = await Pool(self.context).execute(input, **pass_args)
-                print(f"row: {row}")
+                print(f"pre pass_kwargs: {pass_kwargs}")    
+                result = await Pool(self.context).execute(input, **pass_kwargs)
+                if q.PassResultFlag is True:
+                    pass_kwargs = self._pass_kwargs(result)
+                else:
+                    pass_kwargs = {}
+                print(f"post pass_kwargs: {pass_kwargs}")    
+                print(f"row: {result}")
             return True
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
@@ -70,6 +77,12 @@ class Hello:
             DurationMs=int((self.log.TimeCounter() - exe.StartCounter) * 1000),
             Result=result,
         )
+
+    @staticmethod
+    def _pass_kwargs(result) -> dict[str, object]:
+        return {
+            f"${i}": v for i, v in enumerate((v for r in result for v in r), start=1)
+        }
 
     async def execute(self, exe: ExecutionConfig[HelloConfig], **kwargs) -> HelloEvent:
         """Controller to execute Hello jobs Action Types by controller"""

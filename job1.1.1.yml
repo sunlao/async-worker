@@ -13,9 +13,10 @@ jobs:
       pass_result_flag: true
     - name: execute_many_canary
       action_type: execute_many
+    - name: hello_select_count_abc_canary
+      action_type: select_one  
       args:
         - [$1, ABC]
-        - [$2, DEF]
     startup: true
     delay: 600
     run_once: false

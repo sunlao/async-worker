@@ -26,12 +26,11 @@ class Pool:
 
     @staticmethod
     def _args(
-        name: str, args: tuple[tuple[str, Any], ...] = (), **kwargs
+        args: tuple[tuple[str, Any], ...] = (), **kwargs
     ) -> tuple[tuple[str, Any], ...]:
-        match = next((v for k, v in kwargs.items() if k == name), None)
-        if match is None:
+        if kwargs == {}:
             return args
-        return tuple(tuple(arg) for arg in match)
+        return tuple(kwargs.items())
 
     async def execute(self, input: ConnecterDBPoolInput, **kwargs):
         args = self._args(input.ARGS, **kwargs)

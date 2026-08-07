@@ -11,12 +11,21 @@ class Hello:
     hello_test_api_fail = "SELECT count(*) FROM raw.hello_test_api_fail"
     hello_truncate_canary = "TRUNCATE TABLE awork.hello_job"
     hello_select_count_canary = "select count(*) from awork.hello_job"
-    hello_select_canary = "select 'DEF' union all select 'GHI'"
+    hello_select_canary = "select 'ABC', 'DEF'  union all select 'GHI', 'JKL'"
     execute_many_canary = """
     INSERT INTO raw.hello_job (col1, col2)
     VALUES
     (1000, $1),
-    (1001, $2);
+    (1001, $2),
+    (1000, $3),
+    (1001, $4);
+    """
+
+    hello_select_count_abc_canary = """
+    select count(*) 
+    from 
+    awork.hello_job 
+    where col1 = $1
     """
 
     hello_insert_job = """
