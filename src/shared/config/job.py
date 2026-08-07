@@ -58,6 +58,7 @@ class Job:
             Query(
                 Name=query["name"],
                 ActionType=query["action_type"],
+                PassResultFlag=bool(query.get("args", False)),
                 Args=tuple(tuple(arg) for arg in (query.get("args") or ())),
             )
             for query in config.get("queries", ())
@@ -79,7 +80,6 @@ class Job:
             "run_once": "RunOnce",
             "run_next": "RunNext",
             "retry": "Retry",
-            "pass_result_flag": "PassResultFlag"
         }
         return {v: config[k] for k, v in keymap.items() if k in config}
 
