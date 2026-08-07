@@ -30,9 +30,11 @@ class Pool:
     ) -> tuple[tuple[str, Any], ...]:
         if kwargs == {}:
             return args
-        return tuple(kwargs.items())
+        return tuple(kwargs.get("args", None))
 
     async def execute(self, input: ConnecterDBPoolInput, **kwargs):
+        print(f"ARGS: {input.ARGS}")
+        print(f"kwarg: {kwargs.get("args", None)}")
         args = self._args(input.ARGS, **kwargs)
         print(f"args: {args}")
         async with self.db.client() as conn:

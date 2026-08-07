@@ -50,7 +50,7 @@ class Hello:
                 print(f"pre pass_kwargs: {pass_kwargs}")    
                 result = await Pool(self.context).execute(input, **pass_kwargs)
                 if q.PassResultFlag is True:
-                    pass_kwargs = self._pass_kwargs(result)
+                    pass_kwargs = {"args": self._pass_kwargs(result)}
                 else:
                     pass_kwargs = {}
                 print(f"post pass_kwargs: {pass_kwargs}")    
@@ -79,10 +79,8 @@ class Hello:
         )
 
     @staticmethod
-    def _pass_kwargs(result) -> dict[str, object]:
-        return {
-            f"${i}": v for i, v in enumerate((v for r in result for v in r), start=1)
-        }
+    def _pass_kwargs(result) -> tuple[object, ...]:
+        return tuple(value for row in result for value in row)
 
     async def execute(self, exe: ExecutionConfig[HelloConfig], **kwargs) -> HelloEvent:
         """Controller to execute Hello jobs Action Types by controller"""
