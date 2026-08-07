@@ -30,7 +30,7 @@ class Pool:
     ) -> tuple[tuple[str, Any], ...]:
         if kwargs == {}:
             return args
-        return tuple(kwargs.get("args", None))
+        return tuple(kwargs.get("args_orveride", None))
 
     async def execute(self, input: ConnecterDBPoolInput, **kwargs):
         print(f"ARGS: {input.ARGS}")

@@ -50,7 +50,7 @@ class Hello:
                 print(f"pre pass_kwargs: {pass_kwargs}")    
                 result = await Pool(self.context).execute(input, **pass_kwargs)
                 if q.PassResultFlag is True:
-                    pass_kwargs = {"args": self._pass_kwargs(result)}
+                    pass_kwargs = {"args_orveride": self._pass_kwargs(result)}
                 else:
                     pass_kwargs = {}
                 print(f"post pass_kwargs: {pass_kwargs}")    
