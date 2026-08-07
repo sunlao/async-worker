@@ -58,7 +58,7 @@ class Job:
             Query(
                 Name=query["name"],
                 ActionType=query["action_type"],
-                PassResultFlag=bool(query.get("args", False)),
+                PassResultFlag=bool(query.get("pass_result_flag", False)),
                 Args=tuple(tuple(arg) for arg in (query.get("args") or ())),
             )
             for query in config.get("queries", ())
