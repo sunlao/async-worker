@@ -1,7 +1,7 @@
 from datetime import UTC
 from worker.connector.io.connector import Connector as CLI
 from worker.connector.api.connector import Connector as API
-from worker.connector.db.connector import Connector as DB
+from worker.connector.db.pool import Pool
 from shared.models.constants import ConnectorTypes, ResourceTypes
 from shared.models.worker import (
     HelloEvent,
@@ -9,6 +9,7 @@ from shared.models.worker import (
     HelloConfig,
     HelloJobResult,
     ConnectionProfile,
+    ConnecterDBPoolInput,
 )
 
 
@@ -34,12 +35,19 @@ class Hello:
         pass
 
     async def _db_actions(
-        self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
+        self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile
     ):
-        if prof.ResourceType == ResourceTypes.DB_POOL:
-            row = await DB(self.context).execute_db_pool_all(exe, prof, **kwargs)
-            print(f"print row: {row}")
-            return row
+        pass_args = {}
+        if prof.ResourceType == ResourceTypes.DB_EDGE:
+            queries = exe.JobConfig.Queries
+            for q in queries:
+                input = ConnecterDBPoolInput(
+                    ActionType=q.ActionType, SQLName=q.Name, ARGS=q.Args
+                )
+                print(f"name: {q.Name}")
+                row = await Pool(self.context).execute(input, **pass_args)
+                print(f"row: {row}")
+            return True
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
     async def _io_actions(
@@ -67,7 +75,7 @@ class Hello:
         profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
-            result1 = await self._db_actions(exe, profile, **kwargs)
+            result1 = await self._db_actions(exe, profile)
         if connector_type == ConnectorTypes.IO:
             result2 = await self._io_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.API:

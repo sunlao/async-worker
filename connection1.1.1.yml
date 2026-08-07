@@ -1,7 +1,7 @@
 profiles:
   - name: unity_worker_db
     connector_type: db
-    resource_type: db_pool
+    resource_type: db_edge
   - name: unity_worker_api
     connector_type: api
     resource_type: api_client

@@ -117,7 +117,8 @@ class ResourceTypes(StrEnum):
         - have None for Config attribute
     """
 
-    DB_POOL = "db_pool"
+    DB_EDGE = "db_edge"
+    DB_JDBC = "db_jdbc"
     API_CLIENT = "api_client"
     REDIS_CLIENT = "redis_client"
     ASUBPROCESS = "asubprocess"
