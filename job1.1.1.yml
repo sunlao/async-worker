@@ -11,7 +11,7 @@ jobs:
     - name: hello_select_canary
       action_type: select_many
       pass_result_flag: true
-    - name: execute_many_canary
+    - name: hello_execute_many_canary
       action_type: execute_many
     - name: hello_select_count_abc_canary
       action_type: select_one  
