@@ -32,20 +32,19 @@ class Pool:
 
     async def execute(self, input: ConnecterDBPoolInput, **kwargs):
         args = self._args(input.ARGS, **kwargs)
-        print(f"args: {args}")
         async with self.db.client() as conn:
             if input.ActionType == ActionTypes.SELECT_ONE:
                 if args == ():
                     return await conn.fetchrow(self.query.get(input.SQLName))
-                return await conn.fetchrow(self.query.get(input.SQLName), args)
+                return await conn.fetchrow(self.query.get(input.SQLName), *args)
             if input.ActionType == ActionTypes.SELECT_MANY:
                 if args == ():
                     return await conn.fetch(self.query.get(input.SQLName))
-                return await conn.fetch(self.query.get(input.SQLName), args)
+                return await conn.fetch(self.query.get(input.SQLName), *args)
             if input.ActionType == ActionTypes.EXECUTE_ONE:
                 if args == ():
                     return await conn.execute(self.query.get(input.SQLName))
-                return await conn.execute(self.query.get(input.SQLName), args)
+                return await conn.execute(self.query.get(input.SQLName), *args)
             if input.ActionType == ActionTypes.EXECUTE_MANY:
                 if args == ():
                     return await conn.executemany(self.query.get(input.SQLName))
