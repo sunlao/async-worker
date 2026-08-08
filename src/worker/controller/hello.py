@@ -43,7 +43,7 @@ class Hello:
             pass_kwargs = {}
             for q in queries:
                 input = ConnecterDBPoolInput(
-                    ActionType=q.ActionType, SQLName=q.Name, ARGS=q.Args
+                    ActionType=q.ActionType, SQLName=q.Name, Args=q.Args
                 )
                 result = await Pool(self.context).execute(input, **pass_kwargs)
                 if q.PassResultFlag is True:
