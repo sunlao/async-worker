@@ -87,5 +87,5 @@ class Client:
         )
         delay = self._delay(request.Config.Delay, delay_overide)
         if delay is not None:
-            return self._exe_delay(request, enqueue_type, queue, delay, core)
-        return self._exe_run(request, enqueue_type, queue, core)
+            return await self._exe_delay(request, enqueue_type, queue, delay, core)
+        return await self._exe_run(request, enqueue_type, queue, core)
