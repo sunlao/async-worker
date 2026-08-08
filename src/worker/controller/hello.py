@@ -37,10 +37,10 @@ class Hello:
 
     @staticmethod
     def _db_check(check, result, name):
-        if name == "hello_select_count_abc_canary" and result == [1]:
-            return check["abc"] is True
-        if name == "hello_select_count_abc_def_canary" and result == [2]:
-            return check["abc_def"] is True
+        if name == "hello_select_count_abc_canary" and result[0] == 1:
+            check["abc"] = True
+        if name == "hello_select_count_abc_def_canary" and result[0] == 2:
+            check["abc_def"] = True
         return check
 
     async def _db_actions(
@@ -60,6 +60,8 @@ class Hello:
                     pass_kwargs = {"args_orveride": self._pass_kwargs(result)}
                 else:
                     pass_kwargs = {}
+                print(f"q.Name: {q.Name}")
+                print(f"result: {result}")        
             print(f"check: {check}")
             return True
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
