@@ -27,7 +27,7 @@ class AdminConfig(BaseModel):
     StartUp: bool = Field(default=True)
     Delay: int = Field(default=600, ge=0)
     RunOnce: bool = Field(default=False)
-    RunNext: Optional[tuple[int, ...]] = None
+    RunNext: tuple[int, ...] = ()
     Retry: int = Field(default=3, ge=0)
 
 
@@ -119,7 +119,7 @@ class HelloConfig(BaseModel):
     StartUp: bool = Field(default=False)
     Delay: int = Field(default=0, ge=0)
     RunOnce: bool = Field(default=True)
-    RunNext: Optional[tuple[int, ...]] = None
+    RunNext: tuple[int, ...] = ()
     Retry: int = Field(default=3, ge=0)
 
 

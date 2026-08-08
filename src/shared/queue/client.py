@@ -4,8 +4,9 @@ from shared.models.worker import JobConfig, EnqueueResponse
 
 
 class Client:
-    """Client for operating on queue
+    """Client for operating on the worker's queue
     - check gate for maintenance at instantiation
+    - enqueue joob
     """
 
     def __init__(self, context: TaskiqState):
@@ -24,9 +25,9 @@ class Client:
         return job_delay
 
     async def enqueue(self, request: JobConfig, delay_overide: int | None = None):
-        """Enquue operations
+        """Enqueue operations
         - configure queue resource by type and job id
-        - enqeue with or with out a delay
+        - enqueue with or with out a delay
           - Use delay overide if exists
           - Use job config delay if exists and delay overide is none
         """

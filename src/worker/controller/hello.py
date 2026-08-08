@@ -1,8 +1,5 @@
 from datetime import UTC
-from typing import Any
 from worker.connector.io.connector import Connector as CLI
-from worker.connector.api.connector import Connector as API
-from worker.connector.db.pool import Pool
 from shared.models.constants import ConnectorTypes, ResourceTypes
 from shared.models.worker import (
     HelloEvent,
@@ -12,13 +9,9 @@ from shared.models.worker import (
     ConnectionProfile,
     ConnecterDBPoolInput,
 )
-
-
-class HelloErrorHandling(Exception):
-    def __init__(self, p_job_id):
-        super().__init__(
-            f"{p_job_id} failed as part of Hello Controller error handling"
-        )
+from worker.connector.api.connector import Connector as API
+from worker.connector.db.pool import Pool
+from worker.controller.post_process import PostProcess
 
 
 class Hello:
@@ -29,6 +22,7 @@ class Hello:
         self.log = self.context["config_log"]
         self.gate = context["enqueue_gate"]
         self.connection = context.connection
+        self.post_process = PostProcess(self.context)
 
     async def _api_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
@@ -101,4 +95,5 @@ class Hello:
         if connector_type == ConnectorTypes.API:
             result3 = await self._api_actions(exe, profile, **kwargs)
         result = HelloJobResult(Pass=True)
+        self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)
