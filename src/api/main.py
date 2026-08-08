@@ -182,19 +182,13 @@ def create_api() -> FastAPI:
         return RootResponse(Message="Async API Service is up!")
 
     _api.include_router(
-        info.router,
-        prefix="/api/v1",
-        tags=["info"],
+        info.router, prefix="/api/v1", tags=["info"]
     )
     _api.include_router(
-        ready.router,
-        prefix="/api/v1",
-        tags=["info"],
+        ready.router, prefix="/api/v1", tags=["info"]
     )
     _api.include_router(
-        flush.router,
-        prefix="/api/v1",
-        tags=["flush"],
+        flush.router, prefix="/api/v1", tags=["flush"]
     )
 
     return _api
