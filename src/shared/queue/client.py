@@ -4,7 +4,7 @@ from taskiq import TaskiqState
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import EnqueueTypes, Events, LogLevel
 from shared.models.log import Event, EnqueueEvent
-from shared.models.worker import JobConfig, EnqueueResponse
+from shared.models.worker import JobConfig, EnqueueResponse, ReportState
 
 
 class Client:
