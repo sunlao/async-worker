@@ -158,7 +158,7 @@ class LogCoreInput(BaseModel):
 
 
 class ReportState(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = DTO_EDGE_CONFIG
     Enqueued: int = Field(ge=0)
     InFlight: int = Field(ge=0)
     Acknowledged: int = Field(ge=0)
