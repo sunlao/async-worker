@@ -1,7 +1,6 @@
 # pylint: disable=duplicate-code
 from contextlib import asynccontextmanager
 from pathlib import Path
-
 from fastapi import FastAPI, Request, Response
 from redis.asyncio import Redis
 from starlette.responses import PlainTextResponse
@@ -11,7 +10,6 @@ from taskiq_redis import (
     RedisAsyncResultBackend,
     RedisStreamBroker,
 )
-
 from api.metadata import tags
 from api.v1 import flush
 from api.v1.info import info, ready
