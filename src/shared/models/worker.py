@@ -3,14 +3,7 @@ from typing import Any, Awaitable, Callable, Generic, Optional
 from redis.asyncio import Redis
 from taskiq import AsyncBroker
 from taskiq.abc.result_backend import AsyncResultBackend
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    NonNegativeInt,
-    StrictStr,
-    UUID4,
-)
+from pydantic import BaseModel, Field, StrictStr, UUID4
 from shared.models.constants import (
     ActionTypes,
     JobTypes,
@@ -175,9 +168,9 @@ class LogCoreInput(BaseModel):
 
 class ReportState(BaseModel):
     model_config = ConfigDict(frozen=True)
-    Enqueued: NonNegativeInt
-    InFlight: NonNegativeInt
-    Acknowledged: NonNegativeInt
+    Enqueued: int = Field(ge=0)
+    InFlight: int = Field(ge=0)
+    Acknowledged: int = Field(ge=0)
     RedisHealthy: bool
 
 
