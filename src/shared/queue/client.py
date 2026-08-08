@@ -21,6 +21,9 @@ class Client:
         self.tx_id = self.config_log.UUID4()
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
+        self.redis = context.redis_client
+        self.stream = context.queue.queue_name
+        self.group = context.queue.consumer_group_name
 
     async def _exe_delay(
         self, request: JobConfig, enqueue_type: EnqueueTypes, queue, delay, core
@@ -64,6 +67,10 @@ class Client:
             return delay_overide
         return job_delay
 
+    @staticmethod
+    def _text(value: str | bytes) -> str:
+        return value.decode() if isinstance(value, bytes) else value
+
     async def enqueue(
         self,
         request: JobConfig,
@@ -89,14 +96,6 @@ class Client:
         if delay is not None:
             return await self._exe_delay(request, enqueue_type, queue, delay, core)
         return await self._exe_run(request, enqueue_type, queue, core)
-        
-        
-        
-        
- __init__(self, context: TaskiqState):
-        self.redis = context.redis_client
-        self.stream = context.queue.queue_name
-        self.group = context.queue.consumer_group_name
 
     async def state(self) -> ReportState:
         groups = await self.redis.xinfo_groups(self.stream)
@@ -112,6 +111,3 @@ class Client:
             Acknowledged=group["entries-read"] - in_flight,
         )
 
-    @staticmethod
-    def _text(value: str | bytes) -> str:
-        return value.decode() if isinstance(value, bytes) else value
