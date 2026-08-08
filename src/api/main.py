@@ -12,7 +12,7 @@ from taskiq_redis import (
 )
 from api.metadata import tags
 from api.v1 import flush
-from api.v1.info import info, ready
+from api.v1.info import info, ready, state
 from shared.config.locker import Locker
 from shared.db import Engine
 from shared.log.helpers.api_log_serializer import LogSerializer
@@ -176,15 +176,10 @@ def create_api() -> FastAPI:
         """Application Root"""
         return RootResponse(Message="Async API Service is up!")
 
-    _api.include_router(
-        info.router, prefix="/api/v1", tags=["info"]
-    )
-    _api.include_router(
-        ready.router, prefix="/api/v1", tags=["info"]
-    )
-    _api.include_router(
-        flush.router, prefix="/api/v1", tags=["flush"]
-    )
+    _api.include_router(info.router, prefix="/api/v1", tags=["info"])
+    _api.include_router(state.router, prefix="/api/v1", tags=["info"])
+    _api.include_router(ready.router, prefix="/api/v1", tags=["info"])
+    _api.include_router(flush.router, prefix="/api/v1", tags=["flush"])
 
     return _api
 
