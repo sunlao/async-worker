@@ -31,7 +31,7 @@ class Pool:
         return tuple(kwargs.get("args_orveride",(value for _, value in args),))
 
     async def execute(self, input: ConnecterDBPoolInput, **kwargs):
-        args = self._args(input.ARGS, **kwargs)
+        args = self._args(input.Args, **kwargs)
         async with self.db.client() as conn:
             if input.ActionType == ActionTypes.SELECT_ONE:
                 if args == ():
