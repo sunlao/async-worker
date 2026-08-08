@@ -79,7 +79,7 @@ async def lifespan(app: FastAPI):
     client_context.log = app.state.log
     client_context.enqueue_gate = app.state.enqueue_gate
 
-    app.state.client = Client(client_context)
+    app.state.worker = Client(client_context)
 
     await app.state.db.startup()
     await queue.startup()
