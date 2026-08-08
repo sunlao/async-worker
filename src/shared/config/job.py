@@ -81,7 +81,7 @@ class Job:
                 Name=q["name"],
                 ActionType=q["action_type"],
                 PassResultFlag=bool(q.get("pass_result_flag", False)),
-                Args=tuple(tuple(arg) for arg in (q.get("args") or ())),
+                Args=tuple(q.get("args") or ()),
             )
             for q in queries)    
 
