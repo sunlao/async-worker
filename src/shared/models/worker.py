@@ -3,7 +3,14 @@ from typing import Any, Awaitable, Callable, Generic, Optional
 from redis.asyncio import Redis
 from taskiq import AsyncBroker
 from taskiq.abc.result_backend import AsyncResultBackend
-from pydantic import BaseModel, Field, StrictStr, UUID4
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    NonNegativeInt,
+    StrictStr,
+    UUID4,
+)
 from shared.models.constants import (
     ActionTypes,
     JobTypes,
