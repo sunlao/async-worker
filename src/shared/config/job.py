@@ -54,19 +54,10 @@ class Job:
         raise RuntimeError(f"JobType: {job_type} is not Supported")
 
     def _hello(self, config) -> HelloConfig:
-        query = tuple(
-            Query(
-                Name=query["name"],
-                ActionType=query["action_type"],
-                PassResultFlag=bool(query.get("pass_result_flag", False)),
-                Args=tuple(tuple(arg) for arg in (query.get("args") or ())),
-            )
-            for query in config.get("queries", ())
-        )
         return HelloConfig(
             Name=config["name"],
             ConnectionProfile=config["connection_profile"],
-            Queries=query,
+            Queries=self._query(config.get("queries", ())),
             **self._optional(config),
         )
 
@@ -82,6 +73,17 @@ class Job:
             "retry": "Retry",
         }
         return {v: config[k] for k, v in keymap.items() if k in config}
+
+    @staticmethod
+    def _query(queries) -> Query:
+        return tuple(
+            Query(
+                Name=q["name"],
+                ActionType=q["action_type"],
+                PassResultFlag=bool(q.get("pass_result_flag", False)),
+                Args=tuple(tuple(arg) for arg in (q.get("args") or ())),
+            )
+            for q in queries)    
 
     def _validate(self):
         """Return a Validation key with a False value if check failed for:

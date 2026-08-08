@@ -58,7 +58,7 @@ class ConnecterDBPoolInput(BaseModel):
 
     ActionType: ActionTypes
     SQLName: str
-    ARGS: tuple[tuple[str, Any], ...]
+    Args: tuple[Any, ...]
 
 
 class ConnectionProfile(BaseModel, Generic[INPUTTYPE]):
@@ -105,7 +105,7 @@ class Query(BaseModel):
     model_config = DTO_CONFIG
     Name: str
     ActionType: ActionTypes
-    Args: tuple[tuple[str, Any], ...] = ()
+    Args: tuple[Any, ...] = ()
     PassResultFlag: bool = False
 
 
