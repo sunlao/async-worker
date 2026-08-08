@@ -77,6 +77,7 @@ async def startup(context: TaskiqState) -> None:
     - edge injectiion of all side effects
     - intit elible jobs for startup
     """
+    context.redis_client = worker_context.RedisClient
     await lifespan.startup(context)
     config_log = context.config_log
     try:
