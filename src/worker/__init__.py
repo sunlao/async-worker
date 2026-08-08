@@ -1,14 +1,9 @@
 from pathlib import Path
-from asyncio import (
-    sleep as async_sleep,
-    subprocess,
-    gather,
-    create_task,
-    CancelledError,
-)
+from asyncio import sleep as asleep, subprocess, gather, create_task, CancelledError
 from httpx import AsyncClient
 from redis.asyncio import Redis
-from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState, run_scheduler_task
+from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState
+from taskiq.api import run_scheduler_task
 from taskiq_redis import (
     ListRedisScheduleSource,
     RedisAsyncResultBackend,
@@ -44,7 +39,7 @@ gate_path = Path(config_worker.GatePath)
 lifespan_context = LifespanContext(
     Locker=locker,
     Queue=queue,
-    AsyncSleep=async_sleep,
+    AsyncSleep=asleep,
     SubProcess=subprocess,
     Gather=gather,
     EnqueueGate=gate_path.is_file(),
