@@ -95,5 +95,5 @@ class Hello:
         if connector_type == ConnectorTypes.API:
             result3 = await self._api_actions(exe, profile, **kwargs)
         result = HelloJobResult(Pass=True)
-        self.post_process.execute(exe.JobId)
+        await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)
