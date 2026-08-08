@@ -1,8 +1,14 @@
 from pathlib import Path
-from asyncio import sleep as async_sleep, subprocess, gather
+from asyncio import (
+    sleep as async_sleep,
+    subprocess,
+    gather,
+    create_task,
+    CancelledError,
+)
 from httpx import AsyncClient
 from redis.asyncio import Redis
-from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState
+from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState, run_scheduler_task
 from taskiq_redis import (
     ListRedisScheduleSource,
     RedisAsyncResultBackend,
@@ -76,7 +82,6 @@ async def startup(context: TaskiqState) -> None:
     - edge injectiion of all side effects
     - intit elible jobs for startup
     """
-    context.delay_source = delay_source
     await lifespan.startup(context)
     config_log = context.config_log
     try:
@@ -106,5 +111,20 @@ async def shutdown(context: TaskiqState) -> None:
     context.log.write_core(core)
 
 
+async def delay_startup(context: TaskiqState) -> None:
+    context.delay_source = delay_source
+    context.delay_dispatcher = create_task(run_scheduler_task(delay_dispatcher))
+
+
+async def delay_shutdown(context: TaskiqState) -> None:
+    context.delay_dispatcher.cancel()
+    try:
+        await context.delay_dispatcher
+    except CancelledError:
+        pass
+
+
 queue.on_event(TaskiqEvents.WORKER_STARTUP)(startup)
 queue.on_event(TaskiqEvents.WORKER_SHUTDOWN)(shutdown)
+queue.on_event(TaskiqEvents.WORKER_STARTUP)(delay_startup)
+queue.on_event(TaskiqEvents.WORKER_SHUTDOWN)(delay_shutdown)
