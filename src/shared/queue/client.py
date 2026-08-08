@@ -15,8 +15,6 @@ class Client:
 
     def __init__(self, context: TaskiqState):
         self.context = context
-        if self.context.enqueue_gate:
-            raise RuntimeError("Enqueue Gate Closed For Maintenance")
         self.config_log = context["config_log"]
         self.tx_id = self.config_log.UUID4()
         self.start_counter = self.config_log.TimeCounter()
