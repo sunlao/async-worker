@@ -25,9 +25,9 @@ class Client:
     async def _exe_delay(
         self, request: JobConfig, enqueue_type: EnqueueTypes, queue, delay, core
     ):
-        response = await queue.schedule_by_interval(
+        response = await queue.schedule_by_time(
             self.context.delay_source,
-            timedelta(seconds=delay),
+            self.config_log.Now(UTC) + timedelta(seconds=delay),
             config=request,
         )
         event = EnqueueEvent(
