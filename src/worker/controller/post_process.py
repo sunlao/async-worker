@@ -1,4 +1,5 @@
 from taskiq import TaskiqState
+from shared.models.constants import EnqueueTypes
 from shared.models.worker import EnqueueResponse
 from shared.queue.client import Client
 
@@ -11,17 +12,17 @@ class PostProcess:
         self.gather = context.gather
         self.client = Client(context)
 
-    async def _enqueue(self, job_id: int) -> EnqueueResponse:
+    async def _enqueue(self, job_id: int, type: EnqueueTypes) -> EnqueueResponse:
         job = self.job.config(job_id)
-        return await self.client.enqueue(job)
+        return await self.client.enqueue(job, type)
 
     async def execute(self, job_id: int) -> list[EnqueueResponse] | None:
-        job_ids = []
+        enqueue_info = []
         job = self.job.config(job_id)
         if job.Config.RunOnce is False:
-            job_ids.append(job.Id)
+            enqueue_info.append((job.Id, EnqueueTypes.REENQUEUE))
         for i in job.Config.RunNext:
-            job_ids.append(i)
-        if len(job_ids) == 0:
+            enqueue_info.append((i, EnqueueTypes.NEXT))
+        if len(enqueue_info) == 0:
             return None
-        return await self.gather(*(self._enqueue(i) for i in job_ids))
+        return await self.gather(*(self._enqueue(id, type) for id, type in enqueue_info))
