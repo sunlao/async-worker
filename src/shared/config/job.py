@@ -83,7 +83,8 @@ class Job:
                 PassResultFlag=bool(q.get("pass_result_flag", False)),
                 Args=tuple(q.get("args") or ()),
             )
-            for q in queries)    
+            for q in queries
+        )
 
     def _validate(self):
         """Return a Validation key with a False value if check failed for:

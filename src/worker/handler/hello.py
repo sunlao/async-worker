@@ -52,7 +52,7 @@ class Hello:
     ) -> EventError:
         core_msg = f"Failed to execute {job.Config.Name} Job"
         core = core_log(
-            self.context["config_log"], LogLevel.ERROR, Events.JOB, core_msg
+            self.context["config_log"], LogLevel.ERROR, Events.HANDLER, core_msg
         )
         error_result = HelloJobResult(Pass=False)
         event_dto = HelloEvent(
@@ -74,7 +74,7 @@ class Hello:
 
     def _log(self, results: HandleExecution, job: JobConfig[HelloConfig]) -> Event:
         msg = f"Execute Job: {job.Config.Name}"
-        core = core_log(self.config_log, LogLevel.INFO, Events.JOB, msg)
+        core = core_log(self.config_log, LogLevel.INFO, Events.HANDLER, msg)
         dto: Event[HelloEvent] = Event(Core=core, Event=results.Event)
         self.context["log"].write_event(dto)
         return dto

@@ -41,7 +41,7 @@ class Hello:
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile
     ):
         if prof.ResourceType == ResourceTypes.DB_EDGE:
-            check = {"abc":False, "abc_def": False}
+            check = {"abc": False, "abc_def": False}
             queries = exe.JobConfig.Queries
             pass_kwargs = {}
             for q in queries:

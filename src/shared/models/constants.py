@@ -56,6 +56,12 @@ class DebugStatus(StrEnum):
     ERROR = "error"
 
 
+class EnqueueTypes(StrEnum):
+    START_UP = "startup"
+    NEXT = "next"
+    REENQUEUE = "reenqueue"
+
+
 class Environments(StrEnum):
     """Constants for Supported Environments"""
 
@@ -72,8 +78,8 @@ class Events(StrEnum):
     HTTP_ERROR = "http_error"
     DBOPEN = "db_open"
     POOLSNAPSHOT = "pool_snap_shot"
-    JOB = "job"
-    QUIESCE = "quiesce"
+    HANDLER = "handler"
+    ENQUEUE = "enqueue"
 
 
 class JobTypes(StrEnum):

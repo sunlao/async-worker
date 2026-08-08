@@ -4,7 +4,15 @@ from uuid import uuid4
 from typing import Generic, Callable
 from pydantic import Field, UUID4
 from pydantic import BaseModel, SkipValidation
-from shared.models.constants import Events, LogLevel, PathParts, Services, Environments
+from shared.models.constants import (
+    Events,
+    LogLevel,
+    PathParts,
+    Services,
+    Environments,
+    JobTypes,
+    EnqueueTypes,
+)
 from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 
 
@@ -82,6 +90,15 @@ class CoreError(BaseModel):
     model_config = DTO_CONFIG
     Core: Core
     Error: TraceBackEvent
+
+
+class EnqueueEvent(BaseModel):
+    model_config = DTO_CONFIG
+    JobId: int = Field(gt=0)
+    JobType: JobTypes
+    EnqueueType: EnqueueTypes
+    DelayId: str | None = None
+    RunId: str | None = None
 
 
 class EventError(BaseModel, Generic[INPUTTYPE]):
