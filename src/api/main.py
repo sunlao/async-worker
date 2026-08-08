@@ -157,18 +157,13 @@ def create_api() -> FastAPI:
                     str(error),
                 )
                 error_event_input = ASGIEvent(
-                    Request=request,
-                    Response=response,
-                    DurationMS=duration,
+                    Request=request, Response=response, DurationMS=duration
                 )
                 error_event_dto = request.app.state.format_log.build(
-                    err_core,
-                    error_event_input,
+                    err_core, error_event_input
                 )
                 error_event_error_dto = EventError(
-                    Core=error_event_dto.Core,
-                    Event=error_event_dto.Event,
-                    Error=trace_back_nfo,
+                    Core=error_event_dto.Core, Event=error_event_dto.Event, Error=trace_back_nfo
                 )
                 request.app.state.log.write_event_error(
                     dto=error_event_error_dto
