@@ -60,10 +60,9 @@ class Hello:
                     pass_kwargs = {"args_orveride": self._pass_kwargs(result)}
                 else:
                     pass_kwargs = {}
-                print(f"q.Name: {q.Name}")
-                print(f"result: {result}")        
-            print(f"check: {check}")
-            return True
+            if check["abc"] is True and check["abc_def"] is True:
+                return HelloJobResult(Pass=True)
+            return HelloJobResult(Pass=False)
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
     async def _io_actions(
@@ -96,6 +95,7 @@ class Hello:
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
             result1 = await self._db_actions(exe, profile)
+            print(f"result: {result1}")
         if connector_type == ConnectorTypes.IO:
             result2 = await self._io_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.API:
