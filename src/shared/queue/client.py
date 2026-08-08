@@ -97,6 +97,9 @@ class Client:
             return await self._exe_delay(request, enqueue_type, queue, delay, core)
         return await self._exe_run(request, enqueue_type, queue, core)
 
+    async def ping(self) -> bool:
+        return await self.redis.ping()
+
     async def state(self) -> ReportState:
         groups = await self.redis.xinfo_groups(self.stream)
         group = next(
