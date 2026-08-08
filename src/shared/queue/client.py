@@ -81,6 +81,8 @@ class Client:
           - Use delay overide if exists
           - Use job config delay if exists and delay overide is none
         """
+        if self.context.enqueue_gate is True:
+            raise RuntimeError("Enqueue Gate Closed For Maintenance")
         queue = (
             self.context.queue.find_task(request.Type)
             .kicker()
