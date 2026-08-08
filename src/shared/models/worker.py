@@ -92,15 +92,6 @@ class HandleExecution(BaseModel, Generic[INPUTTYPE]):
     TraceBackEvent: Optional[TraceBackEvent]
 
 
-class Health(BaseModel):
-    model_config = DTO_CONFIG
-    Complete: int
-    Failed: int
-    Retried: int
-    Ongoing: int
-    Queued: int
-
-
 class Query(BaseModel):
     model_config = DTO_CONFIG
     Name: str
@@ -171,7 +162,6 @@ class ReportState(BaseModel):
     Enqueued: int = Field(ge=0)
     InFlight: int = Field(ge=0)
     Acknowledged: int = Field(ge=0)
-    RedisHealthy: bool
 
 
 class WorkerConfig(BaseModel):
