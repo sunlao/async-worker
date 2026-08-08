@@ -1,12 +1,12 @@
-from pydantic import BaseModel, ConfigDict, NonNegativeInt
 from taskiq import TaskiqState
+from shared.models.worker import ReportState
 
 
 class Reporter:
     def __init__(self, context: TaskiqState):
-        self.redis = context.RedisClient
-        self.stream = context.QueueName
-        self.group = context.ConsumerGroup
+        self.redis = context.redis_client
+        self.stream = context.queue.queue_name
+        self.group = context.queue.consumer_group_name
 
     async def state(self) -> ReportState:
         redis_healthy = await self.redis.ping()
