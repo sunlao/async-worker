@@ -51,7 +51,7 @@ class Client:
         )
         core_msg = f"Enqueue Job Id: {request.Id} with Job Type: {request.Type} "
         core = core_log(
-            self.coenqueuentext["config_log"], LogLevel.INFO, Events.ENQUEUE, core_msg
+            self.context["config_log"], LogLevel.INFO, Events.ENQUEUE, core_msg
         )
         delay = self._delay(request.Config.Delay, delay_overide)
         if delay is not None:
