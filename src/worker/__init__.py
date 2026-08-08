@@ -10,7 +10,7 @@ from taskiq_redis import (
 )
 from shared.config.locker import Locker
 from shared.log.helpers.core import build as core_log
-from shared.models.constants import Events, LogLevel, JobTypes
+from shared.models.constants import Events, LogLevel, JobTypes, EnqueueTypes
 from shared.models.log import CoreError
 from shared.models.worker import LifespanContext, WorkerInitContext
 from shared.queue.client import Client
@@ -49,7 +49,9 @@ lifespan = Lifespan(lifespan_context)
 async def enqueue_all(context: TaskiqState, job_type: JobTypes) -> list:
     configs = context.job.startup_configs(job_type)
     client = Client(context)
-    return await context.gather(*[client.enqueue(c, 0) for c in configs])
+    return await context.gather(
+        *[client.enqueue(c, EnqueueTypes.START_UP, 0) for c in configs]
+    )
 
 
 async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
