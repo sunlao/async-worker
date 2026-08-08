@@ -26,9 +26,10 @@ class Pool:
 
     @staticmethod
     def _args(
-        args: tuple[tuple[str, Any], ...] = (), **kwargs: Any,
+        args: tuple[Any, ...] = (),
+        **kwargs: Any,
     ) -> tuple[Any, ...]:
-        return tuple(kwargs.get("args_orveride",(value for _, value in args),))
+        return tuple(kwargs.get("args_orveride", args))
 
     async def execute(self, input: ConnecterDBPoolInput, **kwargs):
         args = self._args(input.Args, **kwargs)
