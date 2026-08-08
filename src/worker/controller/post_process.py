@@ -25,4 +25,6 @@ class PostProcess:
             enqueue_info.append((i, EnqueueTypes.NEXT))
         if len(enqueue_info) == 0:
             return None
-        return await self.gather(*(self._enqueue(id, type) for id, type in enqueue_info))
+        return await self.gather(
+            *(self._enqueue(id, type) for id, type in enqueue_info)
+        )

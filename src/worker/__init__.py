@@ -47,14 +47,16 @@ lifespan = Lifespan(lifespan_context)
 
 
 async def enqueue_all(context: TaskiqState, job_type: JobTypes) -> list:
+    """Async enqueue startup elgible jobs with overide delay of 1 second by type"""
     configs = context.job.startup_configs(job_type)
     client = Client(context)
     return await context.gather(
-        *[client.enqueue(c, EnqueueTypes.START_UP, 0) for c in configs]
+        *[client.enqueue(c, EnqueueTypes.START_UP, 1) for c in configs]
     )
 
 
 async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
+    """Send All startup eligble jobs type shared enqueue client"""
     config_log = context.config_log
     try:
         response = await enqueue_all(context, job_type)
@@ -69,6 +71,11 @@ async def jobs(context: TaskiqState, job_type: JobTypes) -> None:
 
 
 async def startup(context: TaskiqState) -> None:
+    """Framework startup
+    - create and start resources
+    - edge injectiion of all side effects
+    - intit elible jobs for startup
+    """
     context.delay_source = delay_source
     await lifespan.startup(context)
     config_log = context.config_log

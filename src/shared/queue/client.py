@@ -22,6 +22,38 @@ class Client:
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
 
+    async def _exe_delay(
+        self, request: JobConfig, enqueue_type: EnqueueTypes, queue, delay, core
+    ):
+        response = await queue.schedule_by_interval(
+            self.context.delay_source,
+            timedelta(seconds=delay),
+            config=request,
+        )
+        event = EnqueueEvent(
+            JobId=request.Id,
+            JobType=request.Type,
+            EnqueueType=enqueue_type,
+            DelayId=response.schedule_id,
+        )
+        dto: Event[EnqueueEvent] = Event(Core=core, Event=event)
+        self.context["log"].write_event(dto)
+        return EnqueueResponse(JobId=request.Id, DelayId=response.schedule_id)
+
+    async def _exe_run(
+        self, request: JobConfig, enqueue_type: EnqueueTypes, queue, core
+    ):
+        response = await queue.kiq(config=request)
+        event = EnqueueEvent(
+            JobId=request.Id,
+            JobType=request.Type,
+            EnqueueType=enqueue_type,
+            RunId=response.task_id,
+        )
+        dto: Event[EnqueueEvent] = Event(Core=core, Event=event)
+        self.context["log"].write_event(dto)
+        return EnqueueResponse(JobId=request.Id, RunId=response.task_id)
+
     @staticmethod
     def _delay(
         job_delay: int | None = None, delay_overide: int | None = None
@@ -55,27 +87,5 @@ class Client:
         )
         delay = self._delay(request.Config.Delay, delay_overide)
         if delay is not None:
-            response = await queue.schedule_by_interval(
-                self.context.delay_source,
-                timedelta(seconds=delay),
-                config=request,
-            )
-            event = EnqueueEvent(
-                JobId=request.Id,
-                JobType=request.Type,
-                EnqueueType=enqueue_type,
-                DelayId=response.schedule_id,
-            )
-            dto: Event[EnqueueEvent] = Event(Core=core, Event=event)
-            self.context["log"].write_event(dto)
-            return EnqueueResponse(JobId=request.Id, DelayId=response.schedule_id)
-        response = await queue.kiq(config=request)
-        event = EnqueueEvent(
-            JobId=request.Id,
-            JobType=request.Type,
-            EnqueueType=enqueue_type,
-            RunId=response.task_id,
-        )
-        dto: Event[EnqueueEvent] = Event(Core=core, Event=event)
-        self.context["log"].write_event(dto)
-        return EnqueueResponse(JobId=request.Id, RunId=response.task_id)
+            return self._exe_delay(request, enqueue_type, queue, delay, core)
+        return self._exe_run(request, enqueue_type, queue, core)
