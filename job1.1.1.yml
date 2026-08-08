@@ -16,11 +16,11 @@ jobs:
     - name: hello_select_count_abc_canary
       action_type: select_one  
       args:
-        - [1001]
+        - [kwarg, (1001)]
     - name: hello_select_count_abc_def_canary
       action_type: select_one
       args:
-        - [1001, 1002]     
+        - [kwarg, (1001, 1002)]     
     startup: true
     delay: 600
     run_once: false
