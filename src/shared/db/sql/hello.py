@@ -20,12 +20,17 @@ class Hello:
     (1002, $3),
     (1003, $4);
     """
-
     hello_select_count_abc_canary = """
     select count(*) 
     from 
     awork.hello_job 
     where col1 = $1
+    """
+    hello_select_count_abc_def_canary = """
+    select count(*) 
+    from 
+    awork.hello_job 
+    where col1 = $1 or col1 = $2
     """
 
     hello_insert_job = """

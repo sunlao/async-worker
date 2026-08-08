@@ -45,8 +45,6 @@ class Hello:
                 input = ConnecterDBPoolInput(
                     ActionType=q.ActionType, SQLName=q.Name, ARGS=q.Args
                 )
-                print(f"name: {q.Name}")
-                print(f"pre pass_kwargs: {pass_kwargs}")    
                 result = await Pool(self.context).execute(input, **pass_kwargs)
                 if q.PassResultFlag is True:
                     pass_kwargs = {"args_orveride": self._pass_kwargs(result)}
