@@ -166,6 +166,14 @@ class LogCoreInput(BaseModel):
     Name: str
 
 
+class ReportState(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    Enqueued: NonNegativeInt
+    InFlight: NonNegativeInt
+    Acknowledged: NonNegativeInt
+    RedisHealthy: bool
+
+
 class WorkerConfig(BaseModel):
     model_config = DTO_CONFIG
     StartUp: bool
