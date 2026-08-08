@@ -9,7 +9,6 @@ class Reporter:
         self.group = context.queue.consumer_group_name
 
     async def state(self) -> ReportState:
-        redis_healthy = await self.redis.ping()
         groups = await self.redis.xinfo_groups(self.stream)
         group = next(
             item
@@ -21,7 +20,6 @@ class Reporter:
             Enqueued=group["lag"],
             InFlight=in_flight,
             Acknowledged=group["entries-read"] - in_flight,
-            RedisHealthy=redis_healthy,
         )
 
     @staticmethod
