@@ -1,5 +1,5 @@
 from datetime import UTC
-from worker.connector.io.connector import Connector as CLI
+from worker.connector.io.connector import Connector as io
 from shared.models.api import ReadyResponse
 from shared.models.constants import ConnectorTypes, ResourceTypes, ActionTypes
 from shared.models.worker import (

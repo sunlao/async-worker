@@ -13,7 +13,17 @@ class Connector:
         self.sp = context["asubprocess"]
         self.platform = context.config_worker.Platform
 
-    async def _cmd(self, command: str, fail_on_stderr: bool = True) -> bytes:
+    async def _kill(self, pid: int) -> None:
+        if self.platform == "nt":
+            command = f"taskkill /PID {pid} /T /F"
+        else:
+            command = f"kill -KILL -- -{pid}"
+        proc = await self.sp.create_subprocess_shell(
+            command, stdout=self.sp.DEVNULL, stderr=self.sp.DEVNULL
+        )
+        await proc.wait()
+
+    async def execute(self, command: str, fail_on_stderr: bool = True) -> bytes:
         """Execute command and return raw stdout bytes."""
         options = {"stdout": self.sp.PIPE, "stderr": self.sp.PIPE}
         if self.platform != "nt":
@@ -35,13 +45,3 @@ class Connector:
                 f"stderr not empty ({len(stderr)}) for command {command}"
             )
         return stdout
-
-    async def _kill(self, pid: int) -> None:
-        if self.platform == "nt":
-            command = f"taskkill /PID {pid} /T /F"
-        else:
-            command = f"kill -KILL -- -{pid}"
-        proc = await self.sp.create_subprocess_shell(
-            command, stdout=self.sp.DEVNULL, stderr=self.sp.DEVNULL
-        )
-        await proc.wait()
