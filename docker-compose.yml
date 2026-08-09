@@ -130,7 +130,7 @@ services:
             "CMD",
             "python",
             "-c",
-            "import urllib.request; urllib.request.urlopen('http://localhost:${API_PORT}/api/v1/info/ready')"
+            "import os; from datetime import UTC, datetime; from redis import Redis; value = Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), decode_responses=True).get('awork-worker-heartbeat'); assert value is not None and (datetime.now(UTC) - datetime.fromisoformat(value)).total_seconds() <= 120"
           ]
         interval: 30s
         timeout: 5s
