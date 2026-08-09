@@ -70,8 +70,8 @@ class Hello:
                 else:
                     pass_kwargs = {}
             if check["abc"] is True and check["abc_def"] is True:
-                return HelloJobResult(Pass=True, Message="DB Checks pass after instert")
-            return HelloJobResult(Pass=False, Message="DB Checks failed after instert")
+                return HelloJobResult(Pass=True, Message="DB Checks pass after insert")
+            return HelloJobResult(Pass=False, Message="DB Checks failed after insert")
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
     async def _io_actions(
@@ -107,15 +107,15 @@ class Hello:
     def _pass_kwargs(result) -> tuple[object, ...]:
         return tuple(value for row in result for value in row)
 
-    async def execute(self, exe: ExecutionConfig[HelloConfig], **kwargs) -> HelloEvent:
+    async def execute(self, exe: ExecutionConfig[HelloConfig]) -> HelloEvent:
         """Controller to execute Hello jobs Action Types by controller"""
         profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
             result = await self._db_actions(exe, profile)
         if connector_type == ConnectorTypes.IO:
-            result = await self._io_actions(exe, profile, **kwargs)
+            result = await self._io_actions(exe, profile)
         if connector_type == ConnectorTypes.API:
-            result = await self._api_actions(exe, profile, **kwargs)
+            result = await self._api_actions(exe, profile)
         await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)

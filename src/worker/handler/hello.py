@@ -36,9 +36,7 @@ class Hello:
             StartCounter=self.start_counter,
         )
         try:
-            job_event_dto = await Controller(self.context).execute(
-                config, **dict(job.KWARGS)
-            )
+            job_event_dto = await Controller(self.context).execute(config)
         except Exception as e:  # pylint: disable=broad-except
             error_flag = True
             trace_back_nfo = self.context["log_error_helper"].trace_back_nfo(e)
@@ -48,19 +46,18 @@ class Hello:
         return results
 
     def _log_error(
-        self, job: JobConfig[HelloConfig], results: HandleExecution
+        self, job: JobConfig[HelloConfig], results: HelloJobResult
     ) -> EventError:
         core_msg = f"Failed to execute {job.Config.Name} Job"
         core = core_log(
             self.context["config_log"], LogLevel.ERROR, Events.HANDLER, core_msg
         )
-        error_result = HelloJobResult(Pass=False)
         event_dto = HelloEvent(
             JobId=job.Id,
             JobName=job.Config.Name,
             ConnectionProfile=job.Config.ConnectionProfile,
             Status=False,
-            Result=error_result,
+            Result=results,
             Message="Hello Handler",
             Start=self.start,
             End=self.config_log.Now(UTC),
