@@ -1,64 +1,4 @@
 services:
-  api:
-    build:
-      context: .
-      dockerfile: ./deploy/api/Dockerfile
-    image: ${APP_CODE}-api:latest
-    platform: linux/amd64
-    container_name: ${APP_CODE}-api
-    command:
-      [
-        "uvicorn",
-        "src.api.main:api",
-        "--host",
-        "0.0.0.0",
-        "--port",
-        "${API_PORT}",
-        "--reload"
-      ]
-    ports:
-      - "${API_PUB_PORT}:${API_PORT}"    
-    environment:
-      - APP_CODE=${APP_CODE}
-      - ENV=${ENV}
-      - SERVICE=${APP_CODE}-api
-      - DB_HOST=${APP_CODE}-postgres
-      - DB_APP_PWD=${DB_APP_PWD}
-      - DB_NAME=db_${APP_CODE}
-      - DB_PORT=${DB_PORT}
-      - DB_MAX_POOL=${DB_MAX_POOL_API}
-      - REDIS_HOST=${APP_CODE}-redis
-      - REDIS_PORT=${REDIS_PORT}
-      - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
-      - API_STATIC_DIR=${API_STATIC_DIR}
-      - TZ=GMT
-      - LOG_LEVEL=info
-      - LOG_DIR=/logs
-      - LOG_TO_FILE=true
-      - BACKUP_COUNT=14
-      - PYTHONPATH=/app/src
-      - JOB_PATH=${JOB_PATH}
-      - JOB_VERSION=${JOB_VERSION}
-      - CONNECTION_PATH=${CONNECTION_PATH}
-      - CONNECTION_VERSION=${CONNECTION_VERSION}
-      - PYTHONDONTWRITEBYTECODE=1
-      - WATCHFILES_FORCE_POLLING=1
-      - GATE_CLOSE_PATH=${GATE_CLOSE_PATH}
-    volumes:
-      - ./data/gate:/app/gate:ro
-      - ./src/api:/app/src/api:rw
-      - ./src/shared:/app/src/shared:rw
-      - ./logs:/logs:rw
-      - ./job${JOB_VERSION}.yml:/app/job${JOB_VERSION}.yml:r
-      - ./connection${CONNECTION_VERSION}.yml:/app/connection${CONNECTION_VERSION}.yml:r      
-    depends_on:
-      db-deploy:
-        condition: service_completed_successfully  
-      worker:
-        condition: service_healthy                  
-    networks:
-      - "${APP_CODE}net"
-
 
   db-deploy:
     build:
@@ -110,19 +50,7 @@ services:
         dockerfile: ./deploy/worker/Dockerfile
       image: ${APP_CODE}-worker:latest
       container_name: ${APP_CODE}-worker
-      command:
-        - taskiq
-        - worker
-        - worker:queue
-        - --workers
-        - ${TASKIQ_WORKERS}
-        - --max-async-tasks
-        - ${TASKIQ_MAX_ASYNC_TASKS}
-        - --max-prefetch
-        - ${TASKIQ_MAX_PREFETCH}
-        - --ack-type
-        - ${ACK_TYPE}
-        - --reload
+      command: ["/bin/sh", "/app/start.sh"]
       restart: unless-stopped   
       healthcheck:
         test: ["CMD", "python", "/app/health.py"]
@@ -131,9 +59,9 @@ services:
         retries: 3
         start_period: 30s
       environment:
+        - ENV=${ENV}
         - APP_CODE=${APP_CODE}
         - SERVICE=${APP_CODE}-worker
-        - ENV=${ENV}
         - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
         - REDIS_HOST=${APP_CODE}-redis
         - REDIS_PORT=${REDIS_PORT}
@@ -143,25 +71,27 @@ services:
         - TASKIQ_MAX_THREADPOOL_THREADS=${TASKIQ_MAX_THREADPOOL_THREADS}
         - TASKIQ_MAX_PROCESS_POOL_PROCESSES=${TASKIQ_MAX_PROCESS_POOL_PROCESSES}
         - DB_HOST=${APP_CODE}-postgres
+        - DB_APP_PWD=${DB_APP_PWD}
         - DB_SUPPORT_PWD=${DB_SUPPORT_PWD}
         - DB_NAME=db_${APP_CODE}
         - DB_PORT=${DB_PORT}
         - DB_MAX_POOL=${DB_MAX_POOL_WORKER}
+        - API_STATIC_DIR=${API_STATIC_DIR}
         - TZ=GMT
         - LOG_LEVEL=info
         - LOG_DIR=/logs
-        - DATA_DIR=/data
         - LOG_TO_FILE=true
+        - DATA_DIR=/data
         - BACKUP_COUNT=10
-        - PYTHONDONTWRITEBYTECODE=1
-        - WATCHFILES_FORCE_POLLING=1      
         - PYTHONPATH=/app/src
+        - PYTHONDONTWRITEBYTECODE=1
         - START_UP=${START_UP}
         - JOB_PATH=${JOB_PATH}
         - JOB_VERSION=${JOB_VERSION}
         - CONNECTION_PATH=${CONNECTION_PATH}
         - CONNECTION_VERSION=${CONNECTION_VERSION}
         - GATE_CLOSE_PATH=${GATE_CLOSE_PATH}      
+        - WATCHFILES_FORCE_POLLING=1      
       depends_on:
         redis:
           condition: service_started
@@ -170,6 +100,7 @@ services:
       links:
         - redis
       volumes:
+        - ./src/api:/app/src/api:rw
         - ./src/shared:/app/src/shared:ro
         - ./src/worker:/app/src/worker:ro
         - ./data:/data:rw
