@@ -49,7 +49,7 @@ jobs:
     id: 1004
     name: Heartbeat
     connection_profile: unity_worker_redis
-    action_type: upsert
+    action_type: set
     key: awork-worker-heartbeat
     startup: true
     delay: 60
