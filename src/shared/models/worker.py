@@ -152,6 +152,14 @@ class LogCoreInput(BaseModel):
     Name: str
 
 
+class EnqueueEvent(BaseModel):
+    model_config = DTO_CONFIG
+    JobId: int = Field(gt=0)
+    JobName: str
+    Message: str
+    Start: datetime
+
+
 class ReportState(BaseModel):
     model_config = DTO_CONFIG
     Delayed: int = Field(ge=0)

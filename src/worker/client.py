@@ -21,7 +21,7 @@ class Client:
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
         self.redis = context.redis_client
-        self.unique_job = UniqueJob(self.redis)
+        self.unique_job = UniqueJob(context)
         self.stream = context.queue.queue_name
         self.group = context.queue.consumer_group_name
 
