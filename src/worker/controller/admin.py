@@ -42,7 +42,7 @@ class Admin:
             )
             return AdminJobResult(Pass=result)
         else:
-            raise RuntimeError(f"Unsupported ActionType: {exe.Config.ActionType}")
+            raise RuntimeError(f"Unsupported ActionType: {exe.JobConfig.ActionType}")
 
     def _event(
         self, exe: ExecutionConfig[AdminConfig], msg: str, result: AdminJobResult
