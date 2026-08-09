@@ -5,6 +5,7 @@ from shared.log.helpers.core import build as core_log
 from shared.models.constants import EnqueueTypes, Events, LogLevel
 from shared.models.log import Event, EnqueueEvent
 from shared.models.worker import JobConfig, EnqueueResponse, ReportState
+from worker.core.unique_job import UniqueJob
 
 
 class Client:
@@ -20,17 +21,26 @@ class Client:
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
         self.redis = context.redis_client
+        self.unique_job = UniqueJob(self.redis)
         self.stream = context.queue.queue_name
         self.group = context.queue.consumer_group_name
 
     async def _exe_delay(
         self, request: JobConfig, enqueue_type: EnqueueTypes, queue, delay, core
     ):
-        response = await queue.schedule_by_time(
-            self.context.delay_source,
-            self.config_log.Now(UTC) + timedelta(seconds=delay),
-            config=request,
-        )
+        schedule_id = self.context.queue.id_generator()
+        await self.unique_job.claim(request.Id, schedule_id)
+        try:
+            response = await (
+                queue.with_schedule_id(schedule_id).schedule_by_time(
+                    self.context.delay_source,
+                    self.config_log.Now(UTC) + timedelta(seconds=delay),
+                    config=request,
+                )
+            )
+        except Exception:  # pylint: disable=broad-exception-caught
+            await self.unique_job.release(request.Id, schedule_id)
+            raise
         event = EnqueueEvent(
             JobId=request.Id,
             JobType=request.Type,
@@ -109,8 +119,8 @@ class Client:
 
     async def state(self) -> ReportState:
         delayed = 0
-        async for _ in self.redis.scan_iter(match="schedule:data:*"):
-            delayed += 1        
+        async for key in self.redis.scan_iter(match="schedule:time:*"):
+            delayed += await self.redis.llen(key)
         groups = await self.redis.xinfo_groups(self.stream)
         group = next(item for item in groups if self._text(item["name"]) == self.group)
         in_flight = group["pending"]
