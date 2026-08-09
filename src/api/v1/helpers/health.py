@@ -20,7 +20,7 @@ class Health:
             return False
 
     async def redis(self) -> bool:
-        return self.worker.redis_ping()
+        return await self.worker.redis_ping()
 
     async def worker(self) -> bool:
-        return self.worker.health()
+        return await self.worker.health()

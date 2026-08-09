@@ -58,6 +58,8 @@ services:
         timeout: 5s
         retries: 3
         start_period: 30s
+      ports:
+        - "${API_PUB_PORT}:${API_PORT}"           
       environment:
         - ENV=${ENV}
         - APP_CODE=${APP_CODE}
@@ -65,6 +67,7 @@ services:
         - RESULT_EXPIRATION_SEC=${RESULT_EXPIRATION_SEC}
         - REDIS_HOST=${APP_CODE}-redis
         - REDIS_PORT=${REDIS_PORT}
+        - ACK_TYPE=${ACK_TYPE}
         - TASKIQ_WORKERS=${TASKIQ_WORKERS}
         - TASKIQ_MAX_ASYNC_TASKS=${TASKIQ_MAX_ASYNC_TASKS}
         - TASKIQ_MAX_PREFETCH=${TASKIQ_MAX_PREFETCH}
@@ -76,6 +79,7 @@ services:
         - DB_NAME=db_${APP_CODE}
         - DB_PORT=${DB_PORT}
         - DB_MAX_POOL=${DB_MAX_POOL_WORKER}
+        - PORT=${API_PORT}
         - API_STATIC_DIR=${API_STATIC_DIR}
         - TZ=GMT
         - LOG_LEVEL=info
