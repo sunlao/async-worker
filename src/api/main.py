@@ -8,6 +8,7 @@ from api.metadata import tags
 from api.v1 import flush
 from api.v1.info import ready, state, version
 from api.v1.queue import enqueue
+from shared.config.job import Job
 from shared.config.locker import Locker
 from shared.db import Engine
 from shared.log.helpers.api_log_serializer import LogSerializer
@@ -17,13 +18,18 @@ from shared.log.writer import Writer
 from shared.models.api import ASGIEvent, RootResponse
 from shared.models.constants import Events, LogLevel, UserContext
 from shared.models.db import DBStartUpContext
+from shared.models.config import JobInputConfig
 from shared.models.log import EventError
+from shared.models.worker import JobConfig
 from worker import delay_source, queue, redis_client
 from worker.client import Client
 
 locker = Locker()
 config_log = locker.log()
 config_awork = locker.awork()
+job_input_config = JobInputConfig(
+    JobPath=config_awork.JobPath, JobVersion=config_awork.JobVersion
+)
 gate_path = Path(config_awork.GatePath)
 
 
@@ -37,6 +43,7 @@ async def lifespan(app: FastAPI):
     s.config_log = config_log
     s.app_version = config_awork.AppVersion
     s.enqueue_gate = gate_path.is_file()
+    s.job = Job(job_input_config)
     db_startup_ctx = DBStartUpContext(
         Log=s.log,
         UserContext=s.user_context,
