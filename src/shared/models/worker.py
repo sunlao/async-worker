@@ -79,13 +79,6 @@ class ExecutionConfig(BaseModel, Generic[INPUTTYPE]):
     StartCounter: float
 
 
-class HandleExecution(BaseModel, Generic[INPUTTYPE]):
-    model_config = DTO_EDGE_CONFIG
-    Event: Optional[INPUTTYPE]
-    ErrorFlag: bool
-    TraceBackEvent: Optional[TraceBackEvent]
-
-
 class Query(BaseModel):
     model_config = DTO_CONFIG
     Name: str
