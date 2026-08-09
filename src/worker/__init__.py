@@ -47,18 +47,12 @@ lifespan_context = LifespanContext(
 lifespan = Lifespan(lifespan_context)
 
 
-def delay(config: JobConfig) -> int:
-    if config.Id == 1004:
-        return 1
-    return 10
-
-
 async def enqueue_all(context: TaskiqState, job_type: JobTypes) -> list:
     """Async enqueue startup elgible jobs with overide delay of 1 second by type"""
     configs = context.job.startup_configs(job_type)
     client = Client(context)
     return await context.gather(
-        *[client.enqueue(c, EnqueueTypes.START_UP, delay(c)) for c in configs]
+        *[client.enqueue(c, EnqueueTypes.START_UP, 1) for c in configs]
     )
 
 
