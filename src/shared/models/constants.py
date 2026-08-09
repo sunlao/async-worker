@@ -61,6 +61,7 @@ class EnqueueTypes(StrEnum):
     START_UP = "startup"
     NEXT = "next"
     REENQUEUE = "reenqueue"
+    MANUAL = "manual"
 
 
 class Environments(StrEnum):

@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/info",
+    "/version",
     response_model=InfoResponse,
     status_code=status.HTTP_200_OK,
 )

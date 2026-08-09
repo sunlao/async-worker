@@ -6,7 +6,8 @@ from starlette.responses import PlainTextResponse
 from taskiq import TaskiqState
 from api.metadata import tags
 from api.v1 import flush
-from api.v1.info import info, ready, state
+from api.v1.info import ready, state, version
+from api.v1.queue import enqueue
 from shared.config.locker import Locker
 from shared.db import Engine
 from shared.log.helpers.api_log_serializer import LogSerializer
@@ -128,10 +129,12 @@ def create_api() -> FastAPI:
         """Application Root"""
         return RootResponse(Message="Async API Service is up!")
 
-    _api.include_router(info.router, prefix="/api/v1", tags=["info"])
-    _api.include_router(state.router, prefix="/api/v1", tags=["info"])
-    _api.include_router(ready.router, prefix="/api/v1", tags=["info"])
-    _api.include_router(flush.router, prefix="/api/v1", tags=["flush"])
+    _api.include_router(version.router, prefix="/api/v1/info", tags=["info"])
+    _api.include_router(state.router, prefix="/api/v1/info", tags=["info"])
+    _api.include_router(ready.router, prefix="/api/v1/info", tags=["info"])
+    _api.include_router(enqueue.router, prefix="/api/v1/queue", tags=["queue"])
+
+    _api.include_router(flush.router, prefix="/api/v1", tags=["cicd"])
 
     return _api
 
