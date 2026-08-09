@@ -21,6 +21,7 @@ class Job:
     def _admin(self, config) -> AdminConfig:
         return AdminConfig(
             Name=config["name"],
+            ConnectionProfile=config["connection_profile"],
             Key=config["key"],
             **self._optional(config),
         )
