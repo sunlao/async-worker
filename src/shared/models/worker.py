@@ -18,12 +18,7 @@ from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 class AdminConfig(BaseModel):
     model_config = DTO_CONFIG
     Name: StrictStr = Field(..., min_length=1)
-    SourceConnectionProfile: str
-    SourceActionType: ActionTypes = Field(default=ActionTypes.SELECT_MANY)
-    SourceCmd: str = Field("")
-    TargetConnectionProfile: str
-    TargetActionType: ActionTypes = Field(default=ActionTypes.EXECUTE_MANY)
-    TargetCmd: str = Field("")
+    Key: str | None = None
     StartUp: bool = Field(default=True)
     Delay: int = Field(default=600, ge=0)
     RunOnce: bool = Field(default=False)
