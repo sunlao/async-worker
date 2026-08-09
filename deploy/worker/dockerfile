@@ -8,6 +8,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY VERSION .
-COPY deploy/worker//health.py . 
-
-RUN touch /tmp/healthy
+COPY deploy/worker/health.py /app/health.py

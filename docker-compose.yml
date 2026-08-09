@@ -123,14 +123,13 @@ services:
         - --ack-type
         - ${ACK_TYPE}
         - --reload
-      restart: unless-stopped
+      restart: unless-stopped   
       healthcheck:
-        test:
-          CMD ["python", "/app/health.py"]
+        test: ["CMD", "python", "/app/health.py"]
         interval: 30s
         timeout: 5s
         retries: 3
-        start_period: 30s      
+        start_period: 30s
       environment:
         - APP_CODE=${APP_CODE}
         - SERVICE=${APP_CODE}-worker
