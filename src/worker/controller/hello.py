@@ -24,6 +24,7 @@ class Hello:
         self.gate = context["enqueue_gate"]
         self.connection = context.connection
         self.post_process = PostProcess(self.context)
+        self.api_port = context.config_worker.ApiPort
 
     async def _api_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
@@ -36,7 +37,12 @@ class Hello:
             )
         if exe.JobConfig.Cmd is None:
             raise RuntimeError("Cmd is required for GET")
-        response = await Edge(self.context).get(exe.JobConfig.Cmd)
+        exe.JobConfig.Cmd
+        API_PORT = self.api_port
+        url = f"{exe.JobConfig.Cmd}"
+        print(f"url: {url}")
+        self.api_port
+        response = await Edge(self.context).get(url)
         ready = ReadyResponse.model_validate(response.json())
         if ready.Database is True and ready.Redis is True and ready.Worker is True:
             return HelloJobResult(Pass=True)

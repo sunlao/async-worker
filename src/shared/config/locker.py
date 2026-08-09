@@ -69,6 +69,7 @@ class Locker:
             DBMaxPool=int(getenv("DB_MAX_POOL")),
             DataDir=getenv("DATA_DIR"),
             GatePath=getenv("GATE_CLOSE_PATH"),
+            ApiPort=int(getenv("API_PORT")),
         )
 
     def log(self) -> Config:

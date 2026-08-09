@@ -31,7 +31,7 @@ jobs:
     name: Hello-Api
     connection_profile: unity_worker_api
     action_type: get
-    cmd: http://localhost:${API_PORT}/api/v1/ready
+    cmd: http://localhost:{API_PORT}/api/v1/ready
     delay: 120
   - job_type: hello
     id: 102

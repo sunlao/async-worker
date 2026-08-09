@@ -168,6 +168,7 @@ class WorkerConfig(BaseModel):
     DBMaxPool: int
     DataDir: str
     GatePath: str
+    ApiPort: int
 
 
 class WorkerInitContext(BaseModel):
