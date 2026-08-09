@@ -25,6 +25,7 @@ class Hello:
         self.connection = context.connection
         self.post_process = PostProcess(self.context)
         self.api_port = context.config_worker.ApiPort
+        self.asleep = context.asleep
 
     async def _api_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
@@ -87,6 +88,9 @@ class Hello:
             raise RuntimeError(f"Unsupported ActionType: {exe.JobConfig.ActionType}")
         if exe.JobConfig.Cmd is None:
             raise RuntimeError("Cmd is required for SUBPROCESS")
+        if exe.JobId == 102:
+            print(f"JobId: {exe.JobId}")
+            await self.asleep(5)
         response = await io(self.context).execute(exe.JobConfig.Cmd)
         if response.ReturnCode == 0:
             return HelloJobResult(Pass=True, Message=response.Message)
