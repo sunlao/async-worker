@@ -41,8 +41,12 @@ class Hello:
         response = await Edge(self.context).get(url)
         ready = ReadyResponse.model_validate(response.json())
         if ready.Database is True and ready.Redis is True and ready.Worker is True:
-            return HelloJobResult(Pass=True, Message="Database, Redis and Worker are ready")
-        return HelloJobResult(Pass=False, Message="Database, Redis and Worker are not ready")
+            return HelloJobResult(
+                Pass=True, Message="Database, Redis and Worker are ready"
+            )
+        return HelloJobResult(
+            Pass=False, Message="Database, Redis and Worker are not ready"
+        )
 
     @staticmethod
     def _db_check(check, result, name):
