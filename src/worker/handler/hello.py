@@ -46,18 +46,19 @@ class Hello:
         return results
 
     def _log_error(
-        self, job: JobConfig[HelloConfig], results: HelloJobResult
+        self, job: JobConfig[HelloConfig], results: HandleExecution
     ) -> EventError:
         core_msg = f"Failed to execute {job.Config.Name} Job"
         core = core_log(
             self.context["config_log"], LogLevel.ERROR, Events.HANDLER, core_msg
         )
+        result = HelloJobResult(Pass=False, Message="Handler Failed")
         event_dto = HelloEvent(
             JobId=job.Id,
             JobName=job.Config.Name,
             ConnectionProfile=job.Config.ConnectionProfile,
             Status=False,
-            Result=results,
+            Result=result,
             Message="Hello Handler",
             Start=self.start,
             End=self.config_log.Now(UTC),
