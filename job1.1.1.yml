@@ -32,7 +32,7 @@ jobs:
     connection_profile: unity_worker_api
     action_type: get
     cmd: http://localhost:{API_PORT}/api/v1/ready
-    delay: 120
+    delay: 10
   - job_type: hello
     id: 102
     name: Hello-Manual-Io
