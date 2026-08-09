@@ -53,7 +53,9 @@ services:
       - ./connection${CONNECTION_VERSION}.yml:/app/connection${CONNECTION_VERSION}.yml:r      
     depends_on:
       db-deploy:
-        condition: service_completed_successfully            
+        condition: service_completed_successfully  
+      worker:
+        condition: service_healthy                  
     networks:
       - "${APP_CODE}net"
 
@@ -122,6 +124,18 @@ services:
         - ${ACK_TYPE}
         - --reload
       restart: unless-stopped
+      healthcheck:
+        test:
+          [
+            "CMD",
+            "python",
+            "-c",
+            "import urllib.request; urllib.request.urlopen('http://localhost:${API_PORT}/api/v1/info/ready')"
+          ]
+        interval: 30s
+        timeout: 5s
+        retries: 3
+        start_period: 30s      
       environment:
         - APP_CODE=${APP_CODE}
         - SERVICE=${APP_CODE}-worker
