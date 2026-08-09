@@ -30,10 +30,7 @@ class AdminConfig(BaseModel):
 class AdminJobResult(BaseModel):
     model_config = DTO_CONFIG
     ExecutionId: UUID4
-    Status: bool
-    Code: int
-    Message: str
-    DurationMs: int = Field(ge=0)
+    Pass: bool
 
 
 class AdminEvent(BaseModel):
