@@ -1,0 +1,32 @@
+type: environment.insomnia.rest/5.0
+schema_version: "5.1"
+name: main
+meta:
+  id: wrk_7de63f31d8b748429f4a2eeab3cf01be
+  created: 1784081385328
+  modified: 1784081385328
+  description: ""
+environments:
+  name: Base Environment
+  meta:
+    id: env_8cefdf95f35deffec86066c302b93dfb3df2777a
+    created: 1784081385330
+    modified: 1786304742145
+    isPrivate: false
+  data:
+    http: https://
+    port: "8080"
+    path: /api/v1
+    "": ""
+  subEnvironments:
+    - name: local
+      meta:
+        id: env_797854e1ba47445a9bd7f8d2533b9057
+        created: 1784940750189
+        modified: 1784941764589
+        isPrivate: false
+        sortKey: 1784940750189
+      data:
+        http: http://
+        host: 127.0.0.1
+        "": ""

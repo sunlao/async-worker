@@ -1,0 +1,130 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: API
+meta:
+  id: wrk_c7b79775e1b84df0af7929bf1bf59cc3
+  created: 1784081454534
+  modified: 1784081454534
+  description: ""
+collection:
+  - url: "{{ _.http }}{{ _.host }}:{{ _.port }}{{ _.path }}"
+    name: root
+    meta:
+      id: req_cb348f733d74403daf79ff5b3bbbfe59
+      created: 1784942171426
+      modified: 1786302477102
+      isPrivate: false
+      description: ""
+      sortKey: -1784081473239
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - name: info
+    meta:
+      id: fld_e52ef4c95257447fbf05819b01e756cb
+      created: 1784081472939
+      modified: 1786301933774
+      sortKey: -1784081473139
+      description: ""
+    children:
+      - url: "{{ _.http }}{{ _.host }}:{{ _.port }}{{ _.path }}/info/version"
+        name: version
+        meta:
+          id: req_1e17f6f83e094ac1baab4289a9ad8a5c
+          created: 1784081481033
+          modified: 1786302744837
+          isPrivate: false
+          description: ""
+          sortKey: -1782576770837.75
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.http }}{{ _.host }}:{{ _.port }}{{ _.path }}/info/ready"
+        name: ready
+        meta:
+          id: req_9c50b684a29b495ba3add650ab9b47a7
+          created: 1784942333637
+          modified: 1786302742603
+          isPrivate: false
+          description: ""
+          sortKey: -1784081481133
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.http }}{{ _.host }}:{{ _.port }}{{ _.path }}/info/state"
+        name: state
+        meta:
+          id: req_da5cf93584f54d318bc6c189473a6c00
+          created: 1786302550726
+          modified: 1786302605723
+          isPrivate: false
+          description: ""
+          sortKey: -1782576770937.75
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: queue
+    meta:
+      id: fld_034244d196854f71ae43df17c2cf1d53
+      created: 1786301923855
+      modified: 1786301929315
+      sortKey: -1784081473039
+      description: ""
+    children:
+      - url: "{{ _.http }}{{ _.host }}:{{ _.port }}{{ _.path }}/queue/enqueue/102"
+        name: enqueue
+        meta:
+          id: req_712a5a5fbb034db5869cf10bbe5b08fe
+          created: 1786302723175
+          modified: 1786302954655
+          isPrivate: false
+          description: ""
+          sortKey: -1786302726848
+        method: POST
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_0ff0eecd0fcb42dc1da9a2d9f7a324b688544f8f
+    created: 1784081454545
+    modified: 1784081454545
+environments:
+  name: Base Environment
+  meta:
+    id: env_0ff0eecd0fcb42dc1da9a2d9f7a324b688544f8f
+    created: 1784081454540
+    modified: 1784941028787
+    isPrivate: false
+  data:
+    "": ""
