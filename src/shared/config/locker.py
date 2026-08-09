@@ -1,4 +1,4 @@
-from os import getenv
+from os import getenv, name
 from os.path import join
 from datetime import datetime
 from time import perf_counter
@@ -70,6 +70,7 @@ class Locker:
             DataDir=getenv("DATA_DIR"),
             GatePath=getenv("GATE_CLOSE_PATH"),
             ApiPort=int(getenv("API_PORT")),
+            Platform=name,
         )
 
     def log(self) -> Config:

@@ -9,14 +9,14 @@ class CliSourceError(RuntimeError):
 class Connector:
     """CLI connector to interface"""
 
-    def __init__(self, ctx):
-        self.ctx = ctx
-        self.sp = self.ctx["asubprocess"]
+    def __init__(self, context):
+        self.sp = context["asubprocess"]
+        self.platform = context.config_worker.Platform
 
     async def _cmd(self, command: str, fail_on_stderr: bool = True) -> bytes:
         """Execute command and return raw stdout bytes."""
         options = {"stdout": self.sp.PIPE, "stderr": self.sp.PIPE}
-        if self.ctx["platform"] != "windows":
+        if self.platform != "nt":
             options["start_new_session"] = True
         proc = await self.sp.create_subprocess_shell(command, **options)
         try:
@@ -37,7 +37,7 @@ class Connector:
         return stdout
 
     async def _kill(self, pid: int) -> None:
-        if self.ctx["platform"] == "windows":
+        if self.platform == "nt":
             command = f"taskkill /PID {pid} /T /F"
         else:
             command = f"kill -KILL -- -{pid}"

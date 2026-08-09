@@ -169,6 +169,7 @@ class WorkerConfig(BaseModel):
     DataDir: str
     GatePath: str
     ApiPort: int
+    Platform: str
 
 
 class WorkerInitContext(BaseModel):
