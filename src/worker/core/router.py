@@ -6,15 +6,13 @@ from worker.handler.hello import Hello
 
 
 async def admin(
-    config: JobConfig[AdminConfig],
-    context: TaskiqState = TaskiqDepends(),
+    config: JobConfig[AdminConfig], context: TaskiqState = TaskiqDepends()
 ) -> None:
     await Admin(context).handle(config)
 
 
 async def hello(
-    config: JobConfig[HelloConfig],
-    context: TaskiqState = TaskiqDepends(),
+    config: JobConfig[HelloConfig], context: TaskiqState = TaskiqDepends()
 ) -> None:
     await Hello(context).handle(config)
 

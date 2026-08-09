@@ -45,7 +45,6 @@ class Lifespan:
             row = await conn.fetchrow("select true as check")
         if row["check"] is not True:
             raise RuntimeError("DB probe failed")
-
         worker_context.db = db
 
     async def startup(self, context: TaskiqState) -> None:

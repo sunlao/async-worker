@@ -6,6 +6,4 @@ def info():
 
 
 def tags():
-    return [
-        info(),
-    ]
+    return [info()]

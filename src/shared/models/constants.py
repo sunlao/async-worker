@@ -20,7 +20,7 @@ class ActionTypes(StrEnum):
     SUBPROCESS = "subprocess"  # issue subprocces command
     GET = "get"  # GET response from API
     POST = "post"
-    SET = "set" # redis kvp set
+    SET = "set"  # redis kvp set
 
 
 class Audit(NamedTuple):

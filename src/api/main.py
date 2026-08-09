@@ -28,78 +28,66 @@ from shared.queue.client import Client
 from worker.core.queue import Queue
 from worker.core.router import register
 
-
 locker = Locker()
 config_log = locker.log()
 config_awork = locker.awork()
 config_redis = locker.redis()
-
 redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
 redis_client = Redis.from_url(redis_url)
-
 queue_context = WorkerInitContext(
     Broker=RedisStreamBroker,
     Backend=RedisAsyncResultBackend,
     RedisURL=redis_url,
     RedisClient=redis_client,
 )
-
 queue = Queue(queue_context, config_redis).build()
 register(queue)
-
 delay_source = ListRedisScheduleSource(redis_url)
 gate_path = Path(config_awork.GatePath)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.log = Writer(config_log)
-    app.state.log_error_helper = Error()
-    app.state.format_log = LogSerializer()
-    app.state.user_context = UserContext.APP
-    app.state.config_log = config_log
-    app.state.app_version = config_awork.AppVersion
-    app.state.enqueue_gate = gate_path.is_file()
-
+    s = app.state
+    s.log = Writer(config_log)
+    s.log_error_helper = Error()
+    s.format_log = LogSerializer()
+    s.user_context = UserContext.APP
+    s.config_log = config_log
+    s.app_version = config_awork.AppVersion
+    s.enqueue_gate = gate_path.is_file()
     db_startup_ctx = DBStartUpContext(
-        Log=app.state.log,
-        UserContext=app.state.user_context,
+        Log=s.log,
+        UserContext=s.user_context,
         Config=config_log,
-        LogErrorHelper=app.state.log_error_helper,
+        LogErrorHelper=s.log_error_helper,
         DBMaxPool=config_awork.DBMaxPool,
     )
-
-    app.state.db = Engine(db_startup_ctx)
-
-    client_context = TaskiqState()
-    client_context.queue = queue
-    client_context.delay_source = delay_source
-    client_context.redis_client = redis_client
-    client_context.config_log = config_log
-    client_context.log = app.state.log
-    client_context.enqueue_gate = app.state.enqueue_gate
-
-    app.state.worker = Client(client_context)
-
-    await app.state.db.startup()
+    s.db = Engine(db_startup_ctx)
+    worker_context = TaskiqState()
+    worker_context.queue = queue
+    worker_context.delay_source = delay_source
+    worker_context.redis_client = redis_client
+    worker_context.config_log = config_log
+    worker_context.log = s.log
+    worker_context.enqueue_gate = s.enqueue_gate
+    s.worker = Client(worker_context)
+    await s.db.startup()
     await queue.startup()
     await delay_source.startup()
-
     msg = "API Service Startup complete"
     core = core_log(config_log, LogLevel.INFO, Events.STARTUP, msg)
-    app.state.log.write_core(core)
-
+    s.log.write_core(core)
     try:
         yield
     finally:
         await delay_source.shutdown()
         await queue.shutdown()
         await redis_client.aclose()
-        await app.state.db.shutdown()
-
+        await s.db.shutdown()
         msg = "API Service Shutdown complete"
         core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, msg)
-        app.state.log.write_core(core)
+        s.log.write_core(core)
 
 
 def create_api() -> FastAPI:
@@ -116,7 +104,6 @@ def create_api() -> FastAPI:
     ):  # pylint: disable=too-many-locals
         start = config_log.TimeCounter()
         request.app.state.txid = request.app.state.format_log.transaction_id(request)
-
         try:
             response: Response = await call_next(request)
             error = None
@@ -131,30 +118,16 @@ def create_api() -> FastAPI:
         finally:
             duration = int((config_log.TimeCounter() - start) * 1000)
             msg = request.app.state.format_log.message(response)
-            core_event = core_log(
-                config_log,
-                LogLevel.INFO,
-                Events.ACCESS,
-                msg,
-            )
+            core_event = core_log(config_log, LogLevel.INFO, Events.ACCESS, msg)
             event_input = ASGIEvent(
-                Request=request,
-                Response=response,
-                DurationMS=duration,
+                Request=request, Response=response, DurationMS=duration
             )
-            log_dto = request.app.state.format_log.build(
-                core_event,
-                event_input,
-            )
-
+            log_dto = request.app.state.format_log.build(core_event, event_input)
             if error is None:
                 request.app.state.log.write_event(dto=log_dto)
             else:
                 err_core = core_log(
-                    config_log,
-                    LogLevel.ERROR,
-                    Events.HTTP_ERROR,
-                    str(error),
+                    config_log, LogLevel.ERROR, Events.HTTP_ERROR, str(error)
                 )
                 error_event_input = ASGIEvent(
                     Request=request, Response=response, DurationMS=duration
@@ -163,12 +136,11 @@ def create_api() -> FastAPI:
                     err_core, error_event_input
                 )
                 error_event_error_dto = EventError(
-                    Core=error_event_dto.Core, Event=error_event_dto.Event, Error=trace_back_nfo
+                    Core=error_event_dto.Core,
+                    Event=error_event_dto.Event,
+                    Error=trace_back_nfo,
                 )
-                request.app.state.log.write_event_error(
-                    dto=error_event_error_dto
-                )
-
+                request.app.state.log.write_event_error(dto=error_event_error_dto)
         return response
 
     @_api.get("/api/v1")

@@ -102,15 +102,10 @@ class Client:
 
     async def state(self) -> ReportState:
         groups = await self.redis.xinfo_groups(self.stream)
-        group = next(
-            item
-            for item in groups
-            if self._text(item["name"]) == self.group
-        )
+        group = next(item for item in groups if self._text(item["name"]) == self.group)
         in_flight = group["pending"]
         return ReportState(
             Enqueued=group["lag"],
             InFlight=in_flight,
             Acknowledged=group["entries-read"] - in_flight,
         )
-

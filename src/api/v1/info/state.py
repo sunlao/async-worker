@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request, status
 from shared.models.worker import ReportState
 
-
 router = APIRouter()
 
 

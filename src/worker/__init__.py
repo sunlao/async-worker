@@ -118,7 +118,7 @@ async def delay_shutdown(context: TaskiqState) -> None:
         await context.delay_dispatcher
     except CancelledError:
         pass
-    
+
 
 queue.on_event(TaskiqEvents.WORKER_STARTUP)(delay_startup)
 queue.on_event(TaskiqEvents.WORKER_STARTUP)(startup)
