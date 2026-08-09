@@ -2,7 +2,7 @@ from fastapi import Request
 from shared.db import Engine
 
 
-class HealthCheck:
+class Health:
     """Help /ready evaluate worker and db status"""
 
     def __init__(self, request: Request):
