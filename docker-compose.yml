@@ -124,7 +124,7 @@ services:
     environment:
       - SERVICE=${APP_CODE}-test
       - APP_CODE=${APP_CODE}
-      - API_HOST=${APP_CODE}-api
+      - API_HOST=${APP_CODE}-worker
       - API_PORT=${API_PORT}
       - DB_PORT=${DB_PORT}
       - DB_HOST=${APP_CODE}-postgres
