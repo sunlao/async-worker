@@ -6,7 +6,6 @@ from shared.models.worker import (
     AdminConfig,
     AdminJobResult,
     ConnectionProfile,
-    ConnecterDBPoolInput,
 )
 from worker.connector.db.redis import Redis
 from worker.controller.post_process import PostProcess
@@ -30,33 +29,12 @@ class Admin:
         self.connection = context.connection
         self.post_process = PostProcess(self.context)
 
-    @staticmethod
-    def _db_check(check, result, name):
-        if name == "admin_select_count_abc_canary" and result[0] == 1:
-            check["abc"] = True
-        if name == "admin_select_count_abc_def_canary" and result[0] == 2:
-            check["abc_def"] = True
-        return check
 
     async def _db_actions(
         self, exe: ExecutionConfig[AdminConfig], prof: ConnectionProfile
     ):
         if prof.ResourceType == ResourceTypes.REDIS_CLIENT:
-            check = {"abc": False, "abc_def": False}
-            queries = exe.JobConfig.Queries
-            pass_kwargs = {}
-            for q in queries:
-                input = ConnecterDBPoolInput(
-                    ActionType=q.ActionType, SQLName=q.Name, Args=q.Args
-                )
-                result = await Pool(self.context).execute(input, **pass_kwargs)
-                check = self._db_check(check, result, q.Name)
-                if q.PassResultFlag is True:
-                    pass_kwargs = {"args_orveride": self._pass_kwargs(result)}
-                else:
-                    pass_kwargs = {}
-            if check["abc"] is True and check["abc_def"] is True:
-                return AdminJobResult(Pass=True)
+            # TODO
             return AdminJobResult(Pass=False)
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
@@ -85,8 +63,8 @@ class Admin:
         profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
-            result1 = await self._db_actions(exe, profile)
-            print(f"result: {result1}")
-        result = AdminJobResult(Pass=True)
+            result = await self._db_actions(exe, profile)
+        else:
+            raise RuntimeError(f"Undefined ConnectorTypes: {connector_type}")
         await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)
