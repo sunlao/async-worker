@@ -1,5 +1,5 @@
 from datetime import UTC
-from datetime import timedelta
+from datetime import timedelta, datetime
 from taskiq import TaskiqState
 from shared.log.helpers.core import build as core_log
 from shared.models.constants import EnqueueTypes, Events, LogLevel
@@ -101,7 +101,11 @@ class Client:
         return await self.redis.ping()
 
     async def health(self) -> bool:
-        return await self.redis.ping()
+        heartbeat = await self.redis.get("awork-worker-heartbeat")
+        if heartbeat is None:
+            return False
+        timestamp = datetime.fromisoformat(self._text(heartbeat))
+        return self.config_log.Now(UTC) - timestamp <= timedelta(minutes=2)
 
     async def state(self) -> ReportState:
         groups = await self.redis.xinfo_groups(self.stream)

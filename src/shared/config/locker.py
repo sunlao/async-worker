@@ -33,7 +33,7 @@ class Locker:
             ConnectionVersion=getenv("CONNECTION_VERSION"),
             AppVersion=self._app_version(),
             DBMaxPool=int(getenv("DB_MAX_POOL")),
-            GatePath=getenv("GATE_CLOSE_PATH", "dev"),
+            GatePath=getenv("GATE_CLOSE_PATH"),
         )
 
     @staticmethod
@@ -68,7 +68,7 @@ class Locker:
             ConnectionVersion=getenv("CONNECTION_VERSION"),
             DBMaxPool=int(getenv("DB_MAX_POOL")),
             DataDir=getenv("DATA_DIR"),
-            GatePath=getenv("GATE_CLOSE_PATH", "dev"),
+            GatePath=getenv("GATE_CLOSE_PATH"),
         )
 
     def log(self) -> Config:
