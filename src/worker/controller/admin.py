@@ -1,5 +1,5 @@
 from datetime import UTC
-from shared.models.constants import ConnectorTypes, ResourceTypes
+from shared.models.constants import ActionTypes, ConnectorTypes, ResourceTypes
 from shared.models.worker import (
     AdminEvent,
     ExecutionConfig,
@@ -29,14 +29,20 @@ class Admin:
         self.connection = context.connection
         self.post_process = PostProcess(self.context)
 
-
     async def _db_actions(
         self, exe: ExecutionConfig[AdminConfig], prof: ConnectionProfile
-    ):
-        if prof.ResourceType == ResourceTypes.REDIS_CLIENT:
-            # TODO
-            return AdminJobResult(Pass=False)
-        raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
+    ) -> AdminJobResult:
+        if prof.ResourceType != ResourceTypes.REDIS_CLIENT:
+            raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
+        if exe.JobConfig.ActionType == ActionTypes.SET:
+            if exe.JobConfig.Key is None:
+                raise RuntimeError("Key is required for SET")
+            await Redis(self.context).upsert(
+                exe.JobConfig.Key, self.log.Now(UTC).isoformat()
+            )
+            return AdminJobResult(Pass=True)
+        else:
+            raise RuntimeError(f"Unsupported ActionType: {exe.obConfig.ActionType}")
 
     def _event(
         self, exe: ExecutionConfig[AdminConfig], msg: str, result: AdminJobResult
@@ -54,10 +60,6 @@ class Admin:
             Result=result,
         )
 
-    @staticmethod
-    def _pass_kwargs(result) -> tuple[object, ...]:
-        return tuple(value for row in result for value in row)
-
     async def execute(self, exe: ExecutionConfig[AdminConfig], **kwargs) -> AdminEvent:
         """Controller to execute Admin jobs Action Types by controller"""
         profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
@@ -65,6 +67,6 @@ class Admin:
         if connector_type == ConnectorTypes.DB:
             result = await self._db_actions(exe, profile)
         else:
-            raise RuntimeError(f"Undefined ConnectorTypes: {connector_type}")
+            raise RuntimeError(f"Unsupported ConnectorTypes: {connector_type}")
         await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)
