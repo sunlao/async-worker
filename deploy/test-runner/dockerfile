@@ -22,5 +22,3 @@ RUN pip install --upgrade pip && \
     pip install -r /app/requirements.txt && \
     pip install -r /app/requirements-test.txt
 RUN tox -e ci --notest --recreate
-
-RUN touch /tmp/healthy

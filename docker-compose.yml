@@ -126,12 +126,7 @@ services:
       restart: unless-stopped
       healthcheck:
         test:
-          [
-            "CMD",
-            "python",
-            "-c",
-            "import os; from datetime import UTC, datetime; from redis import Redis; value = Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), decode_responses=True).get('awork-worker-heartbeat'); assert value is not None and (datetime.now(UTC) - datetime.fromisoformat(value)).total_seconds() <= 120"
-          ]
+          CMD ["python", "/app/health.py"]
         interval: 30s
         timeout: 5s
         retries: 3
