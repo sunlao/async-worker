@@ -41,7 +41,7 @@ class AdminEvent(BaseModel):
     ActionType: ActionTypes = Field(ActionTypes.SET)
     Message: str
     Status: bool
-    AdminResults: Optional[AdminJobResult] = None
+    Result: Optional[AdminJobResult] = None
     Start: datetime
     End: datetime
     DurationMs: int = Field(ge=0)
