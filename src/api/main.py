@@ -20,7 +20,6 @@ from shared.models.log import EventError
 from worker import delay_source, queue, redis_client
 from worker.client import Client
 
-
 locker = Locker()
 config_log = locker.log()
 config_awork = locker.awork()

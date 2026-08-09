@@ -111,6 +111,7 @@ class HelloConfig(BaseModel):
 class HelloJobResult(BaseModel):
     model_config = DTO_CONFIG
     Pass: bool
+    Message: str
 
 
 class HelloEvent(BaseModel):
@@ -124,6 +125,13 @@ class HelloEvent(BaseModel):
     End: datetime
     DurationMs: int = Field(ge=0)
     Result: Optional[HelloJobResult] = None
+
+
+class IOResponse(BaseModel):
+    model_config = DTO_CONFIG
+    ReturnCode: int
+    Message: str
+    Error: str | None = None
 
 
 class JobConfig(BaseModel, Generic[INPUTTYPE]):

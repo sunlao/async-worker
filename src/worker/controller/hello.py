@@ -32,9 +32,7 @@ class Hello:
         if prof.ResourceType != ResourceTypes.API_EDGE:
             raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
         if exe.JobConfig.ActionType != ActionTypes.GET:
-            raise RuntimeError(
-                f"Unsupported ActionType: {exe.JobConfig.ActionType}"
-            )
+            raise RuntimeError(f"Unsupported ActionType: {exe.JobConfig.ActionType}")
         if exe.JobConfig.Cmd is None:
             raise RuntimeError("Cmd is required for GET")
         url = exe.JobConfig.Cmd.format(API_PORT=self.api_port)
@@ -43,8 +41,8 @@ class Hello:
         response = await Edge(self.context).get(url)
         ready = ReadyResponse.model_validate(response.json())
         if ready.Database is True and ready.Redis is True and ready.Worker is True:
-            return HelloJobResult(Pass=True)
-        return HelloJobResult(Pass=False)
+            return HelloJobResult(Pass=True, Message="Database, Redis and Worker are ready")
+        return HelloJobResult(Pass=False, Message="Database, Redis and Worker are not ready")
 
     @staticmethod
     def _db_check(check, result, name):
@@ -72,14 +70,23 @@ class Hello:
                 else:
                     pass_kwargs = {}
             if check["abc"] is True and check["abc_def"] is True:
-                return HelloJobResult(Pass=True)
-            return HelloJobResult(Pass=False)
+                return HelloJobResult(Pass=True, Message="DB Checks pass after instert")
+            return HelloJobResult(Pass=False, Message="DB Checks failed after instert")
         raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
 
     async def _io_actions(
-        self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
-    ):
-        pass
+        self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile
+    ) -> HelloJobResult:
+        if prof.ResourceType != ResourceTypes.ASUBPROCESS:
+            raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
+        if exe.JobConfig.ActionType != ActionTypes.SUBPROCESS:
+            raise RuntimeError(f"Unsupported ActionType: {exe.JobConfig.ActionType}")
+        if exe.JobConfig.Cmd is None:
+            raise RuntimeError("Cmd is required for SUBPROCESS")
+        response = await io(self.context).execute(exe.JobConfig.Cmd)
+        if response.ReturnCode == 0:
+            return HelloJobResult(Pass=True, Message=response.Message)
+        return HelloJobResult(Pass=False, Message=response.Error)
 
     def _event(
         self, exe: ExecutionConfig[HelloConfig], msg: str, result: HelloJobResult
@@ -105,14 +112,10 @@ class Hello:
         profile = self.connection.profile(exe.JobConfig.ConnectionProfile)
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
-            result1 = await self._db_actions(exe, profile)
-            print(f"result1: {result1}")
+            result = await self._db_actions(exe, profile)
         if connector_type == ConnectorTypes.IO:
-            result2 = await self._io_actions(exe, profile, **kwargs)
-            print(f"result2: {result2}")
+            result = await self._io_actions(exe, profile, **kwargs)
         if connector_type == ConnectorTypes.API:
-            result3 = await self._api_actions(exe, profile, **kwargs)
-            print(f"result3: {result3}")
-        result = HelloJobResult(Pass=True)
+            result = await self._api_actions(exe, profile, **kwargs)
         await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)

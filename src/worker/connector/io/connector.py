@@ -1,5 +1,6 @@
 from contextlib import suppress
 from asyncio import wait_for, TimeoutError as ATimeoutError
+from shared.models.worker import IOResponse
 
 
 class CliSourceError(RuntimeError):
@@ -23,7 +24,7 @@ class Connector:
         )
         await proc.wait()
 
-    async def execute(self, command: str, fail_on_stderr: bool = True) -> bytes:
+    async def execute(self, command: str, fail_on_stderr: bool = True) -> IOResponse:
         """Execute command and return raw stdout bytes."""
         options = {"stdout": self.sp.PIPE, "stderr": self.sp.PIPE}
         if self.platform != "nt":
@@ -44,4 +45,8 @@ class Connector:
             raise CliSourceError(
                 f"stderr not empty ({len(stderr)}) for command {command}"
             )
-        return stdout
+        return IOResponse(
+            ReturnCode=proc.returncode,
+            Message=stdout.decode("utf-8"),
+            Error=stderr.decode("utf-8"),
+        )
