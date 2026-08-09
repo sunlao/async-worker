@@ -12,7 +12,6 @@ from shared.models.worker import (
 )
 from worker.connector.api.edge import Edge
 from worker.connector.db.pool import Pool
-from worker.controller.post_process import PostProcess
 
 
 class Hello:
@@ -125,5 +124,4 @@ class Hello:
             result = await self._io_actions(exe, profile)
         if connector_type == ConnectorTypes.API:
             result = await self._api_actions(exe, profile)
-        await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)

@@ -8,7 +8,6 @@ from shared.models.worker import (
     ConnectionProfile,
 )
 from worker.connector.db.redis import Redis
-from worker.controller.post_process import PostProcess
 
 
 class Admin:
@@ -68,5 +67,4 @@ class Admin:
             result = await self._db_actions(exe, profile)
         else:
             raise RuntimeError(f"Unsupported ConnectorTypes: {connector_type}")
-        await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)
