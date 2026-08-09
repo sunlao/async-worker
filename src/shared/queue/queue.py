@@ -1,5 +1,5 @@
 from taskiq import AsyncBroker
-from worker.core.unique_job import UniqueJob
+from shared.queue.unique_job import UniqueJob
 from shared.models.config import Redis as RedisConfig
 from shared.models.worker import WorkerInitContext
 

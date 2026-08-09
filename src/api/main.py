@@ -25,7 +25,7 @@ from shared.models.db import DBStartUpContext
 from shared.models.log import EventError
 from shared.models.worker import WorkerInitContext
 from shared.queue.client import Client
-from worker.core.queue import Queue
+from shared.queue.queue import Queue
 from worker.core.router import register
 
 locker = Locker()

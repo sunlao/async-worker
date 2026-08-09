@@ -16,7 +16,7 @@ from shared.models.log import CoreError
 from shared.models.worker import LifespanContext, WorkerInitContext
 from shared.queue.client import Client
 from worker.core.lifespan import Lifespan
-from worker.core.queue import Queue
+from shared.queue.queue import Queue
 from worker.core.router import register
 
 locker = Locker()
