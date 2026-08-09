@@ -38,7 +38,6 @@ jobs:
     name: Hello-Manual-Io
     action_type: subprocess
     connection_profile: unity_worker_io
-    startup: true
     cmd: >-
       python -c "import json,datetime,uuid; print(json.dumps({'hello':'id-'+uuid.uuid4().hex[:8],'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')}))"
   - job_type: hello
