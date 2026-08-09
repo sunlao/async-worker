@@ -66,9 +66,12 @@ class Admin:
 
     async def handle(self, job: JobConfig[AdminConfig]):
         """Handle admin job types"""
-        try:
-            result = await self._execution(job)
-        except Exception as error:
-            self._log_error(job, error)
-            raise
-        return self._log(result, job)
+        for retry in range(job.Config.Retry + 1):
+            try:
+                result = await self._execution(job)
+            except Exception as error:  # pylint: disable=broad-exception-caught
+                self._log_error(job, error)
+                if retry == job.Config.Retry:
+                    raise
+                continue
+            return self._log(result, job)
