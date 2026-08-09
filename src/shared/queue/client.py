@@ -97,7 +97,10 @@ class Client:
             return await self._exe_delay(request, enqueue_type, queue, delay, core)
         return await self._exe_run(request, enqueue_type, queue, core)
 
-    async def ping(self) -> bool:
+    async def redis_ping(self) -> bool:
+        return await self.redis.ping()
+
+    async def health(self) -> bool:
         return await self.redis.ping()
 
     async def state(self) -> ReportState:

@@ -54,8 +54,9 @@ class ReadyResponse(BaseModel):
     """DTO for api output /ready"""
 
     model_config = DTO_CONFIG
-    DBCheck: bool
-    WorkerCheck: bool
+    Database: bool
+    Redis: bool
+    Worker: bool
 
 
 class EnqueueResponse(BaseModel):
