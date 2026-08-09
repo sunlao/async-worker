@@ -1,7 +1,7 @@
 from typing import Any
-from taskiq import TaskiqState, TaskiqMessage, TaskiqMiddleware, TaskiqResult
-from shared.models.constants import EnqueueTypes
-from worker.core.post_process import PostProcess
+from redis.asyncio import Redis
+from taskiq import TaskiqMessage, TaskiqMiddleware, TaskiqResult
+
 
 class DuplicateJobError(RuntimeError):
     pass
@@ -31,9 +31,8 @@ class UniqueJob(TaskiqMiddleware):
     return 0
     """
 
-    def __init__(self, context: TaskiqState) -> None:
-        self.redis = context.redis_client
-        self.post_process = PostProcess(context)
+    def __init__(self, redis: Redis) -> None:
+        self.redis = redis
 
     def _key(self, job_id: int | str) -> str:
         return f"{self.KEY_PREFIX}{job_id}"
@@ -58,4 +57,8 @@ class UniqueJob(TaskiqMiddleware):
     async def post_save(self, message: TaskiqMessage, result: TaskiqResult[Any]) -> None:
         job_id = message.labels[self.JOB_ID]
         await self.release(job_id, self._token(message))
-        self.post_process._enqueue(job_id, EnqueueTypes.POST_PROCESS)
+        if result.is_err:
+            return
+        from worker.core.post_process import PostProcess
+
+        await PostProcess(self.broker.state).execute(job_id)
