@@ -2,7 +2,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./deploy/api/Dockerfile
+      dockerfile: ./deploy/api/dockerfile
     image: ${APP_CODE}-api:latest
     platform: linux/amd64
     container_name: ${APP_CODE}-api
@@ -63,7 +63,7 @@ services:
   db-deploy:
     build:
       context: .
-      dockerfile: ./deploy/db-deploy/Dockerfile
+      dockerfile: ./deploy/db-deploy/dockerfile
     image: ${APP_CODE}-db-deploy:latest
     platform: linux/amd64
     container_name: "${APP_CODE}-db-deploy"
@@ -107,7 +107,7 @@ services:
   worker:
       build:
         context: .
-        dockerfile: ./deploy/worker/Dockerfile
+        dockerfile: ./deploy/worker/dockerfile
       image: ${APP_CODE}-worker:latest
       container_name: ${APP_CODE}-worker
       command:
@@ -183,7 +183,7 @@ services:
   test:
     build:
       context: .
-      dockerfile: ./deploy/test-runner/Dockerfile
+      dockerfile: ./deploy/test-runner/dockerfile
     container_name: ${APP_CODE}-test-runner
     command: bash -lc "cd /app && tox -vv"
     environment:
