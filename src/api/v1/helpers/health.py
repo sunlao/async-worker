@@ -7,7 +7,7 @@ class Health:
 
     def __init__(self, request: Request):
         self.engine: Engine = request.app.state.db
-        self.worker = request.app.state.worker
+        self.worker_client = request.app.state.worker
 
     async def db(self) -> bool:
         try:
@@ -20,7 +20,7 @@ class Health:
             return False
 
     async def redis(self) -> bool:
-        return await self.worker.redis_ping()
+        return await self.worker_client.redis_ping()
 
     async def worker(self) -> bool:
-        return await self.worker.health()
+        return await self.worker_client.health()
