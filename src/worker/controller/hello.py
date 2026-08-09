@@ -37,9 +37,7 @@ class Hello:
             )
         if exe.JobConfig.Cmd is None:
             raise RuntimeError("Cmd is required for GET")
-        exe.JobConfig.Cmd
-        API_PORT = self.api_port
-        url = f"{exe.JobConfig.Cmd}"
+        url = exe.JobConfig.Cmd.format(API_PORT=self.api_port)
         print(f"url: {url}")
         self.api_port
         response = await Edge(self.context).get(url)
@@ -114,6 +112,7 @@ class Hello:
             print(f"result2: {result2}")
         if connector_type == ConnectorTypes.API:
             result3 = await self._api_actions(exe, profile, **kwargs)
+            print(f"result3: {result3}")
         result = HelloJobResult(Pass=True)
         await self.post_process.execute(exe.JobId)
         return self._event(exe, "g2g", result)
