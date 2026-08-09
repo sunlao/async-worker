@@ -1,13 +1,13 @@
 #!/bin/sh
 set -u
 
-uvicorn src.api.main:api \
+SERVICE="${APP_CODE}-api" uvicorn src.api.main:api \
     --host 0.0.0.0 \
     --port "$API_PORT" \
     --reload &
 api_pid=$!
 
-taskiq worker worker:queue \
+SERVICE="${APP_CODE}-worker" taskiq worker worker:queue \
     --workers "$TASKIQ_WORKERS" \
     --max-async-tasks "$TASKIQ_MAX_ASYNC_TASKS" \
     --max-prefetch "$TASKIQ_MAX_PREFETCH" \
