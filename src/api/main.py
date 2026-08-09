@@ -2,14 +2,8 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, Request, Response
-from redis.asyncio import Redis
 from starlette.responses import PlainTextResponse
 from taskiq import TaskiqState
-from taskiq_redis import (
-    ListRedisScheduleSource,
-    RedisAsyncResultBackend,
-    RedisStreamBroker,
-)
 from api.metadata import tags
 from api.v1 import flush
 from api.v1.info import info, ready, state
@@ -23,26 +17,13 @@ from shared.models.api import ASGIEvent, RootResponse
 from shared.models.constants import Events, LogLevel, UserContext
 from shared.models.db import DBStartUpContext
 from shared.models.log import EventError
-from shared.models.worker import WorkerInitContext
+from worker import delay_source, queue, redis_client
 from worker.client import Client
-from worker.core.queue import Queue
-from worker.core.router import register
+
 
 locker = Locker()
 config_log = locker.log()
 config_awork = locker.awork()
-config_redis = locker.redis()
-redis_url = f"redis://{config_redis.Host}:{config_redis.Port}"
-redis_client = Redis.from_url(redis_url)
-queue_context = WorkerInitContext(
-    Broker=RedisStreamBroker,
-    Backend=RedisAsyncResultBackend,
-    RedisURL=redis_url,
-    RedisClient=redis_client,
-)
-queue = Queue(queue_context, config_redis).build()
-register(queue)
-delay_source = ListRedisScheduleSource(redis_url)
 gate_path = Path(config_awork.GatePath)
 
 
@@ -73,8 +54,6 @@ async def lifespan(app: FastAPI):
     worker_context.enqueue_gate = s.enqueue_gate
     s.worker = Client(worker_context)
     await s.db.startup()
-    await queue.startup()
-    await delay_source.startup()
     msg = "API Service Startup complete"
     core = core_log(config_log, LogLevel.INFO, Events.STARTUP, msg)
     s.log.write_core(core)
