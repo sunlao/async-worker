@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field, StrictStr, UUID4
 from shared.models.constants import (
     ActionTypes,
     JobTypes,
-    Targets,
     ConnectorTypes,
     ResourceTypes,
 )
@@ -41,7 +40,9 @@ class AdminEvent(BaseModel):
     model_config = DTO_CONFIG
     JobId: int = Field(gt=0)
     JobName: str
-    ActionType: ActionTypes = Field(ActionTypes.POST)
+    ConnectionProfile: str
+    Key: str | None = None
+    ActionType: ActionTypes = Field(ActionTypes.SET)
     Message: str
     Status: bool
     AdminResults: Optional[AdminJobResult] = None
