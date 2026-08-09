@@ -8,3 +8,6 @@ profiles:
   - name: unity_worker_io
     connector_type: io
     resource_type: asubprocess
+  - name: unity_worker_redis
+    connector_type: db
+    resource_type: redis_client
