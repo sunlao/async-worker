@@ -37,9 +37,12 @@ class Admin:
         if exe.JobConfig.ActionType == ActionTypes.SET:
             if exe.JobConfig.Key is None:
                 raise RuntimeError("Key is required for SET")
-            await Redis(self.context).upsert(
-                exe.JobConfig.Key, self.log.Now(UTC).isoformat()
-            )
+            try:
+                await Redis(self.context).upsert(
+                    exe.JobConfig.Key, self.log.Now(UTC).isoformat()
+                )
+            except Exception as e:  # pylint: disable=broad-except
+                return AdminJobResult(Pass=False)    
             return AdminJobResult(Pass=True)
         else:
             raise RuntimeError(f"Unsupported ActionType: {exe.obConfig.ActionType}")
