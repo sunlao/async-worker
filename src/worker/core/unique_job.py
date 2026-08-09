@@ -1,5 +1,6 @@
 from typing import Any
 from taskiq import TaskiqState, TaskiqMessage, TaskiqMiddleware, TaskiqResult
+from shared.models.constants import EnqueueTypes
 from worker.core.post_process import PostProcess
 
 class DuplicateJobError(RuntimeError):
@@ -57,4 +58,4 @@ class UniqueJob(TaskiqMiddleware):
     async def post_save(self, message: TaskiqMessage, result: TaskiqResult[Any]) -> None:
         job_id = message.labels[self.JOB_ID]
         await self.release(job_id, self._token(message))
-        self.post_process._enqueue(job_id)
+        self.post_process._enqueue(job_id, EnqueueTypes.POST_PROCESS)

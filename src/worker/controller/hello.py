@@ -22,7 +22,6 @@ class Hello:
         self.log = self.context["config_log"]
         self.gate = context["enqueue_gate"]
         self.connection = context.connection
-        self.post_process = PostProcess(self.context)
         self.api_port = context.config_worker.ApiPort
         self.asleep = context.asleep
 

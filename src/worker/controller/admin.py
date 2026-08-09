@@ -26,7 +26,6 @@ class Admin:
         self.log = self.context["config_log"]
         self.gate = context["enqueue_gate"]
         self.connection = context.connection
-        self.post_process = PostProcess(self.context)
 
     async def _db_actions(
         self, exe: ExecutionConfig[AdminConfig], prof: ConnectionProfile

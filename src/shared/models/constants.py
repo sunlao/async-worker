@@ -62,6 +62,7 @@ class EnqueueTypes(StrEnum):
     NEXT = "next"
     REENQUEUE = "reenqueue"
     MANUAL = "manual"
+    POST_PROCESS = "post_process"
 
 
 class Environments(StrEnum):
