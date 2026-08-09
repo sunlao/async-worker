@@ -1,6 +1,5 @@
 from fastapi import Request
 from shared.db import Engine
-from shared.models.worker import Health
 
 
 class HealthCheck:
