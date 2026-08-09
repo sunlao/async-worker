@@ -21,7 +21,7 @@ safety:
 .PHONY: up test-build test test-ci-local down
 up:
 	python -m scripts.reset
-	docker compose -f docker-compose.yml up --build --remove-orphans --detach api db-deploy postgres redis worker
+	docker compose -f docker-compose.yml up --build --remove-orphans --detach db-deploy postgres redis worker
 test-build:
 	docker compose -f docker-compose.yml build test
 test:
@@ -30,12 +30,12 @@ test-po:
 	docker compose -f docker-compose.yml run --no-deps --remove-orphans test tox -e po $(arg)
 test-ci-local:
 	python -m scripts.reset
-	docker compose -f docker-compose.yml -f docker-compose-ci-local.yml up --build --remove-orphans --detach api db-deploy postgres redis worker dbt-runtime
+	docker compose -f docker-compose.yml -f docker-compose-ci-local.yml up --build --remove-orphans --detach db-deploy postgres redis worker dbt-runtime
 	docker compose -f docker-compose.yml -f docker-compose-ci-local.yml run --no-deps --rm test tox -e ci
 down:
 	docker compose down --remove-orphans -v
 down-ci:
-	docker compose down --remove-orphans -v api db-deploy postgres redis worker dbt-runtime
+	docker compose down --remove-orphans -v db-deploy postgres redis worker dbt-runtime
 
 .PHONY: pip_runner up-ci test-ci
 pip_runner:
@@ -43,8 +43,8 @@ pip_runner:
 	pip install -r requirements.txt
 	pip install -r requirements-test.txt
 up-ci:
-	docker compose -f docker-compose.yml -f docker-compose-ci.yml pull api worker db-deploy dbt-runtime
-	docker compose -f docker-compose.yml -f docker-compose-ci.yml up -d --no-build api db-deploy postgres redis worker dbt-runtime
+	docker compose -f docker-compose.yml -f docker-compose-ci.yml pull worker db-deploy dbt-runtime
+	docker compose -f docker-compose.yml -f docker-compose-ci.yml up -d --no-build db-deploy postgres redis worker dbt-runtime
 	docker ps
 test-ci:
 	docker compose -f docker-compose.yml -f docker-compose-ci.yml pull test
