@@ -60,9 +60,6 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
-        await delay_source.shutdown()
-        await queue.shutdown()
-        await redis_client.aclose()
         await s.db.shutdown()
         msg = "API Service Shutdown complete"
         core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, msg)
