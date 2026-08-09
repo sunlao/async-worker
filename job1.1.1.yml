@@ -30,7 +30,8 @@ jobs:
     id: 101
     name: Hello-Api
     connection_profile: unity_worker_api
-    cmd: /info
+    cmd: /ready
+    delay: 120
   - job_type: hello
     id: 102
     name: Hello-Manual-Io
