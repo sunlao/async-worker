@@ -108,11 +108,14 @@ class Client:
         return self.config_log.Now(UTC) - timestamp <= timedelta(minutes=2)
 
     async def state(self) -> ReportState:
+        delayed = 0
+        async for _ in self.redis.scan_iter(match="schedule:data:*"):
+            delayed += 1        
         groups = await self.redis.xinfo_groups(self.stream)
         group = next(item for item in groups if self._text(item["name"]) == self.group)
         in_flight = group["pending"]
         return ReportState(
-            Delayed=0,
+            Delayed=delayed,
             Enqueued=group["lag"],
             InFlight=in_flight,
             Acknowledged=group["entries-read"] - in_flight,
