@@ -112,6 +112,7 @@ class Client:
         group = next(item for item in groups if self._text(item["name"]) == self.group)
         in_flight = group["pending"]
         return ReportState(
+            Delayed=0,
             Enqueued=group["lag"],
             InFlight=in_flight,
             Acknowledged=group["entries-read"] - in_flight,

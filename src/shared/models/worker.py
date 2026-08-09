@@ -154,6 +154,7 @@ class LogCoreInput(BaseModel):
 
 class ReportState(BaseModel):
     model_config = DTO_CONFIG
+    Delayed: int = Field(ge=0)
     Enqueued: int = Field(ge=0)
     InFlight: int = Field(ge=0)
     Acknowledged: int = Field(ge=0)
