@@ -47,6 +47,15 @@ jobs:
       python -c "raise RuntimeError('Manual Error')"
   - job_type: admin
     id: 1004
+    name: Heartbeat
+    connection_profile: unity_worker_redis
+    action_type: upsert
+    key: awork-worker-heartbeat
+    startup: true
+    delay: 60
+    run_once: false
+  - job_type: admin
+    id: 1005
     name: OpsLedger
     source_connection_profile: unity_worker_redis
     source_cmd: tbd
