@@ -18,6 +18,8 @@ from shared.models.policy import DTO_CONFIG, DTO_EDGE_CONFIG, INPUTTYPE
 class AdminConfig(BaseModel):
     model_config = DTO_CONFIG
     Name: StrictStr = Field(..., min_length=1)
+    ConnectionProfile: str
+    ActionType: ActionTypes | None = None
     Key: str | None = None
     StartUp: bool = Field(default=True)
     Delay: int = Field(default=600, ge=0)
