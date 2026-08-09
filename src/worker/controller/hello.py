@@ -1,6 +1,7 @@
 from datetime import UTC
 from worker.connector.io.connector import Connector as CLI
-from shared.models.constants import ConnectorTypes, ResourceTypes
+from shared.models.api import ReadyResponse
+from shared.models.constants import ConnectorTypes, ResourceTypes, ActionTypes
 from shared.models.worker import (
     HelloEvent,
     ExecutionConfig,
@@ -9,7 +10,7 @@ from shared.models.worker import (
     ConnectionProfile,
     ConnecterDBPoolInput,
 )
-from worker.connector.api.connector import Connector as API
+from worker.connector.api.edge import Edge
 from worker.connector.db.pool import Pool
 from worker.controller.post_process import PostProcess
 
@@ -26,8 +27,20 @@ class Hello:
 
     async def _api_actions(
         self, exe: ExecutionConfig[HelloConfig], prof: ConnectionProfile, **kwargs
-    ):
-        pass
+    ) -> HelloJobResult:
+        if prof.ResourceType != ResourceTypes.API_EDGE:
+            raise RuntimeError(f"Undefined ResourceType: {prof.ResourceType}")
+        if exe.JobConfig.ActionType != ActionTypes.GET:
+            raise RuntimeError(
+                f"Unsupported ActionType: {exe.JobConfig.ActionType}"
+            )
+        if exe.JobConfig.Cmd is None:
+            raise RuntimeError("Cmd is required for GET")
+        response = await Edge(self.context).get(exe.JobConfig.Cmd)
+        ready = ReadyResponse.model_validate(response.json())
+        if ready.Database is True and ready.Redis is True and ready.Worker is True:
+            return HelloJobResult(Pass=True)
+        return HelloJobResult(Pass=False)
 
     @staticmethod
     def _db_check(check, result, name):
@@ -89,9 +102,10 @@ class Hello:
         connector_type = profile.ConnectorType
         if connector_type == ConnectorTypes.DB:
             result1 = await self._db_actions(exe, profile)
-            print(f"result: {result1}")
+            print(f"result1: {result1}")
         if connector_type == ConnectorTypes.IO:
             result2 = await self._io_actions(exe, profile, **kwargs)
+            print(f"result2: {result2}")
         if connector_type == ConnectorTypes.API:
             result3 = await self._api_actions(exe, profile, **kwargs)
         result = HelloJobResult(Pass=True)

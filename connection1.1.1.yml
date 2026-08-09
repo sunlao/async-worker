@@ -4,7 +4,7 @@ profiles:
     resource_type: db_edge
   - name: unity_worker_api
     connector_type: api
-    resource_type: api_client
+    resource_type: api_edge
   - name: unity_worker_io
     connector_type: io
     resource_type: asubprocess

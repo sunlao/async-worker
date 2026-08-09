@@ -126,7 +126,7 @@ class ResourceTypes(StrEnum):
 
     DB_EDGE = "db_edge"
     DB_JDBC = "db_jdbc"
-    API_CLIENT = "api_client"
+    API_EDGE = "api_edge"
     REDIS_CLIENT = "redis_client"
     ASUBPROCESS = "asubprocess"
 
