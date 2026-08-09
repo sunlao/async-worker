@@ -1,7 +1,7 @@
 from taskiq import TaskiqState
 from shared.models.constants import EnqueueTypes
 from shared.models.worker import EnqueueResponse
-from shared.queue.client import Client
+from worker.client import Client
 
 
 class PostProcess:

@@ -14,9 +14,9 @@ from shared.log.helpers.core import build as core_log
 from shared.models.constants import Events, LogLevel, JobTypes, EnqueueTypes
 from shared.models.log import CoreError
 from shared.models.worker import LifespanContext, WorkerInitContext
-from shared.queue.client import Client
+from worker.client import Client
 from worker.core.lifespan import Lifespan
-from shared.queue.queue import Queue
+from worker.core.queue import Queue
 from worker.core.router import register
 
 locker = Locker()
