@@ -29,7 +29,6 @@ class AdminConfig(BaseModel):
 
 class AdminJobResult(BaseModel):
     model_config = DTO_CONFIG
-    ExecutionId: UUID4
     Pass: bool
 
 
