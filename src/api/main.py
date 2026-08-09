@@ -54,12 +54,17 @@ async def lifespan(app: FastAPI):
     worker_context.enqueue_gate = s.enqueue_gate
     s.worker = Client(worker_context)
     await s.db.startup()
+    await queue.startup()
+    await delay_source.startup()
     msg = "API Service Startup complete"
     core = core_log(config_log, LogLevel.INFO, Events.STARTUP, msg)
     s.log.write_core(core)
     try:
         yield
     finally:
+        await delay_source.shutdown()
+        await queue.shutdown()
+        await redis_client.aclose()
         await s.db.shutdown()
         msg = "API Service Shutdown complete"
         core = core_log(config_log, LogLevel.INFO, Events.SHUTDOWN, msg)
