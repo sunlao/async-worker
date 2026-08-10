@@ -74,6 +74,6 @@ class Hello:
                 self._log_error(job, error)
                 if retry == job.Config.Retry:
                     raise
-                self.asleep(self.retry_delay)
+                await self.asleep(self.retry_delay)
                 continue
             return self._log(result, job)
