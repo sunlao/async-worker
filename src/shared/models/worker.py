@@ -180,6 +180,7 @@ class WorkerConfig(BaseModel):
     GatePath: str
     ApiPort: int
     Platform: str
+    WorkerRetryDelay: int = Field(ge=0)
 
 
 class WorkerInitContext(BaseModel):

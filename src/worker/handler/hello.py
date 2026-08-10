@@ -19,7 +19,9 @@ class Hello:
 
     def __init__(self, context: TaskiqState):
         self.context = context
-        self.config_log = context["config_log"]
+        self.config_log = context.config_log
+        self.asleep = context.asleep
+        self.retry_delay = context.config_worker.WorkerRetryDelay
         self.tx_id = self.config_log.UUID4()
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
@@ -72,5 +74,6 @@ class Hello:
                 self._log_error(job, error)
                 if retry == job.Config.Retry:
                     raise
+                self.asleep(self.retry_delay)
                 continue
             return self._log(result, job)

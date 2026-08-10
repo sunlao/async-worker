@@ -71,6 +71,7 @@ class Locker:
             GatePath=getenv("GATE_CLOSE_PATH"),
             ApiPort=int(getenv("API_PORT")),
             Platform=name,
+            WorkerRetryDelay=getenv("WORKER_RETRY_DELAY"),
         )
 
     def log(self) -> Config:
