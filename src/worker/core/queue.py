@@ -1,5 +1,6 @@
 from taskiq import AsyncBroker
-from worker.core.extensions import acknowledge, enqueue
+from worker.core.extensions.acknowledge import Acknowledge
+from worker.core.extensions.enqueue import Enqueue
 from shared.models.config import Redis as RedisConfig
 from shared.models.worker import WorkerInitContext
 
@@ -26,5 +27,5 @@ class Queue:
 
     def build(self) -> AsyncBroker:
         return self._broker().with_middlewares(
-            acknowledge(self.context.RedisClient), enqueue(self.context.RedisClient)
+            Acknowledge(self.context.RedisClient), Enqueue(self.context.RedisClient)
         )
