@@ -36,7 +36,7 @@ class Enqueue(TaskiqMiddleware):
             - Worker must manually call claim before submitting a job for delay
               - no middleware support for delayed jobs (scheduled)
         """
-        claimed = await self.redis.eval(claim_script, 1, self._key(job_id), token)
+        claimed = await self.redis.eval(claim_script(), 1, self._key(job_id), token)
         if claimed != 1:
             raise DuplicateJobError(f"Job '{job_id}' is already active.")
 
@@ -49,4 +49,4 @@ class Enqueue(TaskiqMiddleware):
         return message
 
     async def release_on_error(self, job_id: int | str, token: str) -> None:
-        await self.redis.eval(release_script, 1, self._key(job_id), token)
+        await self.redis.eval(release_script(), 1, self._key(job_id), token)

@@ -6,7 +6,6 @@ from shared.models.constants import EnqueueTypes, Events, LogLevel
 from shared.models.log import Event, EnqueueEvent
 from shared.models.worker import JobConfig, EnqueueResponse, ReportState
 from worker.core.extensions.enqueue import Enqueue
-from worker.core.extensions.acknowledge import Acknowledge
 
 
 class Client:
@@ -23,7 +22,6 @@ class Client:
         self.start = self.config_log.Now(UTC)
         self.redis = context.redis_client
         self.pre_enqueue = Enqueue(context.redis_client)
-        self.post_acknowledge = Acknowledge(context.redis_client)
         self.stream = context.queue.queue_name
         self.group = context.queue.consumer_group_name
 

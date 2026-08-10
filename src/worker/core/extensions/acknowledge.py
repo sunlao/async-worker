@@ -60,7 +60,7 @@ class Acknowledge(TaskiqMiddleware):
         )
 
     async def _release(self, job_id: int | str, token: str) -> None:
-        await self.redis.eval(release_script, 1, self._key(job_id), token)
+        await self.redis.eval((release_script()), 1, self._key(job_id), token)
 
     @classmethod
     def _token(cls, message: TaskiqMessage) -> str:
@@ -74,6 +74,6 @@ class Acknowledge(TaskiqMiddleware):
             await self._release(job_id, self._token(message))
             if result.is_err:
                 return
-            await self._post_process()
+            await self._post_process(job_id)
         except Exception as error:  # pylint: disable=broad-exception-caught
             self._log_error(job_id, error)
