@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, status
 from shared.models.constants import EnqueueTypes
 from shared.models.worker import EnqueueResponse
-from worker.core.unique_job import DuplicateJobError
+from worker.core.extensions.enqueue import DuplicateJobError
 
 router = APIRouter()
 
