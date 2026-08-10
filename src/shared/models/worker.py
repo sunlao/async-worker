@@ -95,7 +95,7 @@ class HelloConfig(BaseModel):
     Cmd: str | None = None
     Queries: tuple[Query, ...]
     StartUp: bool = Field(default=False)
-    Delay: int = Field(default=0, ge=0)
+    Delay: int = Field(default=3600, ge=0)
     RunOnce: bool = Field(default=True)
     RunNext: tuple[int, ...] = ()
     Retry: int = Field(default=3, ge=0)

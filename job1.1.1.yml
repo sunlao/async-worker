@@ -32,7 +32,7 @@ jobs:
     connection_profile: unity_worker_api
     action_type: get
     cmd: http://localhost:{API_PORT}/api/v1/info/ready
-    delay: 10
+    delay: 0
   - job_type: hello
     id: 102
     name: Hello-Manual-Io
@@ -40,11 +40,13 @@ jobs:
     connection_profile: unity_worker_io
     cmd: >-
       python -c "import json,datetime,uuid; print(json.dumps({'hello':'id-'+uuid.uuid4().hex[:8],'timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')}))"
+    delay: 3
   - job_type: hello
     id: 103
     name: Hello-Manual-Io-Error
     action_type: subprocess
     connection_profile: unity_worker_io
+    delay: 0
     cmd: >-
       python -c "raise RuntimeError('Manual Error')"
   - job_type: admin
@@ -53,6 +55,4 @@ jobs:
     connection_profile: unity_worker_redis
     action_type: set
     key: awork-worker-heartbeat
-    startup: true
     delay: 60
-    run_once: false
