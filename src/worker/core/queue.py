@@ -1,11 +1,11 @@
 from taskiq import AsyncBroker
-from worker.core.unique_job import UniqueJob
+from worker.core.extensions import acknowledge, enqueue
 from shared.models.config import Redis as RedisConfig
 from shared.models.worker import WorkerInitContext
 
 
 class Queue:
-    """Create queue with Taskiq's broker
+    """Create queue with frameworkd's broker
     - set up backend with redis
     - configure
     - add Unique job middle ware
@@ -25,4 +25,6 @@ class Queue:
         ).with_result_backend(backend)
 
     def build(self) -> AsyncBroker:
-        return self._broker().with_middlewares(UniqueJob(self.context.RedisClient))
+        return self._broker().with_middlewares(
+            acknowledge(self.context.RedisClient), enqueue(self.context.RedisClient)
+        )

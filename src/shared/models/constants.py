@@ -83,6 +83,7 @@ class Events(StrEnum):
     POOLSNAPSHOT = "pool_snap_shot"
     HANDLER = "handler"
     ENQUEUE = "enqueue"
+    ACKNOWLEDGE = "acknowledge"
 
 
 class JobTypes(StrEnum):

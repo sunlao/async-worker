@@ -5,7 +5,8 @@ from shared.log.helpers.core import build as core_log
 from shared.models.constants import EnqueueTypes, Events, LogLevel
 from shared.models.log import Event, EnqueueEvent
 from shared.models.worker import JobConfig, EnqueueResponse, ReportState
-from worker.core.unique_job import UniqueJob
+from worker.core.extensions.enqueue import Enqueue
+from worker.core.extensions.acknowledge import Acknowledge
 
 
 class Client:
@@ -21,7 +22,8 @@ class Client:
         self.start_counter = self.config_log.TimeCounter()
         self.start = self.config_log.Now(UTC)
         self.redis = context.redis_client
-        self.unique_job = UniqueJob(context.redis_client)
+        self.pre_enqueue = Enqueue(context.redis_client)
+        self.post_acknowledge = Acknowledge(context.redis_client)
         self.stream = context.queue.queue_name
         self.group = context.queue.consumer_group_name
 
@@ -29,7 +31,7 @@ class Client:
         self, request: JobConfig, enqueue_type: EnqueueTypes, queue, delay, core
     ):
         schedule_id = self.context.queue.id_generator()
-        await self.unique_job.claim(request.Id, schedule_id)
+        await self.pre_enqueue.claim(request.Id, schedule_id)
         try:
             response = await queue.with_schedule_id(schedule_id).schedule_by_time(
                 self.context.delay_source,
@@ -37,7 +39,7 @@ class Client:
                 config=request,
             )
         except Exception:  # pylint: disable=broad-exception-caught
-            await self.unique_job.release(request.Id, schedule_id)
+            await self.pre_enqueue.release_on_error(request.Id, schedule_id)
             raise
         event = EnqueueEvent(
             JobId=request.Id,
