@@ -68,7 +68,7 @@ class Acknowledge(TaskiqMiddleware):
     async def post_save(
         self, message: TaskiqMessage, result: TaskiqResult[Any]
     ) -> None:
-        job_id = message.labels[self.JOB_ID]
+        job_id = int(message.labels[self.JOB_ID])
         try:
             await self._release(job_id, self._token(message))
             if result.is_err:
