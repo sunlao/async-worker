@@ -9,11 +9,10 @@ from worker.client import Client
 from worker.core.extensions.lua import release_script
 
 
-
 class Acknowledge(TaskiqMiddleware):
     """Use frameworkd middleware to extend capabilities when performing an acknowledge action
     - Ensure only one unqique job id can be enqueued or submitted for a delayed enqueue
-    - post_save is a reserved word for actions taken after acknowledge action when the framework 
+    - post_save is a reserved word for actions taken after acknowledge action when the framework
     is started with ack-type when_executed
     """
 

@@ -10,6 +10,7 @@ def claim_script():
     end
     return 0"""
 
+
 def release_script():
     return """
     if redis.call("GET", KEYS[1]) == ARGV[1] then

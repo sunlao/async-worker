@@ -2,6 +2,7 @@ from redis.asyncio import Redis
 from taskiq import TaskiqMessage, TaskiqMiddleware
 from worker.core.extensions.lua import release_script, claim_script
 
+
 class DuplicateJobError(RuntimeError):
     pass
 
@@ -27,11 +28,11 @@ class Enqueue(TaskiqMiddleware):
         return str(message.labels.get(cls.SCHEDULE_ID, message.task_id))
 
     async def claim(self, job_id: int | str, token: str) -> None:
-        """Execute LUA claim Script to 
+        """Execute LUA claim Script to
             - Checks the Redis uniqueness key derived from job_id.
             - Sets it to the execution/schedule token if absent.
             - Accepts the same token idempotently.
-            - Rejects a different token        
+            - Rejects a different token
         - Note:
             - Worker must manually call claim before submitting a job for delay
               - no middleware support for delayed jobs (scheduled)
@@ -42,8 +43,8 @@ class Enqueue(TaskiqMiddleware):
 
     async def pre_send(self, message: TaskiqMessage) -> TaskiqMessage:
         """Midleware hook for pre-enqueue actions
-            - framework calls directly before enqueue
-            - Worker must manually call claim before submitting a delayed job
+        - framework calls directly before enqueue
+        - Worker must manually call claim before submitting a delayed job
         """
         await self.claim(message.labels[self.JOB_ID], self._token(message))
         return message
