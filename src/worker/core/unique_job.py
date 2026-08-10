@@ -54,11 +54,16 @@ class UniqueJob(TaskiqMiddleware):
         await self.claim(job_id, self._token(message))
         return message
 
-    async def post_save(self, message: TaskiqMessage, result: TaskiqResult[Any]) -> None:
+    async def post_save(
+        self, message: TaskiqMessage, result: TaskiqResult[Any]
+    ) -> None:
         job_id = message.labels[self.JOB_ID]
-        await self.release(job_id, self._token(message))
-        if result.is_err:
-            return
-        from worker.core.post_process import PostProcess
+        try:
+            await self.release(job_id, self._token(message))
+            if result.is_err:
+                return
+            from worker.core.post_process import PostProcess
 
-        await PostProcess(self.broker.state).execute(job_id)
+            await PostProcess(self.broker.state).execute(job_id)
+        except Exception as error:  # pylint: disable=broad-exception-caught
+            self._log_error(self.broker.state, job_id, error)

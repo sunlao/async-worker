@@ -31,12 +31,10 @@ class Client:
         schedule_id = self.context.queue.id_generator()
         await self.unique_job.claim(request.Id, schedule_id)
         try:
-            response = await (
-                queue.with_schedule_id(schedule_id).schedule_by_time(
-                    self.context.delay_source,
-                    self.config_log.Now(UTC) + timedelta(seconds=delay),
-                    config=request,
-                )
+            response = await queue.with_schedule_id(schedule_id).schedule_by_time(
+                self.context.delay_source,
+                self.config_log.Now(UTC) + timedelta(seconds=delay),
+                config=request,
             )
         except Exception:  # pylint: disable=broad-exception-caught
             await self.unique_job.release(request.Id, schedule_id)
